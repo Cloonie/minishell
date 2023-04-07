@@ -23,8 +23,10 @@ void	ctrl(int sig)
 	}
 }
 
-int	main(void)
+int	main(int ac, char **av, char **ev)
 {
+	(void)ac;
+	(void)av;
 	char	*input;
 	char	cwd[1024];
 	char	display[1024];
@@ -37,15 +39,15 @@ int	main(void)
 	{
 		getcwd(display, sizeof(cwd));
 		getcwd(cwd, sizeof(cwd));
-		strcat(display, "> ");
+		strcat(display, " | MINISHELL > ");
 		input = readline(display);
 		if (input == NULL)
 		{
 			printf("logout\n");
 			break ;
 		}
-		if (strcmp(input, "pwd") == 0)
-			printf("%s\n", cwd);
+		// if (strcmp(input, "pwd") == 0)
+		// 	printf("%s\n", cwd);
 		// if (strcmp(input, "ls") == 0)
 		// {
 		// 	dir = opendir(cwd);
@@ -54,12 +56,18 @@ int	main(void)
 		// 	closedir(dir);
 		// }
 
+		// env
+		if ((strcmp(input, "env") == 0))
+			for (int i = 0; ev[i]; i++)
+				printf("%s\n", ev[i]);
+
+		char **array = ft_split(input, ' ');
+
+		// execve
 		pid_t pid;
-		char *argv[] = {"/bin/cat", "makefile", NULL};
+		char *argv[] = {ft_strjoin("/bin/", array[0]), array[1], NULL};
 		char *envp[] = {NULL};
-
 		pid = fork();
-
 		if (pid == 0) { // child process
 			execve(argv[0], argv, envp);
 			printf("Failed to execute ls command\n");

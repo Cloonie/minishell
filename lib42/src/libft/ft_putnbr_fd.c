@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/04/07 15:48:03 by mliew            ###   ########.fr       */
+/*   Created: 2022/05/26 21:24:23 by mliew             #+#    #+#             */
+/*   Updated: 2022/05/26 21:45:21 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <sys/wait.h>
-#include <dirent.h>
-#include <string.h>
-#include "lib42/includes/libft.h"
-#include "lib42/includes/ft_printf.h"
-#include "lib42/includes/get_next_line_bonus.h"
+#include "libft.h"
 
-#define Ctrl(x) ((x) & 0x1f)
+void	ft_putnbr_fd(int n, int fd)
+{
+	if (n == -2147483648)
+		ft_putstr_fd("-2147483648", fd);
+	else
+	{
+		if (n < 0)
+		{
+			ft_putchar_fd('-', fd);
+			n = -n;
+		}
+		if (n > 9)
+			ft_putnbr_fd(n / 10, fd);
+		ft_putchar_fd(n % 10 + '0', fd);
+	}	
+}

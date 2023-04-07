@@ -1,26 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/04/07 15:48:03 by mliew            ###   ########.fr       */
+/*   Created: 2022/05/24 12:08:16 by mliew             #+#    #+#             */
+/*   Updated: 2022/05/30 22:18:40 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <sys/wait.h>
-#include <dirent.h>
 #include <string.h>
-#include "lib42/includes/libft.h"
-#include "lib42/includes/ft_printf.h"
-#include "lib42/includes/get_next_line_bonus.h"
 
-#define Ctrl(x) ((x) & 0x1f)
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i;
+
+	i = 0;
+	if (dstsize != 0)
+	{
+		while (i < dstsize - 1 && src[i])
+		{
+			dst[i] = src[i];
+			i++;
+		}
+		dst[i] = '\0';
+	}
+	while (src[i])
+		i++;
+	return (i);
+}

@@ -1,26 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/04/07 15:48:03 by mliew            ###   ########.fr       */
+/*   Created: 2022/05/26 21:04:27 by mliew             #+#    #+#             */
+/*   Updated: 2022/05/26 21:05:25 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <sys/wait.h>
-#include <dirent.h>
-#include <string.h>
-#include "lib42/includes/libft.h"
-#include "lib42/includes/ft_printf.h"
-#include "lib42/includes/get_next_line_bonus.h"
+#include "libft.h"
 
-#define Ctrl(x) ((x) & 0x1f)
+void	ft_putchar_fd(char c, int fd)
+{
+	write(fd, &c, 1);
+}
