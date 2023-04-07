@@ -10,16 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <sys/wait.h>
-#include <dirent.h>
-
-#define Ctrl(x) ((x) & 0x1f)
+#include "minishell.h"
 
 void	ctrl(int sig)
 {
@@ -30,10 +21,6 @@ void	ctrl(int sig)
 		rl_replace_line("", 0); // Clear the current input line
 		rl_redisplay(); // Redisplay the prompt
 	}
-	if (sig == SIGQUIT)
-	{
-		printf("SIGQUIT");
-	}
 }
 
 int	main(void)
@@ -41,10 +28,10 @@ int	main(void)
 	char	*input;
 	char	cwd[1024];
 	char	display[1024];
-	DIR		*dir;
-	struct dirent	*entry;
+	// DIR		*dir;
+	// struct dirent	*entry;
 
-	signal(SIGQUIT, ctrl);
+	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, ctrl);
 	while (1)
 	{
@@ -59,13 +46,31 @@ int	main(void)
 		}
 		if (strcmp(input, "pwd") == 0)
 			printf("%s\n", cwd);
-		if (strcmp(input, "ls") == 0)
-		{
-			dir = opendir(cwd);
-			while ((entry = readdir(dir)) != NULL)
-				printf("%s\n", entry->d_name);
-			closedir(dir);
+		// if (strcmp(input, "ls") == 0)
+		// {
+		// 	dir = opendir(cwd);
+		// 	while ((entry = readdir(dir)) != NULL)
+		// 		printf("%s\n", entry->d_name);
+		// 	closedir(dir);
+		// }
+
+		pid_t pid;
+		char *argv[] = {"/bin/cat", "makefile", NULL};
+		char *envp[] = {NULL};
+
+		pid = fork();
+
+		if (pid == 0) { // child process
+			execve(argv[0], argv, envp);
+			printf("Failed to execute ls command\n");
+		} else if (pid > 0) { // parent process
+			wait(NULL); // wait for child to finish
+			printf("Child process finished\n");
+		} else { // fork failed
+			printf("Failed to fork process\n");
+			return 1;
 		}
+
 		add_history(input);
 		free(input);
 	}

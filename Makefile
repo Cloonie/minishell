@@ -1,2 +1,5 @@
+CFLAGS = -Wall -Wextra -Werror
+CFLAGS += -lreadline -L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
+
 all:
-	gcc -Wall -Wextra -Werror main.c -lreadline && ./a.out
+	gcc $(CFLAGS) main.c && ./a.out
