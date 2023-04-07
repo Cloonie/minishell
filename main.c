@@ -21,12 +21,19 @@
 
 #define Ctrl(x) ((x) & 0x1f)
 
-void	ctrl_c(int sig)
+void	ctrl(int sig)
 {
-	printf("\n"); // Print a newline to prompt for new input
-	rl_on_new_line(); // Move cursor to the beginning of the line
-	rl_replace_line("", 0); // Clear the current input line
-	rl_redisplay(); // Redisplay the prompt
+	if (sig == SIGINT)
+	{
+		printf("\n"); // Print a newline to prompt for new input
+		rl_on_new_line(); // Move cursor to the beginning of the line
+		rl_replace_line("", 0); // Clear the current input line
+		rl_redisplay(); // Redisplay the prompt
+	}
+	if (sig == SIGQUIT)
+	{
+		printf("SIGQUIT");
+	}
 }
 
 int	main(void)
@@ -37,7 +44,8 @@ int	main(void)
 	DIR		*dir;
 	struct dirent	*entry;
 
-	signal(SIGINT, ctrl_c);
+	signal(SIGQUIT, ctrl);
+	signal(SIGINT, ctrl);
 	while (1)
 	{
 		getcwd(display, sizeof(cwd));
@@ -56,7 +64,7 @@ int	main(void)
 			dir = opendir(cwd);
 			while ((entry = readdir(dir)) != NULL)
 				printf("%s\n", entry->d_name);
-			// closedir(dir);
+			closedir(dir);
 		}
 		add_history(input);
 		free(input);
