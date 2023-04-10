@@ -23,66 +23,63 @@ void	ctrl(int sig)
 	}
 }
 
-int	main(int ac, char **av, char **ev)
+char	*get_input(void)
 {
-	(void)ac;
-	(void)av;
 	char	*input;
 	char	cwd[1024];
-	char	display[1024];
-	// DIR		*dir;
-	// struct dirent	*entry;
+
+	input = readline(ft_strjoin(ft_strjoin("MK42@minishell", getcwd(cwd, sizeof(cwd))), "> "));
+	ft_strtrim(input, " ");
+	if (input == NULL)
+		exit (0);
+	add_history(input);
+	return (input);
+}
+
+int	executable(char *input, char **ev)
+{
+	pid_t pid;
+	char **array;
+
+	array = ft_split(input, ' ');
+	array[0] = ft_strjoin("/bin/", array[0]);
+	pid = fork();
+	if (pid == 0)
+	{	// child process
+		execve(bin[0], bin, ev);
+		printf("Failed to execute bin command\n");
+	} 
+	else if (pid > 0)
+	{	// parent process
+		wait(NULL); // wait for child to finish
+		// printf("Child process finished\n");
+	}
+	else 
+	{	// fork failed
+		printf("Failed to fork process\n");
+		return 1;
+	}
+	return 0;
+}
+
+int	main(int ac, char **av, char **ev)
+{
+	char	*input;
+
+	(void)ac;
+	(void)av;
+	(void)ev;
 
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, ctrl);
 	while (1)
 	{
-		getcwd(display, sizeof(cwd));
-		getcwd(cwd, sizeof(cwd));
-		strcat(display, " | MINISHELL > ");
-		input = readline(display);
-		if (input == NULL)
-		{
-			printf("logout\n");
-			break ;
-		}
-		// if (strcmp(input, "pwd") == 0)
-		// 	printf("%s\n", cwd);
-		// if (strcmp(input, "ls") == 0)
-		// {
-		// 	dir = opendir(cwd);
-		// 	while ((entry = readdir(dir)) != NULL)
-		// 		printf("%s\n", entry->d_name);
-		// 	closedir(dir);
-		// }
-
-		// env
-		if ((strcmp(input, "env") == 0))
-			for (int i = 0; ev[i]; i++)
-				printf("%s\n", ev[i]);
-
-		char **array = ft_split(input, ' ');
-
-		// execve
-		pid_t pid;
-		char *argv[] = {ft_strjoin("/bin/", array[0]), array[1], NULL};
-		char *envp[] = {NULL};
-		pid = fork();
-		if (pid == 0) { // child process
-			execve(argv[0], argv, envp);
-			printf("Failed to execute ls command\n");
-		} else if (pid > 0) { // parent process
-			wait(NULL); // wait for child to finish
-			printf("Child process finished\n");
-		} else { // fork failed
-			printf("Failed to fork process\n");
-			return 1;
-		}
-
-		add_history(input);
-		free(input);
+		input = get_input();
+		executable(input, ev);
 	}
-	rl_clear_history();
 
+	// free & exit
+	rl_clear_history();
+	free(input);
 	return (0);
 }

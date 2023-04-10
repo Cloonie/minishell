@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 16:52:03 by mliew             #+#    #+#             */
-/*   Updated: 2022/12/29 16:49:15 by mliew            ###   ########.fr       */
+/*   Updated: 2023/04/08 17:04:58 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*join_free(char *str1, char *str2)
 {
 	char	*temp;
 
-	temp = ft_strjoin(str1, str2);
+	temp = ft_strjoingnl(str1, str2);
 	free(str1);
 	return (temp);
 }
@@ -98,7 +98,7 @@ char	*read_file(int fd, char *new)
 // in bonus buffer is a 2d array so it can open multiple fd
 char	*get_next_line(int fd)
 {
-	static char	*buf[OPEN_MAX];
+	static char	*buf[FOPEN_MAX];
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
