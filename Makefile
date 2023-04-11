@@ -19,11 +19,12 @@ LIBFLAGS	+=	-Llib42 -lft
 SANITIZE	=	-fsanitize=address -g3
 
 FILES		=	main
-SRCS		=	$(addsuffix, .c, FILES)
+SRCS		=	$(addsuffix .c, $(FILES))
+OBJS		=	$(SRCS:.c=.o)
 
-all:
+all: $(OBJS)
 	make -C lib42
-	gcc $(CFLAGS) main.c $(LIBFLAGS) && ./a.out
+	gcc $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME) && ./$(NAME)
 
 clean:
 	make clean -C lib42

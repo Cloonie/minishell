@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/04/10 11:48:05 by mliew            ###   ########.fr       */
+/*   Updated: 2023/04/11 14:18:17 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,5 @@
 # include "lib42/includes/get_next_line_bonus.h"
 
 # define Ctrl(x) ((x) & 0x1f)
-
-struct s_linklist
-{
-	char		character;
-	int			num;
-	struct s_linklist	*next;
-};
 
 #endif

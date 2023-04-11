@@ -28,36 +28,43 @@ char	*get_input(void)
 	char	*input;
 	char	cwd[1024];
 
-	input = readline(ft_strjoin(ft_strjoin("MK42@minishell", getcwd(cwd, sizeof(cwd))), "> "));
+	input = readline(ft_strjoin(ft_strjoin("MK42@minishell:",
+			getcwd(cwd, sizeof(cwd))), "> "));
 	ft_strtrim(input, " ");
 	if (input == NULL)
 		exit (0);
 	add_history(input);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 	return (input);
 }
 
 int	executable(char *input, char **ev)
 {
-	pid_t pid;
-	char **array;
+	pid_t	pid;
+	char	**av;
+	char	**paths;
+	int i = 0;
 
-	array = ft_split(input, ' ');
-	array[0] = ft_strjoin("/bin/", array[0]);
-	pid = fork();
-	if (pid == 0)
-	{	// child process
-		execve(bin[0], bin, ev);
-		printf("Failed to execute bin command\n");
-	} 
-	else if (pid > 0)
-	{	// parent process
-		wait(NULL); // wait for child to finish
-		// printf("Child process finished\n");
-	}
-	else 
-	{	// fork failed
-		printf("Failed to fork process\n");
-		return 1;
+	av = ft_split(input, ' ');
+	paths = ft_split(getenv("PATH"), ':');
+	while (i < 6)
+	{
+		pid = fork();
+		if (pid == 0) // child process
+		{
+			execve(ft_strjoin(ft_strjoin(paths[i], "/"), av[0]), av, ev);
+			printf("Failed to execute command\n");
+		} 
+		else if (pid > 0) // parent process
+		{
+			wait(NULL); // wait for child to finish
+			break ;
+		}
+		else // fork failed
+			return 1;
+		i++;
 	}
 	return 0;
 }
@@ -70,8 +77,8 @@ int	main(int ac, char **av, char **ev)
 	(void)av;
 	(void)ev;
 
-	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, ctrl);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		input = get_input();
