@@ -10,21 +10,26 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME		=	a.out
+NAME		=	minishell
 CFLAGS		=	-Wall -Wextra -Werror
 LIB42		=	lib42
 LIBFLAGS	+=	-lreadline
 LIBFLAGS	+=	-Llib42 -lft
-# LIBFLAGS	+=	-L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
+LIBFLAGS	+=	-L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 SANITIZE	=	-fsanitize=address -g3
 
+CC			=	gcc
 FILES		=	main
 SRCS		=	$(addsuffix .c, $(FILES))
-OBJS		=	$(SRCS:.c=.o)
+OBJS		=	$(addsuffix .o, $(FILES))
 
-all: $(OBJS)
+all:
 	make -C lib42
-	gcc $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME) && ./$(NAME)
+	# gcc $(CFLAGS) $(SRCS) -c
+	gcc $(CFLAGS) $(SRCS) $(LIBFLAGS) -o $(NAME) && ./$(NAME)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	make clean -C lib42

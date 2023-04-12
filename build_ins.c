@@ -12,12 +12,27 @@
 
 #include "minishell.h"
 
+void	call_echo(char **input)
+{
+	int	x;
+
+	x = -1;
+	while (input[x++])
+	{
+		if (!ft_strncmp(input[x], "-n", 2))
+			continue;
+		else
+			printf("%s\n", input[x]);
+	}
+}
 void	build_in(void)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 
 	if (strcmp(input, "pwd") == 0)
+		printf("%s\n", cwd);
+	if (strcmp(input, "echo") == 0)
 		printf("%s\n", cwd);
 
 	if (strcmp(input, "ls") == 0)

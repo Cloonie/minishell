@@ -12,6 +12,17 @@
 
 #include "minishell.h"
 
+// void	ctrl(int sig)
+// {
+// 	if (sig == SIGINT)
+// 	{
+// 		printf("\n"); // Print a newline to prompt for new input
+// 		rl_on_new_line(); // Move cursor to the beginning of the line
+// 		rl_replace_line("", 0); // Clear the current input line
+// 		rl_redisplay(); // Redisplay the prompt
+// 	}
+// }
+
 void	ctrl(int sig)
 {
 	if (sig == SIGINT)
@@ -34,9 +45,6 @@ char	*get_input(void)
 	if (input == NULL)
 		exit (0);
 	add_history(input);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
 	return (input);
 }
 
@@ -47,6 +55,8 @@ int	executable(char *input, char **ev)
 	char	**paths;
 	int i = 0;
 
+	signal (SIGINT, ctrl);
+	signal (SIGQUIT, SIG_DFL);
 	av = ft_split(input, ' ');
 	paths = ft_split(getenv("PATH"), ':');
 	while (i < 6)
@@ -55,11 +65,11 @@ int	executable(char *input, char **ev)
 		if (pid == 0) // child process
 		{
 			execve(ft_strjoin(ft_strjoin(paths[i], "/"), av[0]), av, ev);
-			printf("Failed to execute command\n");
+			// printf("Failed to execute command\n");
 		} 
 		else if (pid > 0) // parent process
 		{
-			wait(NULL); // wait for child to finish
+			waitpid(pid, NULL, 0); // wait for child to finish
 			break ;
 		}
 		else // fork failed
@@ -77,14 +87,13 @@ int	main(int ac, char **av, char **ev)
 	(void)av;
 	(void)ev;
 
-	signal(SIGINT, ctrl);
+	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		input = get_input();
 		executable(input, ev);
 	}
-
 	// free & exit
 	rl_clear_history();
 	free(input);
