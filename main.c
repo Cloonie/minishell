@@ -12,17 +12,6 @@
 
 #include "minishell.h"
 
-// void	ctrl(int sig)
-// {
-// 	if (sig == SIGINT)
-// 	{
-// 		printf("\n"); // Print a newline to prompt for new input
-// 		rl_on_new_line(); // Move cursor to the beginning of the line
-// 		rl_replace_line("", 0); // Clear the current input line
-// 		rl_redisplay(); // Redisplay the prompt
-// 	}
-// }
-
 void	ctrl(int sig)
 {
 	if (sig == SIGINT)
@@ -34,65 +23,60 @@ void	ctrl(int sig)
 	}
 }
 
-char	*get_input(void)
+char	**get_input(void)
 {
 	char	*input;
+	char	**av;
 	char	cwd[1024];
 
 	input = readline(ft_strjoin(ft_strjoin("MK42@minishell:",
 			getcwd(cwd, sizeof(cwd))), "> "));
-	ft_strtrim(input, " ");
 	if (input == NULL)
 		exit (0);
+	ft_strtrim(input, " ");
+	av = ft_split(input, ' ');
 	add_history(input);
-	return (input);
+	return (av);
 }
 
-int	executable(char *input, char **ev)
+void	executable(char **input, char **ev)
 {
 	pid_t	pid;
-	char	**av;
 	char	**paths;
-	int i = 0;
+	int		i;
 
 	signal (SIGINT, ctrl);
-	signal (SIGQUIT, SIG_DFL);
-	av = ft_split(input, ' ');
+	signal (SIGQUIT, SIG_IGN);
 	paths = ft_split(getenv("PATH"), ':');
-	while (i < 6)
+	i = 0;
+	pid = fork();
+	while (paths[i++])
 	{
-		pid = fork();
 		if (pid == 0) // child process
-		{
-			execve(ft_strjoin(ft_strjoin(paths[i], "/"), av[0]), av, ev);
-			// printf("Failed to execute command\n");
-		} 
+			execve(ft_strjoin(ft_strjoin(paths[i], "/"), input[0]), input, ev);
 		else if (pid > 0) // parent process
 		{
 			waitpid(pid, NULL, 0); // wait for child to finish
 			break ;
 		}
-		else // fork failed
-			return 1;
-		i++;
 	}
-	return 0;
 }
 
 int	main(int ac, char **av, char **ev)
 {
-	char	*input;
+	char	**input;
 
 	(void)ac;
 	(void)av;
 	(void)ev;
 
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, ctrl);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		input = get_input();
-		executable(input, ev);
+		// executable(input, ev);
+		// build_in(input, cwd, ev);
 	}
 	// free & exit
 	rl_clear_history();

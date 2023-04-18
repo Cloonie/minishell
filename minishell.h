@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/04/11 14:18:17 by mliew            ###   ########.fr       */
+/*   Updated: 2023/04/14 15:09:39 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,15 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <dirent.h>
+# include <sys/stat.h>
 # include <string.h>
+
 # include "lib42/includes/libft.h"
 # include "lib42/includes/ft_printf.h"
 # include "lib42/includes/get_next_line_bonus.h"
 
 # define Ctrl(x) ((x) & 0x1f)
+
+void	build_in(char **input, char *cwd, char **ev);
 
 #endif

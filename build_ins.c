@@ -14,28 +14,30 @@
 
 void	call_echo(char **input)
 {
-	int	x;
+	int	i;
 
-	x = -1;
-	while (input[x++])
+	i = 1;
+	while (input[i++])
 	{
-		if (!ft_strncmp(input[x], "-n", 2))
+		if (!ft_strncmp(input[i], "-n", 2))
 			continue;
 		else
-			printf("%s\n", input[x]);
+			printf("%s\n", input[i]);
 	}
 }
-void	build_in(void)
+
+void	build_in(char **input, char *cwd, char **ev)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 
-	if (strcmp(input, "pwd") == 0)
-		printf("%s\n", cwd);
-	if (strcmp(input, "echo") == 0)
-		printf("%s\n", cwd);
+	if (strcmp(input[0], "pwd") == 0)
+		printf("%s\n", getcwd(cwd, sizeof(cwd)));
 
-	if (strcmp(input, "ls") == 0)
+	if (strcmp(input[0], "echo") == 0)
+		call_echo(input);
+
+	if (strcmp(input[0], "ls") == 0)
 	{
 		dir = opendir(cwd);
 		while ((entry = readdir(dir)) != NULL)
@@ -43,7 +45,7 @@ void	build_in(void)
 		closedir(dir);
 	}
 
-	if ((strcmp(input, "env") == 0))
+	if ((strcmp(input[0], "env") == 0))
 		for (int i = 0; ev[i]; i++)
 			printf("%s\n", ev[i]);
 
