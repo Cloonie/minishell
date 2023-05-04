@@ -3,12 +3,20 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+         #
+#    By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/17 14:01:46 by mliew             #+#    #+#              #
-#    Updated: 2022/09/17 19:35:53 by mliew            ###   ########.fr        #
+#    Updated: 2023/04/21 10:56:13 by mliew            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+B_GREEN=	\033[38;5;121m
+B_RED	=	\033[38;5;204m
+C_GREEN	=	\033[0;32m
+C_RED	=	\033[0;31m
+C_BLUE	=	\033[0;34m
+C_END 	=	\033[0m
+C_ENDR	=	\033[0m\r
 
 NAME		=	libft.a
 OBJS		=	$(SRCS:.c=.o)
@@ -31,18 +39,24 @@ OBJS	= $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRCS)))))
 all: $(NAME)
 
 $(NAME):			$(OBJ_PATH)	$(OBJS)
-					$(AR) $(NAME) $(OBJS)
+					@$(AR) $(NAME) $(OBJS)
+					@echo "$(B_GREEN)Archiving $@...$(C_ENDR)"
+					@echo "$(B_GREEN)Makefile completed.$(C_ENDR)"
 
 $(OBJ_PATH)/%.o:	$(SRC_PATH)/*/%.c*
-					$(CC) $(CFLAGS) -c -I$(INCLUDES) $< -o $@
+					@echo "$(B_GREEN)Compiling $<...$(C_ENDR)"
+					@$(CC) $(CFLAGS) -c -I$(INCLUDES) $< -o $@
 
 $(OBJ_PATH):
-					mkdir -p $(OBJ_PATH)
+					@echo "$(B_GREEN)Creating object path...$(C_END)"
+					@mkdir -p $(OBJ_PATH)
 
 clean:
-					$(RM) $(OBJ_PATH)
+					@echo "$(B_RED)Removing object files...$(C_END)"
+					@$(RM) $(OBJ_PATH)
 
 fclean:				clean
-					$(RM) $(NAME)
+					@echo "$(B_RED)Removing $(NAME)...$(C_END)"
+					@$(RM) $(NAME)
 
 re:					fclean all
