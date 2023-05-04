@@ -15,14 +15,19 @@
 void	call_echo(char **input)
 {
 	int	i;
+	int	j;
 
 	i = 1;
 	while (input[i++])
 	{
-		if (!ft_strncmp(input[i], "-n", 2))
-			continue;
-		else
+		if (ft_strncmp(input[i], ft_strtrim("-n"), 2)) ft_
+		{
+			j = i;
+			while (input[j + 1])
+
 			printf("%s\n", input[i]);
+			
+		}
 	}
 }
 
