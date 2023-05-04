@@ -14,15 +14,15 @@
 
 void	call_echo(char **input)
 {
-	int	x;
+	int	i;
 
-	x = -1;
-	while (input[x++])
+	i = -1;
+	while (input[i++])
 	{
-		if (!ft_strncmp(input[x], "-n", 2))
+		if (!ft_strncmp(input[i], "-n", 2))
 			continue;
 		else
-			printf("%s\n", input[x]);
+			printf("%s\n", input[i]);
 	}
 }
 void	build_in(void)

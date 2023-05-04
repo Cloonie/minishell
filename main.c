@@ -12,17 +12,6 @@
 
 #include "minishell.h"
 
-// void	ctrl(int sig)
-// {
-// 	if (sig == SIGINT)
-// 	{
-// 		printf("\n"); // Print a newline to prompt for new input
-// 		rl_on_new_line(); // Move cursor to the beginning of the line
-// 		rl_replace_line("", 0); // Clear the current input line
-// 		rl_redisplay(); // Redisplay the prompt
-// 	}
-// }
-
 void	ctrl(int sig)
 {
 	if (sig == SIGINT)
@@ -87,7 +76,7 @@ int	main(int ac, char **av, char **ev)
 	(void)av;
 	(void)ev;
 
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, ctrl);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
