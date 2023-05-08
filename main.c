@@ -23,14 +23,13 @@ void	ctrl(int sig)
 	}
 }
 
-char	**get_input(void)
+char	**get_input(char *cwd)
 {
 	char	*input;
 	char	**av;
-	char	cwd[1024];
 
 	input = readline(ft_strjoin(ft_strjoin("MK42@minishell:",
-			getcwd(cwd, sizeof(cwd))), "> "));
+			cwd), "> "));
 	if (input == NULL)
 		exit (0);
 	ft_strtrim(input, " ");
@@ -39,32 +38,10 @@ char	**get_input(void)
 	return (av);
 }
 
-void	executable(char **input, char **ev)
-{
-	pid_t	pid;
-	char	**paths;
-	int		i;
-
-	signal (SIGINT, ctrl);
-	signal (SIGQUIT, SIG_IGN);
-	paths = ft_split(getenv("PATH"), ':');
-	i = 0;
-	pid = fork();
-	while (paths[i++])
-	{
-		if (pid == 0) // child process
-			execve(ft_strjoin(ft_strjoin(paths[i], "/"), input[0]), input, ev);
-		else if (pid > 0) // parent process
-		{
-			waitpid(pid, NULL, 0); // wait for child to finish
-			break ;
-		}
-	}
-}
-
 int	main(int ac, char **av, char **ev)
 {
 	char	**input;
+	char	cwd[1024];
 
 	(void)ac;
 	(void)av;
@@ -72,11 +49,12 @@ int	main(int ac, char **av, char **ev)
 
 	signal(SIGINT, ctrl);
 	signal(SIGQUIT, SIG_IGN);
+	getcwd(cwd, sizeof(cwd));
 	while (1)
 	{
-		input = get_input();
+		input = get_input(cwd);
 		// executable(input, ev);
-		// build_in(input, cwd, ev);
+		build_in(input, cwd, ev);
 	}
 	// free & exit
 	rl_clear_history();

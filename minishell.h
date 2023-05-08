@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/04 19:56:13 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/07 22:05:29 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,14 @@
 
 // # define Ctrl(x) ((x) & 0x1f)
 
+// main
 void	ctrl(int sig);
-int		executable(char *input, char **ev);
-char	*get_input(void);
+char	**get_input(char *cwd);
 
+// execve
+void	executable(char **input, char **ev);
+
+// build_ins
 void	build_in(char **input, char *cwd, char **ev);
 
 #endif

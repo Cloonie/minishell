@@ -20,6 +20,7 @@ LIBFLAGS	+=	-Llib42 -lft
 SANITIZE	=	-fsanitize=address -g3
 
 FILES		=	main build_ins
+
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
 
