@@ -18,8 +18,8 @@ void	executable(char **input, char **ev)
 	char	**paths;
 	int		i;
 
-	signal (SIGINT, ctrl);
-	signal (SIGQUIT, SIG_IGN);
+	// signal(SIGINT, ctrl);
+	// signal(SIGQUIT, SIG_IGN);
 	paths = ft_split(getenv("PATH"), ':');
 	i = 0;
 	pid = fork();
