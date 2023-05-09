@@ -16,10 +16,10 @@ void	ctrl(int sig)
 {
 	if (sig == SIGINT)
 	{
-		printf("\n"); // Print a newline to prompt for new input
-		rl_on_new_line(); // Move cursor to the beginning of the line
-		rl_replace_line("", 0); // Clear the current input line
-		rl_redisplay(); // Redisplay the prompt
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
 	}
 }
 
@@ -28,8 +28,7 @@ char	**get_input(char *cwd)
 	char	*input;
 	char	**av;
 
-	input = readline(ft_strjoin(ft_strjoin("MK42@minishell:",
-			cwd), "> "));
+	input = readline(ft_strjoin(ft_strjoin("MK42@minishell:", cwd), "> "));
 	if (input == NULL)
 		exit (0);
 	ft_strtrim(input, " ");
@@ -46,17 +45,14 @@ int	main(int ac, char **av, char **ev)
 	(void)ac;
 	(void)av;
 	(void)ev;
-
 	signal(SIGINT, ctrl);
 	signal(SIGQUIT, SIG_IGN);
-	getcwd(cwd, sizeof(cwd));
 	while (1)
 	{
+		getcwd(cwd, sizeof(cwd));
 		input = get_input(cwd);
-		// executable(input, ev);
 		build_in(input, cwd, ev);
 	}
-	// free & exit
 	rl_clear_history();
 	free(input);
 	return (0);
