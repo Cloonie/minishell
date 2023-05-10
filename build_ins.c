@@ -60,10 +60,27 @@ void	call_cd(char **input, char *cwd)
 		chdir(getenv("HOME"));
 }
 
-// void	call_unset(char **input, char **envp)
-// {
+void	call_unset(char **input, char **envp)
+{
+	int	i;
+	int	j;
 
-// }
+	i = 0;
+	j = 0;
+	while (envp[i])
+	{
+		if (!ft_strncmp(envp[i], ft_strchr(input[1], '='), ft_strlen(input[1])))
+		{
+			envp[i] = NULL;
+			i = j;
+			while (envp[++j])
+			{
+				envp = envp[j + 1];
+			}
+		}
+		i++;
+	}
+}
 
 void	call_export(char **input, char **envp)
 {
