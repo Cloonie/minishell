@@ -63,20 +63,19 @@ void	call_cd(char **input, char *cwd)
 void	call_unset(char **input, char **envp)
 {
 	int	i;
-	int	j;
 
 	i = 0;
-	j = 0;
 	while (envp[i])
 	{
-		if (!ft_strncmp(envp[i], ft_strchr(input[1], '='), ft_strlen(input[1])))
+		if (!ft_strncmp(envp[i], ft_strchr(input[1], '='), 3))
 		{
 			envp[i] = NULL;
-			i = j;
-			while (envp[++j])
+			while (envp[i])
 			{
-				envp = envp[j + 1];
+				envp[i] = envp[i + 1];
+				i++;
 			}
+			break ;
 		}
 		i++;
 	}
@@ -116,8 +115,8 @@ void	build_in(char **input, char *cwd, char **envp)
 			printf("%s\n", cwd);
 		else if (ft_strncmp(input[0], "export", 6) == 0)
 			call_export(input, envp);
-		// else if (ft_strncmp(input[0], "unset", 5) == 0)
-		// 	call_unset(input, envp);
+		else if (ft_strncmp(input[0], "unset", 5) == 0)
+			call_unset(input, envp);
 		else if ((ft_strncmp(input[0], "env", 3) == 0))
 			while (envp[i])
 				printf("%s\n", envp[i++]);
