@@ -37,18 +37,6 @@ void	call_echo(char **input)
 		printf("\n");
 }
 
-void	call_unset(char **input)
-{
-	char	*to_unset;
-
-	to_unset = NULL;
-	if (input[1])
-	{
-		to_unset = getenv(input[1]);
-		unlink(to_unset);
-	}
-}
-
 void	call_cd(char **input, char *cwd)
 {
 	char	*path;
@@ -72,7 +60,31 @@ void	call_cd(char **input, char *cwd)
 		chdir(getenv("HOME"));
 }
 
-void	build_in(char **input, char *cwd, char **ev)
+// void	call_unset(char **input, char **envp)
+// {
+
+// }
+
+void	call_export(char **input, char **envp)
+{
+	int	i;
+
+	i = 0;
+	if (!input[1])
+		return ;
+	while (envp[i])
+	{
+		if (!envp[i + 1])
+		{
+			envp[i + 1] = input[1];
+			envp[i + 2] = NULL;
+			break ;
+		}
+		i++;
+	}
+}
+
+void	build_in(char **input, char *cwd, char **envp)
 {
 	int	i;
 
@@ -85,20 +97,20 @@ void	build_in(char **input, char *cwd, char **ev)
 			call_cd(input, cwd);
 		else if (ft_strncmp(input[0], "pwd", 3) == 0)
 			printf("%s\n", cwd);
-		// else if (ft_strncmp(input[0], "export", 6) == 0)
-		// 	printf("export\n");
-		else if (ft_strncmp(input[0], "unset", 5) == 0)
-			call_unset(input);
+		else if (ft_strncmp(input[0], "export", 6) == 0)
+			call_export(input, envp);
+		// else if (ft_strncmp(input[0], "unset", 5) == 0)
+		// 	call_unset(input, envp);
 		else if ((ft_strncmp(input[0], "env", 3) == 0))
-			while (ev[i])
-				printf("%s\n", ev[i++]);
+			while (envp[i])
+				printf("%s\n", envp[i++]);
 		else if (ft_strncmp(input[0], "exit", 4) == 0)
 		{
 			printf("Exit Minishell.\n");
 			exit(0);
 		}
 		else
-			executable(input, ev);
+			executable(input, envp);
 	}
 }
 

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	executable(char **input, char **ev)
+void	executable(char **input, char **envp)
 {
 	pid_t	pid;
 	char	**paths;
@@ -26,7 +26,7 @@ void	executable(char **input, char **ev)
 	while (paths[i++])
 	{
 		if (pid == 0) // child process
-			execve(ft_strjoin(ft_strjoin(paths[i], "/"), input[0]), input, ev);
+			execve(ft_strjoin(ft_strjoin(paths[i], "/"), input[0]), input, envp);
 		else if (pid > 0) // parent process
 		{
 			waitpid(pid, NULL, 0); // wait for child to finish

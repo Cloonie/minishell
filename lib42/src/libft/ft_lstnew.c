@@ -19,8 +19,7 @@ t_list	*ft_lstnew(void *content)
 	lst = malloc(sizeof(t_list));
 	if (!lst)
 		return (NULL);
-	lst->value = ft_atoi(content);
-	lst->index = 0;
+	lst->var = content;
 	lst->next = NULL;
 	return (lst);
 }

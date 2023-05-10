@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
+/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/09 23:29:03 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/10 15:02:50 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,6 @@
 # include "lib42/includes/get_next_line_bonus.h"
 
 // # define Ctrl(x) ((x) & 0x1f)
-
-typedef struct s_environment
-{
-	char	*var;
-	t_env	*next;
-}	t_env;
 
 // main
 void	ctrl(int sig);

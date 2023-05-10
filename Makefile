@@ -26,7 +26,7 @@ OBJS		=	$(addsuffix .o, $(FILES))
 
 all: $(OBJS)
 	make -C lib42
-	# gcc $(CFLAGS) $(SRCS) -c
+	gcc $(CFLAGS) $(SRCS) -c
 	gcc $(CFLAGS) $(SRCS) $(LIBFLAGS) -o $(NAME) && ./$(NAME)
 
 %.o: %.c
