@@ -19,7 +19,9 @@ LIBFLAGS	+=	-Llib42 -lft
 # LIBFLAGS	+=	-L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 SANITIZE	=	-fsanitize=address -g3
 
-FILES		=	main build_ins execve
+FILES		=	main		\
+				build_ins	\
+				execve		\
 
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))

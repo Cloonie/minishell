@@ -62,14 +62,19 @@ void	call_cd(char **input, char *cwd)
 
 void	call_unset(char **input, char **envp)
 {
-	int	i;
+	char	*var;
+	int		i;
+	int		len;
 
+	if (!input[1])
+		return ;
 	i = 0;
 	while (envp[i])
 	{
-		if (!ft_strncmp(envp[i], ft_strchr(input[1], '='), 3))
+		var = ft_substr(envp[i], 0, ft_strpos(envp[i], "="));
+		len = ft_strlen(var);
+		if (!ft_strncmp(input[1], var, len))
 		{
-			envp[i] = NULL;
 			while (envp[i])
 			{
 				envp[i] = envp[i + 1];
