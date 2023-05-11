@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 16:52:03 by mliew             #+#    #+#             */
-/*   Updated: 2023/04/08 17:04:58 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/11 15:53:28 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*join_free(char *str1, char *str2)
 {
 	char	*temp;
 
-	temp = ft_strjoingnl(str1, str2);
+	temp = gnl_strjoin(str1, str2);
 	free(str1);
 	return (temp);
 }
@@ -37,7 +37,7 @@ char	*continue_next(char *buffer)
 		free(buffer);
 		return (NULL);
 	}
-	line = ft_calloc((ft_strlen(buffer) - i + 1), sizeof(char));
+	line = gnl_calloc((gnl_strlen(buffer) - i + 1), sizeof(char));
 	i++;
 	j = 0;
 	while (buffer[i])
@@ -57,7 +57,7 @@ char	*take_line(char *buffer)
 		return (NULL);
 	while (buffer[i] && buffer[i] != '\n')
 		i++;
-	line = ft_calloc(i + 2, sizeof(char));
+	line = gnl_calloc(i + 2, sizeof(char));
 	i = 0;
 	while (buffer[i] && buffer[i] != '\n')
 	{
@@ -76,15 +76,15 @@ char	*read_file(int fd, char *new)
 	int		byte_read;
 
 	if (!new)
-		new = ft_calloc(1, 1);
-	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		new = gnl_calloc(1, 1);
+	buffer = gnl_calloc(BUFFER_SIZE + 1, sizeof(char));
 	byte_read = 1;
 	while (byte_read > 0)
 	{
 		byte_read = read(fd, buffer, BUFFER_SIZE);
 		buffer[byte_read] = 0;
 		new = join_free(new, buffer);
-		if (ft_strchr(new, '\n'))
+		if (gnl_strchr(new, '\n'))
 			break ;
 	}
 	free(buffer);
