@@ -12,18 +12,17 @@
 
 B_GREEN=	\033[38;5;121m
 B_RED	=	\033[38;5;204m
-C_GREEN	=	\033[0;32m
-C_RED	=	\033[0;31m
-C_BLUE	=	\033[0;34m
+C_GREEN	=	\033[1;32m
+C_RED	=	\033[1;31m
+C_BLUE	=	\033[1;34m
 C_END 	=	\033[0m
-C_ENDR	=	\033[0m\r
 
 NAME		=	minishell
 CFLAGS		=	-Wall -Wextra -Werror
 CC			=	gcc
-LIB42		=	lib42
+LIBFT		=	libft
 LIBFLAGS	+=	-lreadline
-LIBFLAGS	+=	-Llib42 -lft
+LIBFLAGS	+=	-Llibft -lft
 # LIBFLAGS	+=	-L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 SANITIZE	=	-fsanitize=address -g3
 
@@ -34,24 +33,28 @@ FILES		=	main		\
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
 
-all: $(OBJS)
-	@make -C lib42
-	@echo "$(B_GREEN)Compiling $(OBJS)$(C_ENDR)"
-	@gcc $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME) && ./$(NAME)
+all: $(NAME)
+
+$(NAME): $(OBJS)
+	@make -s -C libft
+	@gcc $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
+	@echo "$(B_GREEN)Compiling $(OBJS)$(C_END)"
+	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 
 %.o: %.c
-	@echo "$(B_GREEN)Creating object file: $<$(C_ENDR)"
 	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "$(B_GREEN)Creating object file: $<$(C_END)"
 
-libftfclean:
-	@make fclean -C lib42
 
 clean:
-	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
 	@$(RM) $(OBJS)
+	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
 
 fclean:	clean
-	@echo "$(B_RED)Removing $(NAME)$(C_END)"
 	@$(RM) $(NAME)
+	@echo "$(C_RED)Removing $(NAME)$(C_END)"
 
-re:	fclean all
+lclean:
+	@make fclean -s -C libft
+
+re:	lclean fclean all

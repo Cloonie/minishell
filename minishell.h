@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/10 15:02:50 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/13 00:54:08 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@
 # include <sys/stat.h>
 # include <string.h>
 
-# include "lib42/includes/libft.h"
-# include "lib42/includes/ft_printf.h"
-# include "lib42/includes/get_next_line_bonus.h"
+# include "libft/includes/libft.h"
+# include "libft/includes/ft_printf.h"
+# include "libft/includes/get_next_line_bonus.h"
 
 // # define Ctrl(x) ((x) & 0x1f)
 

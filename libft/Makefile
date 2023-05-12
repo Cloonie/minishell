@@ -6,15 +6,15 @@
 #    By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/17 14:01:46 by mliew             #+#    #+#              #
-#    Updated: 2023/05/13 00:10:56 by mliew            ###   ########.fr        #
+#    Updated: 2023/05/13 01:15:35 by mliew            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 B_GREEN=	\033[38;5;121m
 B_RED	=	\033[38;5;204m
-C_GREEN	=	\033[0;32m
-C_RED	=	\033[0;31m
-C_BLUE	=	\033[0;34m
+C_GREEN	=	\033[1;32m
+C_RED	=	\033[1;31m
+C_BLUE	=	\033[1;34m
 C_END 	=	\033[0m
 C_ENDR	=	\033[0m\r
 
@@ -41,22 +41,22 @@ all: $(NAME)
 $(NAME):			$(OBJ_PATH)	$(OBJS)
 					@$(AR) $(NAME) $(OBJS)
 					@echo "$(B_GREEN)Compiling $@$(C_ENDR)"
-					@echo "$(B_GREEN)Makefile for lib42 completed.$(C_ENDR)"
+					@echo "$(C_GREEN)Makefile for lib42 completed.$(C_ENDR)"
 
 $(OBJ_PATH)/%.o:	$(SRC_PATH)/*/%.c*
 					@echo "$(B_GREEN)Creating object file: $<$(C_ENDR)"
 					@$(CC) $(CFLAGS) -c -I$(INCLUDES) $< -o $@
 
 $(OBJ_PATH):
-					@echo "$(B_GREEN)Creating object path$(C_END)"
+					@echo "$(C_GREEN)Creating libft object directory$(C_END)"
 					@mkdir -p $(OBJ_PATH)
 
 clean:
-					@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
+					@echo "$(B_RED)Removing libft object directory$(C_END)"
 					@$(RM) $(OBJ_PATH)
 
 fclean:				clean
-					@echo "$(B_RED)Removing $(NAME)$(C_END)"
+					@echo "$(C_RED)Removing $(NAME)$(C_END)"
 					@$(RM) $(NAME)
 
 re:					fclean all
