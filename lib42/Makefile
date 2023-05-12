@@ -6,7 +6,7 @@
 #    By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/17 14:01:46 by mliew             #+#    #+#              #
-#    Updated: 2023/04/21 10:56:13 by mliew            ###   ########.fr        #
+#    Updated: 2023/05/13 00:10:56 by mliew            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,23 +40,23 @@ all: $(NAME)
 
 $(NAME):			$(OBJ_PATH)	$(OBJS)
 					@$(AR) $(NAME) $(OBJS)
-					@echo "$(B_GREEN)Archiving $@...$(C_ENDR)"
-					@echo "$(B_GREEN)Makefile completed.$(C_ENDR)"
+					@echo "$(B_GREEN)Compiling $@$(C_ENDR)"
+					@echo "$(B_GREEN)Makefile for lib42 completed.$(C_ENDR)"
 
 $(OBJ_PATH)/%.o:	$(SRC_PATH)/*/%.c*
-					@echo "$(B_GREEN)Compiling $<...$(C_ENDR)"
+					@echo "$(B_GREEN)Creating object file: $<$(C_ENDR)"
 					@$(CC) $(CFLAGS) -c -I$(INCLUDES) $< -o $@
 
 $(OBJ_PATH):
-					@echo "$(B_GREEN)Creating object path...$(C_END)"
+					@echo "$(B_GREEN)Creating object path$(C_END)"
 					@mkdir -p $(OBJ_PATH)
 
 clean:
-					@echo "$(B_RED)Removing object files...$(C_END)"
+					@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
 					@$(RM) $(OBJ_PATH)
 
 fclean:				clean
-					@echo "$(B_RED)Removing $(NAME)...$(C_END)"
+					@echo "$(B_RED)Removing $(NAME)$(C_END)"
 					@$(RM) $(NAME)
 
 re:					fclean all

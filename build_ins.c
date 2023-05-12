@@ -92,8 +92,12 @@ void	call_export(char **input, char **envp)
 
 	i = 0;
 	if (!input[1])
-		return ;
-	while (envp[i])
+	{
+		while (envp[i])
+			printf("%s\n", envp[i++]);
+	}
+	i = 0;
+	while (input[1] && envp[i])
 	{
 		if (!envp[i + 1])
 		{
@@ -126,10 +130,7 @@ void	build_in(char **input, char *cwd, char **envp)
 			while (envp[i])
 				printf("%s\n", envp[i++]);
 		else if (ft_strncmp(input[0], "exit", 4) == 0)
-		{
-			printf("Exit Minishell.\n");
 			exit(0);
-		}
 		else
 			executable(input, envp);
 	}

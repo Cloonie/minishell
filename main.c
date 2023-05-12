@@ -18,7 +18,7 @@ void	ctrl(int sig)
 	{
 		printf("\n");
 		rl_on_new_line();
-		// rl_replace_line("", 0);mak
+		// rl_replace_line("", 0);
 		rl_redisplay();
 	}
 }
@@ -28,7 +28,9 @@ char	**get_input(char *cwd)
 	char	*input;
 	char	**av;
 
-	input = readline(ft_strjoin(ft_strjoin("MK42@minishell:", cwd), "> "));
+	input = readline(ft_strjoin(ft_strjoin
+				("\033[38;5;39m[minishell] \033[4;36m", cwd),
+				"\033[0;36m> \033[0m"));
 	if (input == NULL)
 		exit (0);
 	ft_strtrim(input, " ");
@@ -56,7 +58,6 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	(void)envp;
 	signal(SIGINT, ctrl);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
