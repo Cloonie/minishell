@@ -12,51 +12,11 @@
 
 #include "minishell.h"
 
-char	**get_input(char *cwd)
+void	sigint_handler(int sig)
 {
-	char	*input;
-	char	**av;
-
-	input = readline(ft_strjoin(ft_strjoin
-				("\033[38;5;39m[minishell] \033[4;36m", cwd),
-				"\033[0;36m> \033[0m"));
-	if (input == NULL)
-		exit (0);
-	ft_strtrim(input, " ");
-	add_history(input);
-	av = ft_split(input, ' ');
-	return (av);
+	(void)sig;
+	printf("\n");
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
-
-int	main(int argc, char **argv, char **envp)
-{
-	char				**input;
-	char				cwd[1024];
-
-	(void)argv;
-	if (argc != 1)
-		return (0);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
-	while (1)
-	{
-		getcwd(cwd, sizeof(cwd));
-		input = get_input(cwd);
-		cmd(input, cwd, envp);
-		free(input);
-	}
-	return (0);
-}
-
-	// t_list	*env;
-
-	// int i = 0;
-	// while (envp[i])
-	// {
-	// 	ft_lstadd_back(&env, ft_lstnew(envp[i++]));
-	// }
-	// while (env)
-	// {
-	// 	printf("%s\n", env->var);
-	// 	env = env->next;
-	// }

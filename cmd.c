@@ -90,14 +90,15 @@ void	call_export(char **input, char **envp)
 {
 	int	i;
 
-	i = 0;
+	i = -1;
 	if (!input[1])
 	{
-		while (envp[i])
-			printf("%s\n", envp[i++]);
+		while (envp[++i])
+			printf("declare -x %s\"%s\"\n",
+				ft_substr(envp[i], 0, ft_strpos(envp[i], "=") + 1),
+				ft_strchr(envp[i], '=') + 1);
 	}
-	i = 0;
-	while (input[1] && envp[i])
+	while (input[1] && envp[++i])
 	{
 		if (!envp[i + 1])
 		{
@@ -105,11 +106,10 @@ void	call_export(char **input, char **envp)
 			envp[i + 2] = NULL;
 			break ;
 		}
-		i++;
 	}
 }
 
-void	build_in(char **input, char *cwd, char **envp)
+void	cmd(char **input, char *cwd, char **envp)
 {
 	int	i;
 
@@ -130,7 +130,10 @@ void	build_in(char **input, char *cwd, char **envp)
 			while (envp[i])
 				printf("%s\n", envp[i++]);
 		else if (ft_strncmp(input[0], "exit", 4) == 0)
+		{
+			// system("leaks minishell");
 			exit(0);
+		}
 		else
 			executable(input, envp);
 	}

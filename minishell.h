@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/13 00:54:08 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/15 15:51:44 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,15 @@
 // # define Ctrl(x) ((x) & 0x1f)
 
 // main
-void	ctrl(int sig);
 char	**get_input(char *cwd);
 
-// execve
+// utils
+void	sigint_handler(int sig);
+
+// executable
 void	executable(char **input, char **ev);
 
-// build_ins
-void	build_in(char **input, char *cwd, char **ev);
+// cmd
+void	cmd(char **input, char *cwd, char **ev);
 
 #endif

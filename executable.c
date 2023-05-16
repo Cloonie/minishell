@@ -16,21 +16,27 @@ void	executable(char **input, char **envp)
 {
 	pid_t	pid;
 	char	**paths;
+	char	*current_path;
 	int		i;
 
-	// signal(SIGINT, ctrl);
-	// signal(SIGQUIT, SIG_IGN);
 	paths = ft_split(getenv("PATH"), ':');
 	i = 0;
-	pid = fork();
 	while (paths[i++])
 	{
-		if (pid == 0) // child process
-			execve(ft_strjoin(ft_strjoin(paths[i], "/"), input[0]), input, envp);
-		else if (pid > 0) // parent process
+		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), input[0]);
+		if (access(current_path, F_OK) == 0)
 		{
-			waitpid(pid, NULL, 0); // wait for child to finish
-			break ;
+			pid = fork();
+			if (pid == 0)
+			{
+				// printf("%s\n", current_path);
+				execve(current_path, input, envp);
+			}
+			else if (pid > 0)
+			{
+				waitpid(pid, NULL, 0);
+				break ;
+			}
 		}
 	}
 }

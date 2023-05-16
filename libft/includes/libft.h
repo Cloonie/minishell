@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:10:43 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/11 16:22:44 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/16 16:17:07 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 // EXTRA
-int	ft_strpos(const char *haystack, const char *needle);
+int		ft_strpos(const char *haystack, const char *needle);
+char	*ft_strschr(char *s, int c);
 
 #endif
