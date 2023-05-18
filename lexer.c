@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 15:31:58 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/16 16:39:33 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/17 15:04:07 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,3 +29,17 @@ enum {
 	TOK_PIPE,
 	TOK_EOF,
 };
+
+void	lexer(char **input)
+{
+	int	i;
+
+	i = 0;
+	while (input)
+	{
+		if (input[i][0] == '\"' && input[i][ft_strlen(input[i])] == '\"')
+			ft_strtrim(input[i], "\"");
+	}
+}
+
+
