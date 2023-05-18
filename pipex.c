@@ -10,42 +10,39 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
+#include "minishell.h"
 
-int create_pipe(int *fd) {
-    int ret = pipe(fd);
-    if (ret == -1) {
-        perror("pipe");
-        return -1;
-    }
-    return 0;
-}
+// int	main(void)
+// {
+// 	int	pipe_fd[2];
+// 	int	pid;
+
+// 	printf("Parent Process starts\n");
+// 	if (pipe(pipe_fd) == -1)
+// 		perror("pipe");
+// 	pid = fork();
+// 	if (pid == -1)
+// 		perror("fork error");
+// 	if (pid > 0)
+// 		printf("Child Process starts\n");
+// }
 
 int main() {
-    int fd[2];
-    char buffer[10];
+    pid_t childPID;
 
-    if (create_pipe(fd) == -1) {
+    childPID = fork();
+
+    if (childPID == -1) {
+        printf("Fork failed!\n");
         return 1;
     }
 
-    pid_t pid = fork();
-    if (pid == -1) {
-        perror("fork");
-        return 1;
-    } else if (pid == 0) {
-        // Child process
-        close(fd[1]); // Close write end
-        read(fd[0], buffer, sizeof(buffer));
-        printf("Child: Received message: %s\n", buffer);
-        close(fd[0]);
+    if (childPID == 0) {
+        printf("Child process: PID=%d\n", getpid());
+        // Child process code here
     } else {
-        // Parent process
-        close(fd[0]); // Close read end
-        write(fd[1], "Hello", 6);
-        printf("Parent: Sent message: Hello\n");
-        close(fd[1]);
+        printf("Parent process: PID=%d, Child PID=%d\n", getpid(), childPID);
+        // Parent process code here
     }
 
     return 0;
