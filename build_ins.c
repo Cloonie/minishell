@@ -94,48 +94,43 @@ void	call_export(char **input, char **envp)
 	if (!input[1])
 	{
 		while (envp[++i])
-			printf("declare -x %s\"%s\"\n",
-				ft_substr(envp[i], 0, ft_strpos(envp[i], "=") + 1),
-				ft_strchr(envp[i], '=') + 1);
-	}
-	while (input[1] && envp[++i])
-	{
-		if (!envp[i + 1])
 		{
-			envp[i + 1] = input[1];
-			envp[i + 2] = NULL;
-			break ;
+			if (ft_strchr(envp[i], '='))
+				printf("declare -x %s=\"%s\"\n",
+					ft_substr(envp[i], 0, ft_strpos(envp[i], "=")),
+					ft_strchr(envp[i], '=') + 1);
+			else
+				printf("declare -x %s\n", envp[i]);
 		}
 	}
+	export2(input, envp);
 }
 
-void	cmd(char **input, char *cwd, char **envp)
+void	export2(char **input, char **envp)
 {
 	int	i;
+	int	j;
 
-	i = 0;
-	if (input[0])
+	j = 1;
+	while (input[j])
 	{
-		if (ft_strncmp(input[0], "echo", 4) == 0)
-			call_echo(input);
-		else if (ft_strncmp(input[0], "cd", 2) == 0)
-			call_cd(input, cwd);
-		else if (ft_strncmp(input[0], "pwd", 3) == 0)
-			printf("%s\n", cwd);
-		else if (ft_strncmp(input[0], "export", 6) == 0)
-			call_export(input, envp);
-		else if (ft_strncmp(input[0], "unset", 5) == 0)
-			call_unset(input, envp);
-		else if ((ft_strncmp(input[0], "env", 3) == 0))
-			while (envp[i])
-				printf("%s\n", envp[i++]);
-		else if (ft_strncmp(input[0], "exit", 4) == 0)
-		{
-			// system("leaks minishell");
-			exit(0);
-		}
+		if (!ft_isalpha(input[j][0]))
+			printf("-minishell: export: `%s': not a valid identifier\n",
+				input[j]);
 		else
-			executable(input, envp);
+		{
+			i = -1;
+			while (envp[++i])
+			{
+				if (!envp[i + 1])
+				{
+					envp[i + 1] = input[j];
+					envp[i + 2] = NULL;
+					break ;
+				}
+			}
+		}
+		j++;
 	}
 }
 

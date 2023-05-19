@@ -20,3 +20,13 @@ void	sigint_handler(int sig)
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
+
+void	myexit(int status)
+{
+	system("leaks minishell");
+	if (status == EXIT_SUCCESS)
+		printf("EXIT_SUCCESS\n");
+	else if (status == EXIT_FAILURE)
+		printf("EXIT_FAILURE\n");
+	exit(status);
+}

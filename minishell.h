@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/15 15:51:44 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/19 15:46:54 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,21 @@ char	**get_input(char *cwd);
 
 // utils
 void	sigint_handler(int sig);
+void	myexit(int status);
+
+// build_ins
+void	call_echo(char **input);
+void	call_cd(char **input, char *cwd);
+void	call_unset(char **input, char **envp);
+void	call_export(char **input, char **envp);
+void	export2(char **input, char **envp);
 
 // executable
+void	cmd(char **input, char *cwd, char **ev);
 void	executable(char **input, char **ev);
 
-// cmd
-void	cmd(char **input, char *cwd, char **ev);
+// lexer
+
+// pipex
 
 #endif

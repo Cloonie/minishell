@@ -28,7 +28,7 @@ SANITIZE	=	-fsanitize=address -g3
 
 FILES		=	main		\
 				utils		\
-				cmd			\
+				build_ins	\
 				executable	\
 
 SRCS		=	$(addsuffix .c, $(FILES))

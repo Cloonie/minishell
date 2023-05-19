@@ -30,12 +30,11 @@ char	**get_input(char *cwd)
 
 int	main(int argc, char **argv, char **envp)
 {
-	char				**input;
-	char				cwd[1024];
+	char	**input;
+	char	cwd[1024];
 
-	(void)argv;
-	if (argc != 1)
-		return (0);
+	if (!argv[0] || argc != 1)
+		myexit(1);
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
@@ -43,9 +42,7 @@ int	main(int argc, char **argv, char **envp)
 		getcwd(cwd, sizeof(cwd));
 		input = get_input(cwd);
 		cmd(input, cwd, envp);
-		free(input);
 	}
-	return (0);
 }
 
 	// t_list	*env;
