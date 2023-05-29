@@ -12,11 +12,40 @@
 
 #include "minishell.h"
 
-void	cmd(char **input, char *cwd, char **envp)
+void	call_env(char **envp)
 {
 	int	i;
 
 	i = 0;
+	while (envp[i])
+	{
+		if (ft_strchr(envp[i], '='))
+			printf("%s\n", envp[i++]);
+		else
+			i++;
+	}
+}
+
+void	call_run(char **input, char **envp)
+{
+	int		pid;
+
+	if (access(input[0], F_OK) == 0)
+	{
+		pid = fork();
+		if (pid == 0)
+			execve(input[0], input, envp);
+		else if (pid > 0)
+		{
+			waitpid(pid, NULL, 0);
+			return ;
+		}
+
+	}
+}
+
+void	cmd(char **input, char *cwd, char **envp)
+{
 	if (input[0])
 	{
 		if (ft_strncmp(input[0], "echo", 4) == 0)
@@ -30,17 +59,11 @@ void	cmd(char **input, char *cwd, char **envp)
 		else if (ft_strncmp(input[0], "unset", 5) == 0)
 			call_unset(input, envp);
 		else if ((ft_strncmp(input[0], "env", 3) == 0))
-		{
-			while (envp[i])
-			{
-				if (ft_strchr(envp[i], '='))
-					printf("%s\n", envp[i++]);
-				else
-					i++;
-			}
-		}
+			call_env(envp);
 		else if (ft_strncmp(input[0], "exit", 4) == 0)
 			myexit(0);
+		else if (ft_strncmp(input[0], "./", 2) == 0)
+			call_run(input, envp);
 		else
 			executable(input, envp);
 	}

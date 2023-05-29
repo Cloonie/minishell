@@ -64,25 +64,31 @@ void	call_unset(char **input, char **envp)
 {
 	char	*var;
 	int		i;
-	int		len;
+	int		j;
 
 	if (!input[1])
 		return ;
 	i = 0;
-	while (envp[i])
+	j = 0;
+	while (input[++j])
 	{
-		var = ft_substr(envp[i], 0, ft_strpos(envp[i], "="));
-		len = ft_strlen(var);
-		if (!ft_strncmp(input[1], var, len))
+		while (envp[i])
 		{
-			while (envp[i])
+			if (ft_strpos(envp[i], "="))
+				var = ft_substr(envp[i], 0, ft_strpos(envp[i], "=") - 1);
+			else
+				var = ft_substr(envp[i], 0, ft_strlen(envp[i]));
+			if (!ft_strncmp(input[j], var, ft_strlen(var)))
 			{
-				envp[i] = envp[i + 1];
-				i++;
+				while (envp[i])
+				{
+					envp[i] = envp[i + 1];
+					i++;
+				}
+				break ;
 			}
-			break ;
+			i++;
 		}
-		i++;
 	}
 }
 
