@@ -20,10 +20,25 @@ void	call_echo(char **input)
 
 	i = 1;
 	j = 1;
-	newline = 0;
-	if (input[i] && input[i][j - 1] == '-' && input[i][j] == 'n')
+	newline = 1;
+	while (input[i])
 	{
-		newline = 1;
+		if (input[i][j - 1] != '-')
+			break ;
+		while (input[i][j])
+		{
+			if (input[i][j] == 'n')
+				newline = 0;
+			else
+			{
+				newline = 1;
+				break ;
+			}
+			j++;
+		}
+		if (newline)
+			break ;
+		j = 1;
 		i++;
 	}
 	while (input[i])
@@ -33,7 +48,7 @@ void	call_echo(char **input)
 			printf(" ");
 		i++;
 	}
-	if (!newline)
+	if (newline)
 		printf("\n");
 }
 
