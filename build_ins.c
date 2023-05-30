@@ -27,16 +27,13 @@ void	call_echo(char **input)
 			break ;
 		while (input[i][j])
 		{
-			if (input[i][j] == 'n')
+			if (i == 1 && input[i][j] == 'n' && !input[i][j + 1])
 				newline = 0;
-			else
-			{
-				newline = 1;
+			else if (input[i][j] != 'n')
 				break ;
-			}
 			j++;
 		}
-		if (newline)
+		if (input[i][j] && input[i][j] != 'n')
 			break ;
 		j = 1;
 		i++;
