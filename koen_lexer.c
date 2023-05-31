@@ -8,6 +8,18 @@ typedef enum {
 	COMMAND,
 	OPTION,
 	ARGUMENT,
+	TOK_SPACE,
+	BACKSLASH,
+	SEMICOLON,
+	SINGLEQ,
+	DOUBLEQ,
+	DOLLAR,
+	REDIRECT_LEFT,
+	REDIRECT_RIGHT,
+	APPEND_LEFT,
+	APPEND_RIGHT,
+	PIPE,
+	TOK_EOF,	
 }	token_type;
 
 typedef struct s_token {
@@ -93,6 +105,11 @@ t_token	*lexer(char *input)
 			t_token *tok_opt = create_token(OPTION, token);
 			append_token(&head, tok_opt);
 		}
+		else if (token[0] == '$')
+		{
+			t_token *tok_dollar = create_token(DOLLAR, token);
+			append_token(&head, tok_dollar);
+		}
 		else
 		{
 			t_token *tok_arg = create_token(ARGUMENT, token);
@@ -106,7 +123,7 @@ t_token	*lexer(char *input)
 int	main()
 {
 	t_token	*token_list;
-	char str[21] = "echo -n how are you?";
+	char str[21] = "how $ are you?";
 	token_list = lexer(str);
 	print_token(token_list);
 }
