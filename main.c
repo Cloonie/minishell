@@ -21,7 +21,7 @@ char	**get_input(char *cwd)
 				("\033[38;5;39m[minishell] \033[4;36m", cwd),
 				"\033[0;36m> \033[0m"));
 	if (input == NULL)
-		exit (0);
+		exit(0);
 	ft_strtrim(input, " ");
 	add_history(input);
 	av = ft_split(input, ' ');

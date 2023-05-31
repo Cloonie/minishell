@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 15:31:58 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/19 14:34:32 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/30 23:43:49 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,15 @@ enum {
 	TOK_EOF,
 };
 
-// void	token(char **input)
-// {
-// 	int	i;
+int	ft_strlen(const char *s)
+{
+	int	i;
 
-// 	i = 0;
-// 	while (input)
-// 	{
-// 		if (input[i][0] == '\"' && input[i][ft_strlen(input[i])] == '\"')
-// 			ft_strtrim(input[i], "\"");
-// 	}
-// }
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
 
 static int	count_words(char const *s, char c)
 {
@@ -75,7 +73,13 @@ static char	*word_dup(const char *str, int start, int finish)
 	return (word);
 }
 
-static void	split_words(char **array, const char *s, char c)
+int	is_special_char(char c)
+{
+	return (c == ' ' || c == '>' || c == '<'
+		|| c == '\'' || c == '\"' || c == '$');
+}
+
+static void	split_words(char **array, const char *s)
 {
 	int		i;
 	int		j;
@@ -86,10 +90,11 @@ static void	split_words(char **array, const char *s, char c)
 	k = -1;
 	while (i <= ft_strlen(s))
 	{
-		if (s[i] != c && k < 0)
+		if (!is_special_char(s[i]) && k < 0)
 			k = i;
-		else if ((s[i] == c || i == ft_strlen(s)) && k >= 0)
+		else if ((is_special_char(s[i]) || i == ft_strlen(s)) && k >= 0)
 		{
+			if (s[i] == ' ')
 			array[j++] = word_dup(s, k, i);
 			k = -1;
 		}
@@ -107,6 +112,16 @@ char	**lexer(char const *s, char c)
 	array = malloc((count_words(s, c) + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);
-	split_words(array, s, c);
+	split_words(array, s);
 	return (array);
+}
+
+int	main()
+{
+	char	**array;
+
+	array = lexer("HELLO how aRe you?", ' ');
+	for (int i = 0; array[i]; i++)
+		printf("%s\n", array[i]);
+	// printf("%d\n", is_special_char('\"'));
 }
