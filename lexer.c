@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 15:31:58 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/30 23:43:49 by mliew            ###   ########.fr       */
+/*   Updated: 2023/05/31 18:36:36 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <ctype.h>
 
 enum {
+	TOK_EOF,
 	TOK_SPACE,
 	TOK_BACKSLASH,
 	TOK_SEMICOLON,
@@ -28,7 +29,6 @@ enum {
 	TOK_APPEND_LEFT,
 	TOK_APPEND_RIGHT,
 	TOK_PIPE,
-	TOK_EOF,
 };
 
 int	ft_strlen(const char *s)
@@ -41,17 +41,17 @@ int	ft_strlen(const char *s)
 	return (i);
 }
 
-static int	count_words(char const *s, char c)
+static int	count_words(char const *s)
 {
 	int		words;
 
 	words = 0;
 	while (*s)
 	{
-		if (*s != c)
+		if (*s != ' ')
 		{
 			++words;
-			while (*s && *s != c)
+			while (*s && *s != ' ')
 				++s;
 		}
 		else
@@ -75,15 +75,29 @@ static char	*word_dup(const char *str, int start, int finish)
 
 int	is_special_char(char c)
 {
-	return (c == ' ' || c == '>' || c == '<'
-		|| c == '\'' || c == '\"' || c == '$');
+	if (c == ' ')
+		return (TOK_SPACE);
+	else if (c == '\"')
+		return (TOK_DOUBLEQ);
+	else if (c == '\'')
+		return (TOK_SINGLEQ);
+	else if (c == '>')
+		return (TOK_REDIRECT_RIGHT);
+	else if (c == '<')
+		return (TOK_REDIRECT_LEFT);
+	else if (c == '$')
+		return (TOK_DOLLAR);
+	else if (c == '|')
+		return (TOK_PIPE);
+	else
+		return (TOK_EOF);
 }
 
 static void	split_words(char **array, const char *s)
 {
-	int		i;
-	int		j;
-	int		k;
+	int		i; // string index
+	int		j; // array index
+	int		k; // start index
 
 	i = 0;
 	j = 0;
@@ -92,24 +106,35 @@ static void	split_words(char **array, const char *s)
 	{
 		if (!is_special_char(s[i]) && k < 0)
 			k = i;
-		else if ((is_special_char(s[i]) || i == ft_strlen(s)) && k >= 0)
+		else if ((is_special_char(s[i]) == TOK_SPACE || i == ft_strlen(s)) && k >= 0)
 		{
-			if (s[i] == ' ')
 			array[j++] = word_dup(s, k, i);
 			k = -1;
+		}
+		else if (is_special_char(s[i]) == TOK_DOUBLEQ)
+		{
+			k = i;
+			while (s[++i])
+			{
+				if (!s[i])
+					exit(0);
+				if (s[i] == '\"')
+					break ;
+			}
+			// array[j++] = word_dup(s, k, i);
 		}
 		i++;
 	}
 	array[j] = 0;
 }
 
-char	**lexer(char const *s, char c)
+char	**lexer(char const *s)
 {
 	char	**array;
 
 	if (!s)
 		return (NULL);
-	array = malloc((count_words(s, c) + 1) * sizeof(char *));
+	array = malloc((count_words(s) + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);
 	split_words(array, s);
@@ -120,8 +145,9 @@ int	main()
 {
 	char	**array;
 
-	array = lexer("HELLO how aRe you?", ' ');
+	array = lexer("Hello, \"how are\" you?");
 	for (int i = 0; array[i]; i++)
-		printf("%s\n", array[i]);
+		printf("String %d: |%s|\n", i, array[i]);
+	system("leaks a.out");
 	// printf("%d\n", is_special_char('\"'));
 }
