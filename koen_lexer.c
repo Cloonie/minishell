@@ -97,17 +97,27 @@ t_token	*lexer(char *input)
 	{
 		if (strcmp(token, "echo") == 0)
 		{
-			t_token *tok_cmd = create_token(COMMAND, token);
+			t_token	*tok_cmd = create_token(COMMAND, token);
 			append_token(&head, tok_cmd);
 		}
 		else if (token[0] == '-')
 		{
-			t_token *tok_opt = create_token(OPTION, token);
+			t_token	*tok_opt = create_token(OPTION, token);
 			append_token(&head, tok_opt);
+		}
+		else if (token[0] == '"')
+		{
+			t_token	*tok_quote = create_token(DOUBLEQ, token);
+			append_token(&head, tok_quote);
+			while (token[strlen(token) - 1] != '"')
+			{
+				token = strtok(NULL, " ");
+				strcat(tok_quote->value, token);
+			}
 		}
 		else if (token[0] == '$')
 		{
-			t_token *tok_dollar = create_token(DOLLAR, token);
+			t_token	*tok_dollar = create_token(DOLLAR, token);
 			append_token(&head, tok_dollar);
 		}
 		else
@@ -123,7 +133,7 @@ t_token	*lexer(char *input)
 int	main()
 {
 	t_token	*token_list;
-	char str[21] = "how $ are you?";
+	char str[35] = "echo \"hi koen cheong hi\" byebye";
 	token_list = lexer(str);
 	print_token(token_list);
 }
