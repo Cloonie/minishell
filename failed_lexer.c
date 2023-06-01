@@ -6,7 +6,7 @@
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 15:31:58 by mliew             #+#    #+#             */
-/*   Updated: 2023/06/01 18:59:15 by mliew            ###   ########.fr       */
+/*   Updated: 2023/06/01 22:46:08 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,13 @@ static char	*word_dup(const char *str, int start, int finish)
 	word = malloc((finish - start + 1) * sizeof(char));
 	if (str[start] == '\"' && str[finish - 1] == '\"')
 		finish--;
+	else if (str[start] == '\'' && str[finish - 1] == '\'')
+		finish--;
 	while (start < finish)
 	{
 		while (str[start] == '\"')
+			start++;
+		while (str[start] == '\'')
 			start++;
 		word[i++] = str[start++];
 	}
@@ -124,6 +128,17 @@ static void	split_words(char **array, const char *s)
 			while (s[i] && s[++i] != '\"')
 				;
 		}
+		else if (s[i] == '\'')
+		{
+			if (s[i - 1] == ' ')
+				k = i;
+			while (s[i] && s[++i] != '\'')
+				;
+		}
+		// if ((s[k] == '\"' && s[i] != '\"')
+		// 	|| (s[k] != '\"' && s[i] == '\"'))
+		// 	myexit(1);
+		printf("str: %s start: %c end: %c\n", s, s[k], s[i]);
 		i++;
 	}
 	array[j] = 0;
@@ -142,13 +157,13 @@ char	**lexer(char const *s)
 	return (array);
 }
 
-int	main()
-{
-	char	**array;
+// int	main()
+// {
+// 	char	**array;
 
-	array = lexer(" \" abc echo\" ");
-	for (int i = 0; array[i]; i++)
-		printf("String %d: |%s|\n", i, array[i]);
-	// system("leaks a.out");
-	// printf("%d\n", is_special_char('\"'));
-}
+// 	array = lexer(" \'abc echo\' koen \"hey world there\" ");
+// 	for (int i = 0; array[i]; i++)
+// 		printf("String %d: |%s|\n", i, array[i]);
+// 	// system("leaks a.out");
+// 	// printf("%d\n", is_special_char('\"'));
+// }

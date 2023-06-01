@@ -24,7 +24,8 @@ char	**get_input(char *cwd)
 		exit(0);
 	ft_strtrim(input, " ");
 	add_history(input);
-	av = ft_split(input, ' ');
+	// av = ft_split(input, ' ');
+	av = lexer(input);
 	return (av);
 }
 

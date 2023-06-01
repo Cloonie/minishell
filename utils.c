@@ -23,10 +23,11 @@ void	sigint_handler(int sig)
 
 void	myexit(int status)
 {
-	system("leaks minishell");
+
 	if (status == EXIT_SUCCESS)
 		printf("EXIT_SUCCESS\n");
 	else if (status == EXIT_FAILURE)
 		printf("EXIT_FAILURE\n");
+	// system("leaks minishell");
 	exit(status);
 }
