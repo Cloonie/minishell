@@ -28,6 +28,8 @@ typedef struct s_token {
 	struct		s_token *next;
 }	t_token;
 
+
+
 void	print_token(t_token *token_list)
 {
 	t_token	*current;
@@ -112,6 +114,7 @@ t_token	*lexer(char *input)
 			while (token[strlen(token) - 1] != '"')
 			{
 				token = strtok(NULL, " ");
+				strcat(tok_quote->value, " ");
 				strcat(tok_quote->value, token);
 			}
 		}
@@ -133,7 +136,7 @@ t_token	*lexer(char *input)
 int	main()
 {
 	t_token	*token_list;
-	char str[35] = "echo \"hi koen cheong hi\" byebye";
+	char str[43] = "echo hi \"koen\"cheong \"yoo\" hi\" byebye";
 	token_list = lexer(str);
 	print_token(token_list);
 }

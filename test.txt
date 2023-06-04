@@ -1,0 +1,2 @@
+Received message [Hello from child].
+DONE :D
