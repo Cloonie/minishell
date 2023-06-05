@@ -12,38 +12,22 @@
 
 #include "minishell.h"
 
-// int	main(void)
-// {
-// 	int	pipe_fd[2];
-// 	int	pid;
+int	main(void)
+{
+	int	forkpid;
 
-// 	printf("Parent Process starts\n");
-// 	if (pipe(pipe_fd) == -1)
-// 		perror("pipe");
-// 	pid = fork();
-// 	if (pid == -1)
-// 		perror("fork error");
-// 	if (pid > 0)
-// 		printf("Child Process starts\n");
-// }
-
-int main() {
-    pid_t childPID;
-
-    childPID = fork();
-
-    if (childPID == -1) {
-        printf("Fork failed!\n");
-        return 1;
-    }
-
-    if (childPID == 0) {
-        printf("Child process: PID=%d\n", getpid());
-        // Child process code here
-    } else {
-        printf("Parent process: PID=%d, Child PID=%d\n", getpid(), childPID);
-        // Parent process code here
-    }
-
-    return 0;
+	forkpid = fork();
+	if (forkpid == -1)
+		perror("fork");
+	if (forkpid == 0)
+	{
+		printf("this is child process, forkpid: %d\n", forkpid);
+		printf("childpid: %d\n", getpid());
+	}
+	else if (forkpid > 0)
+	{
+		waitpid(forkpid, NULL, 0);
+		printf("this is parent process, forkpid: %d\n", forkpid);
+		printf("parentpid: %d\n", getpid());
+	}
 }

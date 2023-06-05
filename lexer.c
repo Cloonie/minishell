@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   failed_lexer.c                                     :+:      :+:    :+:   */
+/*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 15:31:58 by mliew             #+#    #+#             */
-/*   Updated: 2023/06/03 18:14:04 by mliew            ###   ########.fr       */
+/*   Updated: 2023/06/05 16:45:30 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,13 +135,46 @@ static void	split_words(char **array, const char *s)
 			while (s[i] && s[++i] != '\'')
 				;
 		}
-		// if ((s[k] == '\"' && s[i] != '\"')
-		// 	|| (s[k] != '\"' && s[i] == '\"'))
-		// 	myexit(1);
-		// printf("str: %s start: %c end: %c\n", s, s[k], s[i]);
 		i++;
 	}
 	array[j] = 0;
+}
+
+void	check_dollar(char **array)
+{
+	char	*envvar;
+	int		i;
+
+	i = -1;
+	while (array[++i])
+	{
+		envvar = &array[i][1];
+		if (array[i][0] == '$')
+			array[i] = getenv(envvar);
+	}
+}
+
+int	check_quotes(char const *s)
+{
+	int	d_quote;
+	int	s_quote;
+
+	d_quote = 0;
+	s_quote = 0;
+	while (*s)
+	{
+		if (*s == '\"')
+			d_quote++;
+		if (*s == '\'')
+			s_quote++;
+		s++;
+	}
+	if ((d_quote % 2) != 0 || (s_quote % 2) != 0)
+	{
+		printf("Error quotes are not closed.\n");
+		return (1);
+	}
+	return (0);
 }
 
 char	**lexer(char const *s)
@@ -153,7 +186,13 @@ char	**lexer(char const *s)
 	array = malloc((count_words(s) + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);
+	if (check_quotes(s))
+	{
+		free(array);
+		return (array);
+	}
 	split_words(array, s);
+	check_dollar(array);
 	return (array);
 }
 

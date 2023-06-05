@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/06/01 19:27:31 by mliew            ###   ########.fr       */
+/*   Updated: 2023/06/05 15:36:28 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	export2(char **input, char **envp);
 
 // executable
 void	cmd(char **input, char *cwd, char **ev);
-void	executable(char **input, char **ev);
+int		executable(char **input, char **ev);
 
 // lexer
 char	**lexer(char const *s);
