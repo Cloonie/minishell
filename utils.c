@@ -17,7 +17,7 @@ void	sigint_handler(int sig)
 	(void)sig;
 	printf("\n");
 	rl_on_new_line();
-	// rl_replace_line("", 0);
+	rl_replace_line("", 0);
 	rl_redisplay();
 }
 
@@ -28,6 +28,6 @@ void	myexit(int status)
 		printf("EXIT_SUCCESS\n");
 	else if (status == EXIT_FAILURE)
 		printf("EXIT_FAILURE\n");
-	// system("leaks minishell");
+	system("leaks minishell");
 	exit(status);
 }

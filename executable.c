@@ -40,8 +40,9 @@ void	call_run(char **input, char **envp)
 			waitpid(pid, NULL, 0);
 			return ;
 		}
-
 	}
+	else
+		printf("Enter a valid command.\n");
 }
 
 void	cmd(char **input, char *cwd, char **envp)
@@ -50,19 +51,20 @@ void	cmd(char **input, char *cwd, char **envp)
 	{
 		if (ft_strncmp(input[0], "echo ", 5) == 0)
 			call_echo(input);
-		else if (ft_strncmp(input[0], "cd ", 3) == 0)
+		else if (ft_strncmp(input[0], "cd", 2) == 0)
 			call_cd(input, cwd);
-		else if (ft_strncmp(input[0], "pwd ", 4) == 0)
+		else if (ft_strncmp(input[0], "pwd", 3) == 0)
 			printf("%s\n", cwd);
-		else if (ft_strncmp(input[0], "export ", 7) == 0)
+		else if (ft_strncmp(input[0], "export", 6) == 0)
 			call_export(input, envp);
-		else if (ft_strncmp(input[0], "unset ", 6) == 0)
+		else if (ft_strncmp(input[0], "unset", 5) == 0)
 			call_unset(input, envp);
-		else if ((ft_strncmp(input[0], "env ", 4) == 0))
+		else if ((ft_strncmp(input[0], "env", 3) == 0))
 			call_env(envp);
-		else if (ft_strncmp(input[0], "exit ", 5) == 0)
+		else if (ft_strncmp(input[0], "exit", 4) == 0)
 			myexit(0);
-		else if (ft_strncmp(input[0], "./", 2) == 0)
+		else if (ft_strncmp(input[0], "./", 2) == 0
+			|| ft_strncmp(input[0], "/", 1) == 0)
 			call_run(input, envp);
 		else if (executable(input, envp))
 			printf("Enter a valid command.\n");
