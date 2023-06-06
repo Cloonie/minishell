@@ -1,2 +1,3 @@
-Received message [Hello from child].
-DONE :D
+Child no.2 received message [Hello from child no.1].
+Child no.2 received message [Hello from child no.1].
+Child no.2 received message [Hello from child no.1].

@@ -18,6 +18,7 @@ C_BLUE	=	\033[1;34m
 C_END 	=	\033[0m
 
 NAME		=	minishell
+NAME2		= 	pipex
 CFLAGS		=	-Wall -Wextra -Werror
 CC			=	gcc
 LIBFT		=	libft
@@ -31,8 +32,14 @@ FILES		=	main		\
 				build_ins	\
 				executable	\
 
+PIPEX_FILES	=	utils		\
+				build_ins	\
+				executable	\
+				piping		\
+
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
+OBJS2		=	$(addsuffix .o, $(PIPEX_FILES))
 
 all: $(NAME)
 
@@ -42,18 +49,26 @@ $(NAME): $(OBJS)
 	@echo "$(B_GREEN)Compiling $(OBJS)$(C_END)"
 	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 
+$(NAME2): $(OBJS2)
+	@make -s -C libft
+	@gcc $(CFLAGS) $(OBJS2) $(LIBFLAGS) -o $(NAME2)
+	@echo "$(B_GREEN)Compiling $(OBJS2)$(C_END)"
+	@echo "$(C_GREEN)Makefile for pipex completed.$(C_END)"
+
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "$(B_GREEN)Creating object file: $<$(C_END)"
 
 
 clean:
-	@$(RM) $(OBJS)
+	@$(RM) $(OBJS) $(OBJS2)
 	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
+	@echo "$(B_RED)Removing $(NAME2) object files$(C_END)"
 
 fclean:	clean
-	@$(RM) $(NAME)
+	@$(RM) $(NAME) $(NAME2)
 	@echo "$(C_RED)Removing $(NAME)$(C_END)"
+	@echo "$(C_RED)Removing $(NAME2)$(C_END)"
 
 lclean:
 	@make fclean -s -C libft

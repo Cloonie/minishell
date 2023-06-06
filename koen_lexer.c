@@ -136,7 +136,7 @@ t_token	*lexer(char *input)
 int	main()
 {
 	t_token	*token_list;
-	char str[43] = "echo hi \"koen\"cheong \"yoo\" hi\" byebye";
+	char str[43] = "echo$HOME";
 	token_list = lexer(str);
 	print_token(token_list);
 }

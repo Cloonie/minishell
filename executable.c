@@ -71,29 +71,35 @@ void	cmd(char **input, char *cwd, char **envp)
 
 void	executable(char **input, char **envp)
 {
-	pid_t	pid;
+	// pid_t	pid;
 	char	**paths;
 	char	*current_path;
 	int		i;
-
+	
+	// input = ft_split(input[0], ' ');
+	// printf("%s\n", input[0]);
 	paths = ft_split(getenv("PATH"), ':');
 	i = 0;
-	while (paths[i++])
+	while (paths[i] != NULL)
 	{
 		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), input[0]);
-		if (access(current_path, F_OK) == 0)
-		{
-			pid = fork();
-			if (pid == 0)
-			{
-				// printf("%s\n", current_path);
-				execve(current_path, input, envp);
-			}
-			else if (pid > 0)
-			{
-				waitpid(pid, NULL, 0);
-				break ;
-			}
-		}
+		// printf("current path is [%s]\n", current_path);
+		execve(current_path, input, envp);
+		i++;
+		// if (access(current_path, F_OK) == 0)
+		// {
+		// 	execve(current_path, input, envp);
+		// 	pid = fork();
+		// 	if (pid == 0)
+		// 	{
+		// 		// printf("%s\n", current_path);
+		// 		execve(current_path, input, envp);
+		// 	}
+		// 	else if (pid > 0)
+		// 	{
+		// 		waitpid(pid, NULL, 0);
+		// 		break ;
+		// 	}
+		// }
 	}
 }
