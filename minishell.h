@@ -17,19 +17,17 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <dirent.h>
 # include <sys/stat.h>
-# include <string.h>
 
 # include "libft/includes/libft.h"
 # include "libft/includes/ft_printf.h"
 # include "libft/includes/get_next_line_bonus.h"
-
-// # define Ctrl(x) ((x) & 0x1f)
 
 // main
 char	**get_input(char *cwd);

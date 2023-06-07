@@ -140,10 +140,16 @@ void	export2(char **input, char **envp)
 			i = -1;
 			while (envp[++i])
 			{
-				if (!envp[i + 1])
+				if (envp[i + 1] == NULL)
 				{
 					envp[i + 1] = input[j];
 					envp[i + 2] = NULL;
+					break ;
+				}
+				else if (ft_strncmp(envp[i + 1], input[j],
+					ft_strpos(envp[i + 1], "=")) == 0)
+				{
+					envp[i + 1] = input[j];
 					break ;
 				}
 			}

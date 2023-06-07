@@ -83,26 +83,6 @@ static char	*word_dup(const char *str, int start, int finish)
 	return (word);
 }
 
-int	is_special_char(char c)
-{
-	if (c == ' ')
-		return (TOK_SPACE);
-	else if (c == '\"')
-		return (TOK_DOUBLEQ);
-	else if (c == '\'')
-		return (TOK_SINGLEQ);
-	else if (c == '>')
-		return (TOK_REDIRECT_RIGHT);
-	else if (c == '<')
-		return (TOK_REDIRECT_LEFT);
-	else if (c == '$')
-		return (TOK_DOLLAR);
-	else if (c == '|')
-		return (TOK_PIPE);
-	else
-		return (TOK_EOF);
-}
-
 static void	split_words(char **array, const char *s)
 {
 	int		i; // string index
@@ -205,4 +185,24 @@ char	**lexer(char const *s)
 // 		printf("String %d: |%s|\n", i, array[i]);
 // 	// system("leaks a.out");
 // 	// printf("%d\n", is_special_char('\"'));
+// }
+
+// int	is_special_char(char c)
+// {
+// 	if (c == ' ')
+// 		return (TOK_SPACE);
+// 	else if (c == '\"')
+// 		return (TOK_DOUBLEQ);
+// 	else if (c == '\'')
+// 		return (TOK_SINGLEQ);
+// 	else if (c == '>')
+// 		return (TOK_REDIRECT_RIGHT);
+// 	else if (c == '<')
+// 		return (TOK_REDIRECT_LEFT);
+// 	else if (c == '$')
+// 		return (TOK_DOLLAR);
+// 	else if (c == '|')
+// 		return (TOK_PIPE);
+// 	else
+// 		return (TOK_EOF);
 // }

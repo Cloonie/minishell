@@ -12,22 +12,36 @@
 
 #include "minishell.h"
 
-int	main(void)
+int	pipex(char **input, char **envp)
 {
-	int	forkpid;
+	int	pipefd[2];
+	int	child1;
+	int	child2;
 
-	forkpid = fork();
-	if (forkpid == -1)
+	if (pipe(pipefd) == -1)
+		perror("pipe");
+	child1 = fork();
+	if (child1 == -1)
 		perror("fork");
-	if (forkpid == 0)
+	if (child1 == 0)
 	{
-		printf("this is child process, forkpid: %d\n", forkpid);
-		printf("childpid: %d\n", getpid());
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[1]);
+		close(pipefd[0]);
+		execlp("ls", "ls", NULL);
 	}
-	else if (forkpid > 0)
+	child2 = fork();
+	if (child2 == -1)
+		perror("fork");
+	if (child2 == 0)
 	{
-		waitpid(forkpid, NULL, 0);
-		printf("this is parent process, forkpid: %d\n", forkpid);
-		printf("parentpid: %d\n", getpid());
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		execlp("grep", "grep", "mini", NULL);
 	}
+	close(pipefd[0]);
+	close(pipefd[1]);
+	waitpid(child2, NULL, 0);
+	waitpid(child1, NULL, 0);
 }
