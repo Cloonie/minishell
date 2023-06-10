@@ -87,10 +87,7 @@ int	executable(char **input, char **envp)
 		{
 			pid = fork();
 			if (pid == 0)
-			{
-				// printf("%s\n", current_path);
 				execve(current_path, input, envp);
-			}
 			else if (pid > 0)
 			{
 				waitpid(pid, NULL, 0);

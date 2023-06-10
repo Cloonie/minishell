@@ -80,17 +80,17 @@ void	call_unset(char **input, char **envp)
 
 	if (!input[1])
 		return ;
-	i = 0;
 	j = 0;
 	while (input[++j])
 	{
-		while (envp[i])
+		i = -1;
+		while (envp[++i])
 		{
 			if (ft_strpos(envp[i], "="))
-				var = ft_substr(envp[i], 0, ft_strpos(envp[i], "=") - 1);
+				var = ft_substr(envp[i], 0, ft_strpos(envp[i], "="));
 			else
 				var = ft_substr(envp[i], 0, ft_strlen(envp[i]));
-			if (!ft_strncmp(input[j], var, ft_strlen(var)))
+			if (!ft_strncmp(input[j], var, ft_strlen(var) + 1))
 			{
 				while (envp[i])
 				{
@@ -99,7 +99,6 @@ void	call_unset(char **input, char **envp)
 				}
 				break ;
 			}
-			i++;
 		}
 	}
 }

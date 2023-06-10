@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-char	**get_input(char *cwd)
+char	**get_input(char *cwd, char **envp)
 {
 	char	*input;
 	char	**av;
@@ -26,6 +26,7 @@ char	**get_input(char *cwd)
 	add_history(input);
 	// av = ft_split(input, ' ');
 	av = lexer(input);
+	av = check_dollar(av, envp);
 	return (av);
 }
 
@@ -41,7 +42,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		getcwd(cwd, sizeof(cwd));
-		input = get_input(cwd);
+		input = get_input(cwd, envp);
 		cmd(input, cwd, envp);
 	}
 }

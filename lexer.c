@@ -31,16 +31,6 @@ enum {
 	TOK_PIPE,
 };
 
-int	ft_strlen(const char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
 static int	count_words(char const *s)
 {
 	int		words;
@@ -120,18 +110,28 @@ static void	split_words(char **array, const char *s)
 	array[j] = 0;
 }
 
-void	check_dollar(char **array)
+char	**check_dollar(char **array, char **envp)
 {
-	char	*envvar;
 	int		i;
+	int		j;
+	char	*str;
+	char	*var;
 
 	i = -1;
+	j = -1;
 	while (array[++i])
 	{
-		envvar = &array[i][1];
-		if (array[i][0] == '$')
-			array[i] = getenv(envvar);
+		while (envp[++j] && array[i][0] == '$')
+		{
+			var = &array[i][1];
+			str = ft_substr(envp[j], 0, ft_strpos(envp[j], "="));
+			if (ft_strncmp(str, var, ft_strlen(array[i])) == 0)
+				array[i] = ft_strchr(envp[j], '=') + 1;
+			else if (!envp[j + 1])
+				array[i] = "";
+		}
 	}
+	return (array);
 }
 
 int	check_quotes(char const *s)
@@ -172,7 +172,6 @@ char	**lexer(char const *s)
 		return (array);
 	}
 	split_words(array, s);
-	check_dollar(array);
 	return (array);
 }
 
