@@ -35,13 +35,13 @@ FILES		=	main		\
 PIPEX_FILES	=	utils		\
 				build_ins	\
 				executable	\
-				piping		\
+				pipex		\
 
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
 OBJS2		=	$(addsuffix .o, $(PIPEX_FILES))
 
-all: $(NAME)
+all: $(NAME) $(NAME2)
 
 $(NAME): $(OBJS)
 	@make -s -C libft

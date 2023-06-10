@@ -1,3 +1,3 @@
-Child no.2 received message [Hello from child no.1].
-Child no.2 received message [Hello from child no.1].
-Child no.2 received message [Hello from child no.1].
+hihi
+abhjos oius
+soiu
