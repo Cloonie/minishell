@@ -24,7 +24,6 @@ char	**get_input(char *cwd, char **envp)
 		exit(0);
 	ft_strtrim(input, " ");
 	add_history(input);
-	// av = ft_split(input, ' ');
 	av = lexer(input);
 	av = check_dollar(av, envp);
 	return (av);

@@ -172,6 +172,8 @@ char	**lexer(char const *s)
 		return (array);
 	}
 	split_words(array, s);
+	// for (int i = 0; array[i]; i++)
+	// 	printf("array[%d]: %s\n", i , array[i]);
 	return (array);
 }
 
