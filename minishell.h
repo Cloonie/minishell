@@ -44,7 +44,7 @@ void	call_export(char **input, char **envp);
 void	export2(char **input, char **envp);
 
 // executable
-int	cmd(char **input, char *cwd, char **ev);
+int		cmd(char **input, char *cwd, char **ev);
 int		executable(char **input, char **ev);
 
 // lexer
