@@ -12,8 +12,24 @@
 
 #include "minishell.h"
 
-char	**get_input(char *cwd, char **envp)
+t_list	*array2list(char **array)
 {
+	t_list	*list;
+	int		i;
+
+	i = -1;
+	while (array[++i])
+	{
+		list = ft_lstnew(array[i]);
+		// list->token = tokenize(array[i]);
+		list = list->next;
+	}
+	return (list);
+}
+
+t_list	*get_input(char *cwd, char **envp)
+{
+	t_list	*list;
 	char	*input;
 	char	**av;
 
@@ -26,12 +42,14 @@ char	**get_input(char *cwd, char **envp)
 	add_history(input);
 	av = lexer(input);
 	av = check_dollar(av, envp);
-	return (av);
+	list = array2list(av);
+	return (list);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	**input;
+	t_list	*list;
+	// char	**input;
 	char	cwd[1024];
 
 	if (!argv[0] || argc != 1)
@@ -41,8 +59,10 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		getcwd(cwd, sizeof(cwd));
-		input = get_input(cwd, envp);
-		cmd(input, cwd, envp);
+		list = get_input(cwd, envp);
+		// cmd(input, cwd, envp);
+		// printf("VAR: %s TOKEN: %d QUOTED: %d\n", list->var, list->token, list->quoted);
+		printf("%s", list->var);
 	}
 }
 

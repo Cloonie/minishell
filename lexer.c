@@ -16,21 +16,6 @@
 #include <string.h>
 #include <ctype.h>
 
-enum {
-	TOK_EOF,
-	TOK_SPACE,
-	TOK_BACKSLASH,
-	TOK_SEMICOLON,
-	TOK_SINGLEQ,
-	TOK_DOUBLEQ,
-	TOK_DOLLAR,
-	TOK_REDIRECT_LEFT,
-	TOK_REDIRECT_RIGHT,
-	TOK_APPEND_LEFT,
-	TOK_APPEND_RIGHT,
-	TOK_PIPE,
-};
-
 static int	count_words(char const *s)
 {
 	int		words;
@@ -186,24 +171,4 @@ char	**lexer(char const *s)
 // 		printf("String %d: |%s|\n", i, array[i]);
 // 	// system("leaks a.out");
 // 	// printf("%d\n", is_special_char('\"'));
-// }
-
-// int	is_special_char(char c)
-// {
-// 	if (c == ' ')
-// 		return (TOK_SPACE);
-// 	else if (c == '\"')
-// 		return (TOK_DOUBLEQ);
-// 	else if (c == '\'')
-// 		return (TOK_SINGLEQ);
-// 	else if (c == '>')
-// 		return (TOK_REDIRECT_RIGHT);
-// 	else if (c == '<')
-// 		return (TOK_REDIRECT_LEFT);
-// 	else if (c == '$')
-// 		return (TOK_DOLLAR);
-// 	else if (c == '|')
-// 		return (TOK_PIPE);
-// 	else
-// 		return (TOK_EOF);
 // }

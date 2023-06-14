@@ -30,11 +30,12 @@
 # include "libft/includes/get_next_line_bonus.h"
 
 // main
-char	**get_input(char *cwd, char **envp);
+t_list	*get_input(char *cwd, char **envp);
 
 // utils
 void	sigint_handler(int sig);
 void	myexit(int status);
+int		tokenize(char *str);
 
 // build_ins
 void	call_echo(char **input);
