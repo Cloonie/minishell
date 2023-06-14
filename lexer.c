@@ -118,14 +118,14 @@ char	**check_dollar(char **array, char **envp)
 	char	*var;
 
 	i = -1;
-	j = -1;
 	while (array[++i])
 	{
-		while (envp[++j] && array[i][0] == '$')
+		j = -1;
+		var = &array[i][1];
+		while (array[i][0] == '$' && envp[++j] && array[i][1])
 		{
-			var = &array[i][1];
 			str = ft_substr(envp[j], 0, ft_strpos(envp[j], "="));
-			if (ft_strncmp(str, var, ft_strlen(array[i])) == 0)
+			if (ft_strncmp(str, var, ft_strlen(var) + 1) == 0)
 				array[i] = ft_strchr(envp[j], '=') + 1;
 			else if (!envp[j + 1])
 				array[i] = "";

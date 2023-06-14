@@ -12,11 +12,10 @@
 
 #include "minishell.h"
 
-char	*get_input(char *cwd, char **envp)
+char	**get_input(char *cwd, char **envp)
 {
 	char	*input;
-	char	**array;
-	char	*array;
+	char	**av;
 
 	input = readline(ft_strjoin(ft_strjoin
 				("\033[38;5;39m[minishell] \033[4;36m", cwd),
@@ -27,7 +26,7 @@ char	*get_input(char *cwd, char **envp)
 	add_history(input);
 	av = lexer(input);
 	av = check_dollar(av, envp);
-	return (array);
+	return (av);
 }
 
 int	main(int argc, char **argv, char **envp)
