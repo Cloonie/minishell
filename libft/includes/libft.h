@@ -22,7 +22,8 @@ typedef struct s_list
 {
 	void			*content;
 	char			*var;
-	int				tok_type;
+	int				token;
+	int				quoted;
 	struct s_list	*next;
 }	t_list;
 
