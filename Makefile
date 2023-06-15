@@ -24,7 +24,6 @@ CC			=	gcc
 LIBFT		=	libft
 LIBFLAGS	+=	-lreadline
 LIBFLAGS	+=	-Llibft -lft
-# LIBFLAGS	+=	-L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 SANITIZE	=	-fsanitize=address -g3
 
 FILES		=	main		\
@@ -59,18 +58,17 @@ $(NAME2): $(OBJS2)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "$(B_GREEN)Creating object file: $<$(C_END)"
 
-
 clean:
 	@$(RM) $(OBJS) $(OBJS2)
 	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
 	@echo "$(B_RED)Removing $(NAME2) object files$(C_END)"
 
 fclean:	clean
-	@$(RM) $(NAME) $(NAME2)
+	@$(RM) $(NAME) $(NAME2) $(NAME3)
 	@echo "$(C_RED)Removing $(NAME)$(C_END)"
 	@echo "$(C_RED)Removing $(NAME2)$(C_END)"
-
+	
 lclean:
-	@make fclean -s -C libft
+	@make fclean -s -C $(LIBFT)
 
 re:	lclean fclean all
