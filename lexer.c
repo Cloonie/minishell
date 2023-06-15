@@ -42,16 +42,16 @@ static char	*word_dup(const char *str, int start, int finish)
 
 	i = 0;
 	word = malloc((finish - start + 1) * sizeof(char));
-	if (str[start] == '\"' && str[finish - 1] == '\"')
-		finish--;
-	else if (str[start] == '\'' && str[finish - 1] == '\'')
-		finish--;
+	// if (str[start] == '\"' && str[finish - 1] == '\"')
+	// 	finish--;
+	// if (str[start] == '\'' && str[finish - 1] == '\'')
+	// 	finish--;
 	while (start < finish)
 	{
-		while (str[start] == '\"')
-			start++;
-		while (str[start] == '\'')
-			start++;
+		// while (str[start] == '\"')
+		// 	start++;
+		// while (str[start] == '\'')
+		// 	start++;
 		word[i++] = str[start++];
 	}
 	word[i] = '\0';
@@ -76,19 +76,12 @@ static void	split_words(char **array, const char *s)
 			array[j++] = word_dup(s, k, i);
 			k = -1;
 		}
-		if (s[i] == '\"')
+		if (s[i] == '\"' || s[i] == '\'')
 		{
 			if (s[i - 1] == ' ')
 				k = i;
-			while (s[i] && s[++i] != '\"')
-				;
-		}
-		else if (s[i] == '\'')
-		{
-			if (s[i - 1] == ' ')
-				k = i;
-			while (s[i] && s[++i] != '\'')
-				;
+			while (s[i] && (s[i + 1] != '\"' || s[i + 1] != '\"'))
+				i++;
 		}
 		i++;
 	}
@@ -119,20 +112,30 @@ char	**check_dollar(char **array, char **envp)
 	return (array);
 }
 
-int	check_quotes(char const *s)
+int	check_quotes(char *s)
 {
+	int	i;
+	int	j;
 	int	d_quote;
 	int	s_quote;
 
+	i = 0;
 	d_quote = 0;
 	s_quote = 0;
-	while (*s)
+	while (s[i])
 	{
-		if (*s == '\"')
+		if (s[i] == '\"')
 			d_quote++;
-		if (*s == '\'')
+		if (s[i] == '\'')
 			s_quote++;
-		s++;
+		if (s[i] == '\"' || s[i] == '\'')
+		{
+			j = i - 1;
+			while (s[++j])
+				s[j] = s[j + 1];
+		}
+		else
+			i++;
 	}
 	if ((d_quote % 2) != 0 || (s_quote % 2) != 0)
 	{
@@ -142,7 +145,7 @@ int	check_quotes(char const *s)
 	return (0);
 }
 
-char	**lexer(char const *s)
+char	**lexer(char *s)
 {
 	char	**array;
 
@@ -157,18 +160,7 @@ char	**lexer(char const *s)
 		return (array);
 	}
 	split_words(array, s);
-	// for (int i = 0; array[i]; i++)
-	// 	printf("array[%d]: %s\n", i , array[i]);
+	for (int i = 0; array[i]; i++)
+		printf("array[%d]: %s\n", i , array[i]);
 	return (array);
 }
-
-// int	main()
-// {
-// 	char	**array;
-
-// 	array = lexer(" \'abc echo\' koen \"hey world there\" ");
-// 	for (int i = 0; array[i]; i++)
-// 		printf("String %d: |%s|\n", i, array[i]);
-// 	// system("leaks a.out");
-// 	// printf("%d\n", is_special_char('\"'));
-// }

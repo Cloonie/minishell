@@ -30,7 +30,7 @@
 # include "libft/includes/get_next_line_bonus.h"
 
 // main
-t_list	*get_input(char *cwd, char **envp);
+char	**get_input(char *cwd, char **envp);
 
 // utils
 void	sigint_handler(int sig);
@@ -50,8 +50,8 @@ int		executable(char **input, char **ev);
 
 // lexer
 char	**check_dollar(char **array, char **envp);
-int		check_quotes(char const *s);
-char	**lexer(char const *s);
+int		check_quotes(char *s);
+char	**lexer(char *s);
 
 // pipex
 

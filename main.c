@@ -12,24 +12,24 @@
 
 #include "minishell.h"
 
-t_list	*array2list(char **array)
-{
-	t_list	*list;
-	int		i;
+// t_list	*array2list(char **array)
+// {
+// 	t_list	**list;
+// 	int		i;
 
-	i = -1;
-	while (array[++i])
-	{
-		list = ft_lstnew(array[i]);
-		// list->token = tokenize(array[i]);
-		list = list->next;
-	}
-	return (list);
-}
+// 	i = -1;
+// 	while (array[++i])
+// 	{
+// 		list = ft_lstnew(array[i]);
+// 		// list->token = tokenize(array[i]);
+// 		list = list->next;
+// 	}
+// 	return (list);
+// }
 
-t_list	*get_input(char *cwd, char **envp)
+char **get_input(char *cwd, char **envp)
 {
-	t_list	*list;
+	// t_list	*list;
 	char	*input;
 	char	**av;
 
@@ -42,14 +42,14 @@ t_list	*get_input(char *cwd, char **envp)
 	add_history(input);
 	av = lexer(input);
 	av = check_dollar(av, envp);
-	list = array2list(av);
-	return (list);
+	// list = array2list(av);
+	return (av);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_list	*list;
-	// char	**input;
+	// t_list	*list;
+	char	**input;
 	char	cwd[1024];
 
 	if (!argv[0] || argc != 1)
@@ -59,10 +59,10 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		getcwd(cwd, sizeof(cwd));
-		list = get_input(cwd, envp);
-		// cmd(input, cwd, envp);
+		input = get_input(cwd, envp);
+		cmd(input, cwd, envp);
 		// printf("VAR: %s TOKEN: %d QUOTED: %d\n", list->var, list->token, list->quoted);
-		printf("%s", list->var);
+		// printf("%s", list->var);
 	}
 }
 
