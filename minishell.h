@@ -6,7 +6,7 @@
 /*   By: kcheong <kcheong@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/06/10 14:59:11 by kcheong          ###   ########.fr       */
+/*   Updated: 2023/06/18 00:43:38 by kcheong          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,15 @@
 # include "libft/includes/libft.h"
 # include "libft/includes/ft_printf.h"
 # include "libft/includes/get_next_line_bonus.h"
+
+typedef	struct	s_pipe {
+	int		numcmd;
+	int		tmpin;
+	int		tmpout;
+	int		argc;
+	char	**argv;
+	char	**envp;
+}	t_pipe;
 
 // # define Ctrl(x) ((x) & 0x1f)
 
