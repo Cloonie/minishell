@@ -63,25 +63,35 @@ static void	split_words(char **array, const char *s)
 	int		i; // string index
 	int		j; // array index
 	int		k; // start index
+	int		q;
 
 	i = 0;
 	j = 0;
 	k = -1;
+	q = -1;
 	while (i <= ft_strlen(s))
 	{
-		if (s[i] != ' ' && k < 0)
-			k = i;
-		else if ((s[i] == ' ' || i == ft_strlen(s)) && k >= 0)
+		if ((s[i] != ' ') && k < 0 && q < 0)
 		{
+			if (s[i] == '\"' || s[i] == '\'')
+				q = i;
+			else
+				k = i;
+		}
+		else if ((!s[i] || s[i] == ' ') && k >= 0)
+		{
+			printf("dup space\n");
 			array[j++] = word_dup(s, k, i);
 			k = -1;
 		}
-		if (s[i] == '\"' || s[i] == '\'')
+		else if ((!s[i] || s[i] == '\"' || s[i] == '\'') && q >= 0)
 		{
-			if (s[i - 1] == ' ')
-				k = i;
-			while (s[i] && (s[i + 1] != '\"' || s[i + 1] != '\"'))
-				i++;
+			printf("dup quote\n");
+			if ((s[i] == '\"' || s[i] == '\''))
+				while (s[i] && (s[i + 1] != '\"' || s[i + 1] != '\"'))
+					i++;
+			array[j++] = word_dup(s, q, i);
+			q = -1;
 		}
 		i++;
 	}
@@ -154,11 +164,11 @@ char	**lexer(char *s)
 	array = malloc((count_words(s) + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);
-	if (check_quotes(s))
-	{
-		free(array);
-		return (array);
-	}
+	// if (check_quotes(s))
+	// {
+	// 	free(array);
+	// 	return (array);
+	// }
 	split_words(array, s);
 	for (int i = 0; array[i]; i++)
 		printf("array[%d]: %s\n", i , array[i]);
