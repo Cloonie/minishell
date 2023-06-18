@@ -12,38 +12,36 @@
 
 #include "minishell.h"
 
-// int	main(void)
-// {
-// 	int	pipe_fd[2];
-// 	int	pid;
+int	pipex(char **input, char **envp)
+{
+	int	pipefd[2];
+	int	child1;
+	int	child2;
 
-// 	printf("Parent Process starts\n");
-// 	if (pipe(pipe_fd) == -1)
-// 		perror("pipe");
-// 	pid = fork();
-// 	if (pid == -1)
-// 		perror("fork error");
-// 	if (pid > 0)
-// 		printf("Child Process starts\n");
-// }
-
-int main() {
-    pid_t childPID;
-
-    childPID = fork();
-
-    if (childPID == -1) {
-        printf("Fork failed!\n");
-        return 1;
-    }
-
-    if (childPID == 0) {
-        printf("Child process: PID=%d\n", getpid());
-        // Child process code here
-    } else {
-        printf("Parent process: PID=%d, Child PID=%d\n", getpid(), childPID);
-        // Parent process code here
-    }
-
-    return 0;
+	if (pipe(pipefd) == -1)
+		perror("pipe");
+	child1 = fork();
+	if (child1 == -1)
+		perror("fork");
+	if (child1 == 0)
+	{
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[1]);
+		close(pipefd[0]);
+		execlp("ls", "ls", NULL);
+	}
+	child2 = fork();
+	if (child2 == -1)
+		perror("fork");
+	if (child2 == 0)
+	{
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		execlp("grep", "grep", "mini", NULL);
+	}
+	close(pipefd[0]);
+	close(pipefd[1]);
+	waitpid(child2, NULL, 0);
+	waitpid(child1, NULL, 0);
 }

@@ -40,60 +40,68 @@ void	call_run(char **input, char **envp)
 			waitpid(pid, NULL, 0);
 			return ;
 		}
-
 	}
+	else
+		printf("Enter a valid command.\n");
 }
 
-void	cmd(char **input, char *cwd, char **envp)
+int	cmd(char **input, char *cwd, char **envp)
 {
 	if (input[0])
 	{
-		if (ft_strncmp(input[0], "echo", 4) == 0)
+		if (ft_strncmp(input[0], "echo\0", 5) == 0)
 			call_echo(input);
-		else if (ft_strncmp(input[0], "cd", 2) == 0)
+		else if (ft_strncmp(input[0], "cd\0", 3) == 0)
 			call_cd(input, cwd);
-		else if (ft_strncmp(input[0], "pwd", 3) == 0)
+		else if (ft_strncmp(input[0], "pwd\0", 4) == 0)
 			printf("%s\n", cwd);
-		else if (ft_strncmp(input[0], "export", 6) == 0)
+		else if (ft_strncmp(input[0], "export\0", 7) == 0)
 			call_export(input, envp);
-		else if (ft_strncmp(input[0], "unset", 5) == 0)
+		else if (ft_strncmp(input[0], "unset\0", 6) == 0)
 			call_unset(input, envp);
-		else if ((ft_strncmp(input[0], "env", 3) == 0))
+		else if ((ft_strncmp(input[0], "env\0", 4) == 0))
 			call_env(envp);
-		else if (ft_strncmp(input[0], "exit", 4) == 0)
+		else if (ft_strncmp(input[0], "exit\0", 5) == 0)
 			myexit(0);
-		else if (ft_strncmp(input[0], "./", 2) == 0)
+		else if (ft_strncmp(input[0], "./", 2) == 0
+			|| ft_strncmp(input[0], "/", 1) == 0)
 			call_run(input, envp);
-		else
-			executable(input, envp);
+		else if (executable(input, envp))
+		{
+			printf("Enter a valid command.\n");
+			return (1);
+		}
 	}
+	return (0);
 }
 
-void	executable(char **input, char **envp)
+int	executable(char **input, char **envp)
 {
 	pid_t	pid;
 	char	**paths;
 	char	*current_path;
 	int		i;
 
-	paths = ft_split(getenv("PATH"), ':');
-	i = 0;
-	while (paths[i++])
+	i = -1;
+	paths = NULL;
+	while (envp[++i])
+		if (envp[i] && !ft_strncmp(envp[i], "PATH=", 5))
+			paths = ft_split(ft_strtrim(envp[i], "PATH="), ':');
+	i = -1;
+	while (paths && paths[++i])
 	{
 		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), input[0]);
 		if (access(current_path, F_OK) == 0)
 		{
 			pid = fork();
 			if (pid == 0)
-			{
-				// printf("%s\n", current_path);
 				execve(current_path, input, envp);
-			}
 			else if (pid > 0)
 			{
 				waitpid(pid, NULL, 0);
-				break ;
+				return (0);
 			}
 		}
 	}
+	return (1);
 }

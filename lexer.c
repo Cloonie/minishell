@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 15:31:58 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/30 23:43:49 by mliew            ###   ########.fr       */
+/*   Updated: 2023/06/05 16:45:30 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,42 +16,17 @@
 #include <string.h>
 #include <ctype.h>
 
-enum {
-	TOK_SPACE,
-	TOK_BACKSLASH,
-	TOK_SEMICOLON,
-	TOK_SINGLEQ,
-	TOK_DOUBLEQ,
-	TOK_DOLLAR,
-	TOK_REDIRECT_LEFT,
-	TOK_REDIRECT_RIGHT,
-	TOK_APPEND_LEFT,
-	TOK_APPEND_RIGHT,
-	TOK_PIPE,
-	TOK_EOF,
-};
-
-int	ft_strlen(const char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-static int	count_words(char const *s, char c)
+static int	count_words(char const *s)
 {
 	int		words;
 
 	words = 0;
 	while (*s)
 	{
-		if (*s != c)
+		if (*s != ' ')
 		{
 			++words;
-			while (*s && *s != c)
+			while (*s && *s != ' ')
 				++s;
 		}
 		else
@@ -67,61 +42,135 @@ static char	*word_dup(const char *str, int start, int finish)
 
 	i = 0;
 	word = malloc((finish - start + 1) * sizeof(char));
+	// if (str[start] == '\"' && str[finish - 1] == '\"')
+	// 	finish--;
+	// if (str[start] == '\'' && str[finish - 1] == '\'')
+	// 	finish--;
 	while (start < finish)
+	{
+		// while (str[start] == '\"')
+		// 	start++;
+		// while (str[start] == '\'')
+		// 	start++;
 		word[i++] = str[start++];
+	}
 	word[i] = '\0';
 	return (word);
 }
 
-int	is_special_char(char c)
-{
-	return (c == ' ' || c == '>' || c == '<'
-		|| c == '\'' || c == '\"' || c == '$');
-}
-
 static void	split_words(char **array, const char *s)
 {
-	int		i;
-	int		j;
-	int		k;
+	int		i; // string index
+	int		j; // array index
+	int		k; // start index
+	int		q;
 
 	i = 0;
 	j = 0;
 	k = -1;
+	q = -1;
 	while (i <= ft_strlen(s))
 	{
-		if (!is_special_char(s[i]) && k < 0)
-			k = i;
-		else if ((is_special_char(s[i]) || i == ft_strlen(s)) && k >= 0)
+		if ((s[i] != ' ') && k < 0 && q < 0)
 		{
-			if (s[i] == ' ')
+			if (s[i] == '\"' || s[i] == '\'')
+				q = i;
+			else
+				k = i;
+		}
+		else if ((!s[i] || s[i] == ' ') && k >= 0)
+		{
+			printf("dup space\n");
 			array[j++] = word_dup(s, k, i);
 			k = -1;
+		}
+		else if ((!s[i] || s[i] == '\"' || s[i] == '\'') && q >= 0)
+		{
+			printf("dup quote\n");
+			if ((s[i] == '\"' || s[i] == '\''))
+				while (s[i] && (s[i + 1] != '\"' || s[i + 1] != '\"'))
+					i++;
+			array[j++] = word_dup(s, q, i);
+			q = -1;
 		}
 		i++;
 	}
 	array[j] = 0;
 }
 
-char	**lexer(char const *s, char c)
+char	**check_dollar(char **array, char **envp)
+{
+	int		i;
+	int		j;
+	char	*str;
+	char	*var;
+
+	i = -1;
+	while (array[++i])
+	{
+		j = -1;
+		var = &array[i][1];
+		while (array[i][0] == '$' && envp[++j] && array[i][1])
+		{
+			str = ft_substr(envp[j], 0, ft_strpos(envp[j], "="));
+			if (ft_strncmp(str, var, ft_strlen(var) + 1) == 0)
+				array[i] = ft_strchr(envp[j], '=') + 1;
+			else if (!envp[j + 1])
+				array[i] = "";
+		}
+	}
+	return (array);
+}
+
+int	check_quotes(char *s)
+{
+	int	i;
+	int	j;
+	int	d_quote;
+	int	s_quote;
+
+	i = 0;
+	d_quote = 0;
+	s_quote = 0;
+	while (s[i])
+	{
+		if (s[i] == '\"')
+			d_quote++;
+		if (s[i] == '\'')
+			s_quote++;
+		if (s[i] == '\"' || s[i] == '\'')
+		{
+			j = i - 1;
+			while (s[++j])
+				s[j] = s[j + 1];
+		}
+		else
+			i++;
+	}
+	if ((d_quote % 2) != 0 || (s_quote % 2) != 0)
+	{
+		printf("Error quotes are not closed.\n");
+		return (1);
+	}
+	return (0);
+}
+
+char	**lexer(char *s)
 {
 	char	**array;
 
 	if (!s)
 		return (NULL);
-	array = malloc((count_words(s, c) + 1) * sizeof(char *));
+	array = malloc((count_words(s) + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);
+	// if (check_quotes(s))
+	// {
+	// 	free(array);
+	// 	return (array);
+	// }
 	split_words(array, s);
-	return (array);
-}
-
-int	main()
-{
-	char	**array;
-
-	array = lexer("HELLO how aRe you?", ' ');
 	for (int i = 0; array[i]; i++)
-		printf("%s\n", array[i]);
-	// printf("%d\n", is_special_char('\"'));
+		printf("array[%d]: %s\n", i , array[i]);
+	return (array);
 }

@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/19 15:46:54 by mliew            ###   ########.fr       */
+/*   Updated: 2023/06/05 15:36:28 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,25 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <dirent.h>
 # include <sys/stat.h>
-# include <string.h>
 
 # include "libft/includes/libft.h"
 # include "libft/includes/ft_printf.h"
 # include "libft/includes/get_next_line_bonus.h"
 
-// # define Ctrl(x) ((x) & 0x1f)
-
 // main
-char	**get_input(char *cwd);
+char	**get_input(char *cwd, char **envp);
 
 // utils
 void	sigint_handler(int sig);
 void	myexit(int status);
+int		tokenize(char *str);
 
 // build_ins
 void	call_echo(char **input);
@@ -46,10 +45,13 @@ void	call_export(char **input, char **envp);
 void	export2(char **input, char **envp);
 
 // executable
-void	cmd(char **input, char *cwd, char **ev);
-void	executable(char **input, char **ev);
+int		cmd(char **input, char *cwd, char **ev);
+int		executable(char **input, char **ev);
 
 // lexer
+char	**check_dollar(char **array, char **envp);
+int		check_quotes(char *s);
+char	**lexer(char *s);
 
 // pipex
 

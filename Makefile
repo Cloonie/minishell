@@ -30,6 +30,7 @@ FILES		=	main		\
 				utils		\
 				build_ins	\
 				executable	\
+				lexer		\
 
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
