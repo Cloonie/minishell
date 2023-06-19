@@ -41,7 +41,8 @@ char **get_input(char *cwd, char **envp)
 	ft_strtrim(input, " ");
 	add_history(input);
 	av = lexer(input);
-	av = check_dollar(av, envp);
+	remove_quotes(av);
+	check_dollar(av, envp);
 	// list = array2list(av);
 	return (av);
 }

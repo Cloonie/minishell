@@ -50,7 +50,7 @@ int		executable(char **input, char **ev);
 
 // lexer
 char	**check_dollar(char **array, char **envp);
-int		check_quotes(char *s);
+void		remove_quotes(char **array);
 char	**lexer(char *s);
 
 // pipex
