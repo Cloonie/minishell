@@ -42,18 +42,9 @@ static char	*word_dup(const char *str, int start, int finish)
 
 	i = 0;
 	word = malloc((finish - start + 1) * sizeof(char));
-	// if (str[start] == '\"' && str[finish - 1] == '\"')
-	// 	finish--;
-	// if (str[start] == '\'' && str[finish - 1] == '\'')
-	// 	finish--;
+
 	while (start < finish)
-	{
-		// while (str[start] == '\"')
-		// 	start++;
-		// while (str[start] == '\'')
-		// 	start++;
 		word[i++] = str[start++];
-	}
 	word[i] = '\0';
 	return (word);
 }
@@ -76,7 +67,7 @@ static void	split_words(char **array, const char *s)
 			array[j++] = word_dup(s, k, i);
 			k = -1;
 		}
-		if ((s[i] == '\"'))
+		if (s[i] == '\"')
 			while (s[++i] && s[i] != '\"')
 				;
 		else if (s[i] == '\'')
@@ -169,10 +160,9 @@ char	**lexer(char *s)
 	array = malloc((count_words(s) + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);
-	if (check_quotes(s))
-		myexit(1);
+	check_quotes(s);
 	split_words(array, s);
-	for (int i = 0; array[i]; i++)
-		printf("array[%d]: [%s]\n", i , array[i]);
+	// for (int i = 0; array[i]; i++)
+	// 	printf("array[%d]: [%s]\n", i , array[i]);
 	return (array);
 }

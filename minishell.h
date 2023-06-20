@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -29,30 +28,62 @@
 # include "libft/includes/ft_printf.h"
 # include "libft/includes/get_next_line_bonus.h"
 
+typedef struct s_minishell
+{
+	char	**input;
+	int		*token;
+	// char	**commands;
+	// char	**operators;
+}	t_minishell;
+
+t_minishell	*g_ms;
+
+enum {
+	TOK_EOF,
+	TOK_CMD,
+	TOK_ARG,
+	TOK_BACKSLASH,
+	TOK_SEMICOLON,
+	TOK_SINGLEQ,
+	TOK_DOUBLEQ,
+	TOK_DOLLAR,
+	TOK_SINGLE_LEFT,
+	TOK_SINGLE_RIGHT,
+	TOK_DOUBLE_LEFT,
+	TOK_DOUBLE_RIGHT,
+	TOK_PIPE,
+};
+
 // main
-char	**get_input(char *cwd, char **envp);
+char		**get_input(char *cwd, char **envp);
 
 // utils
-void	sigint_handler(int sig);
-void	myexit(int status);
-int		tokenize(char *str);
+void		sigint_handler(int sig);
+void		myexit(int status);
 
 // build_ins
-void	call_echo(char **input);
-void	call_cd(char **input, char *cwd);
-void	call_unset(char **input, char **envp);
-void	call_export(char **input, char **envp);
-void	export2(char **input, char **envp);
+void		call_echo(char **input);
+void		call_cd(char **input, char *cwd);
+void		call_unset(char **input, char **envp);
+void		call_export(char **input, char **envp);
+void		export2(char **input, char **envp);
 
 // executable
-int		cmd(char **input, char *cwd, char **ev);
-int		executable(char **input, char **ev);
+void		call_env(char **envp);
+void		call_run(char **input, char **envp);
+int			cmd(char **input, char *cwd, char **ev);
+int			executable(char **input, char **ev);
 
 // lexer
-char	**check_dollar(char **array, char **envp);
+// static int	count_words(char const *s);
+// static char	*word_dup(const char *str, int start, int finish);
+// static void	split_words(char **array, const char *s);
+char		**check_dollar(char **array, char **envp);
 void		remove_quotes(char **array);
-char	**lexer(char *s);
+int			check_quotes(char *s);
+char		**lexer(char *s);
 
 // pipex
+int			pipex(char **input, char **envp);
 
 #endif
