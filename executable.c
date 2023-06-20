@@ -96,4 +96,5 @@ void	executable(char **input, char **envp)
 		}
 		i++;
 	}
+	perror("execve");
 }
