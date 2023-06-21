@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	get_token(char **input)
+void	get_token(t_minishell *ms)
 {
 	int			i;
 	int			j;
@@ -20,24 +20,24 @@ void	get_token(char **input)
 
 	operators = "\"\'><$|";
 	i = 0;
-	while (input[i])
+	while (ms->input[i])
 	{
 		j = 0;
-		while (input[i][j])
+		while (ms->input[i][j])
 		{
-			if (ft_strchr(operators, input[i][j]) != NULL)
+			if (ft_strchr(operators, ms->input[i][j]) != NULL)
 			{
-				if (input[i][j] == '\"')
+				if (ms->input[i][0] == '\"' && ms->input[i][ft_strlen(ms->input[i]) - 1] == '\"')
 					printf("DOUBLEQUOTE\n");
-				else if (input[i][j] == '\'')
+				else if (ms->input[i][0] == '\'' && ms->input[i][ft_strlen(ms->input[i]) - 1] == '\'')
 					printf("SINGLEQUOTE\n");
-				else if (input[i][j] == '<')
+				else if (ms->input[i][j] == '<')
 					printf("LEFTARROW\n");
-				else if (input[i][j] == '>')
+				else if (ms->input[i][j] == '>')
 					printf("RIGHTARROW\n");
-				else if (input[i][j] == '$')
+				else if (ms->input[i][j] == '$')
 					printf("DOLLAR\n");
-				else if (input[i][j] == '|')
+				else if (ms->input[i][j] == '|')
 					printf("PIPE\n");
 			}
 			j++;
@@ -46,10 +46,9 @@ void	get_token(char **input)
 	}
 }
 
-char	**get_input(char *cwd, char **envp)
+char	**get_input(t_minishell *ms, char *cwd, char **envp)
 {
 	char	*line;
-	char	**input;
 
 	line = readline(ft_strjoin(ft_strjoin
 				("\033[38;5;39m[minishell] \033[4;36m", cwd),
@@ -58,18 +57,19 @@ char	**get_input(char *cwd, char **envp)
 		exit(0);
 	ft_strtrim(line, " ");
 	add_history(line);
-	input = lexer(line);
-	get_token(input);
-	remove_quotes(input);
-	check_dollar(input, envp);
-	return (input);
+	ms->input = lexer(line);
+	// get_token(ms);
+	remove_quotes(ms->input);
+	check_dollar(ms->input, envp);
+	return (ms->input);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	cwd[1024];
+	t_minishell	*ms;
+	char		cwd[1024];
 
-	g_ms = malloc(sizeof(t_minishell));
+	ms = malloc(sizeof(t_minishell));
 	if (!argv[0] || argc != 1)
 		myexit(1);
 	signal(SIGINT, sigint_handler);
@@ -77,8 +77,8 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		getcwd(cwd, sizeof(cwd));
-		g_ms->input = get_input(cwd, envp);
-		cmd(g_ms->input, cwd, envp);
+		ms->input = get_input(ms, cwd, envp);
+		cmd(ms->input, cwd, envp);
 		// printf("VAR: %s TOKEN: %d QUOTED: %d\n", list->var, list->token, list->quoted);
 		// printf("%s", list->var);
 	}

@@ -36,8 +36,6 @@ typedef struct s_minishell
 	// char	**operators;
 }	t_minishell;
 
-t_minishell	*g_ms;
-
 enum {
 	TOK_EOF,
 	TOK_CMD,
@@ -55,7 +53,7 @@ enum {
 };
 
 // main
-char		**get_input(char *cwd, char **envp);
+char		**get_input(t_minishell *ms, char *cwd, char **envp);
 
 // utils
 void		sigint_handler(int sig);

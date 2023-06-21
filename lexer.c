@@ -18,15 +18,17 @@
 
 static int	count_words(char const *s)
 {
-	int		words;
+	int			words;
+	const char	*operators;
 
+	operators = "\"\'><$|";
 	words = 0;
 	while (*s)
 	{
-		if (*s != ' ')
+		if (*s != ' ' || ft_strchr(operators, *s))
 		{
 			++words;
-			while (*s && *s != ' ')
+			while (*s && (*s != ' ' || ft_strchr(operators, *s)))
 				++s;
 		}
 		else
@@ -41,9 +43,9 @@ static char	*word_dup(const char *str, int start, int finish)
 	int		i;
 
 	i = 0;
-	word = malloc((finish - start + 1) * sizeof(char));
+	word = malloc((finish - start + 2) * sizeof(char));
 
-	while (start < finish)
+	while (start <= finish)
 		word[i++] = str[start++];
 	word[i] = '\0';
 	return (word);
@@ -54,7 +56,9 @@ static void	split_words(char **array, const char *s)
 	int		i; // string index
 	int		j; // array index
 	int		k; // start index
+	const char	*operators;
 
+	operators = "\"\'><$|";
 	i = 0;
 	j = 0;
 	k = -1;
@@ -62,7 +66,7 @@ static void	split_words(char **array, const char *s)
 	{
 		if (s[i] != ' ' && k < 0)
 			k = i;
-		else if ((!s[i] || s[i] == ' ') && k >= 0)
+		else if ((!s[i + 1] || s[i + 1] == ' ' || ft_strchr(operators, s[i + 1])) && k >= 0)
 		{
 			array[j++] = word_dup(s, k, i);
 			k = -1;
@@ -105,24 +109,17 @@ char	**check_dollar(char **array, char **envp)
 void	remove_quotes(char **array)
 {
 	int	i;
-	int	j;
-	int	k;
 
 	i = 0;
+
 	while (array[i])
 	{
-		j = 0;
-		while (array[i][j])
-		{
-			if (array[i][j] == '\"' || array[i][j] == '\'')
-			{
-				k = j - 1;
-				while (array[i][++k])
-					array[i][k] = array[i][k + 1];
-			}
-			else
-				j++;
-		}
+		if (array[i][0] == '\"'
+				&& array[i][ft_strlen(array[i]) - 1] == '\"')
+			array[i] = ft_strtrim(array[i], "\"");
+		else if (array[i][0] == '\''
+				&& array[i][ft_strlen(array[i]) - 1] == '\'')
+			array[i] = ft_strtrim(array[i], "\'");
 		i++;
 	}
 }
@@ -162,7 +159,7 @@ char	**lexer(char *s)
 		return (NULL);
 	check_quotes(s);
 	split_words(array, s);
-	// for (int i = 0; array[i]; i++)
-	// 	printf("array[%d]: [%s]\n", i , array[i]);
+	for (int i = 0; array[i]; i++)
+		printf("array[%d]: [%s]\n", i , array[i]);
 	return (array);
 }
