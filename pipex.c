@@ -22,20 +22,36 @@ void	lastcmd(int *fdout, t_pipe *pipe_vars)
 {
 	if (pipe_vars->argv[pipe_vars->argc - 1])
 	{
-		*fdout = open(pipe_vars->argv[pipe_vars->argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (*fdout == -1)
+		if (pipe_vars->here_doc_flag == 1)
 		{
-			perror("Outfile");
-			exit(1);
+			*fdout = open(pipe_vars->argv[pipe_vars->argc - 1], O_WRONLY | O_APPEND, 0644);
+			if (*fdout == -1)
+			{
+				perror("Outfile");
+				exit(1);
+			}
+		}
+		else
+		{
+			*fdout = open(pipe_vars->argv[pipe_vars->argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (*fdout == -1)
+			{
+				perror("Outfile");
+				exit(1);
+			}
 		}
 	}
 }
 
 void	output_redir(int i, int *fdin, int *fdout, t_pipe *pipe_vars)
 {
-	int fdpipe[2];
+	int	fdpipe[2];
 
-	dup2(*fdin, 0);
+	if (dup2(*fdin, 0) == -1)
+	{
+		perror("dup2");
+		exit(1);
+	}
 	close(*fdin);
 	if (i == (pipe_vars->numcmd - 1))
 		lastcmd(fdout, pipe_vars);
@@ -68,7 +84,12 @@ void	fork_process(t_pipe *pipe_vars, int *fdin, int *fdout)
 		else if (child == 0)
 		{
 			if (pipe_vars->here_doc_flag == 1)
-				executable(&pipe_vars->argv[i + 3], pipe_vars->envp);
+			{
+				if (i == 0)
+					executable(&pipe_vars->argv[i + 3], pipe_vars->envp);
+				else
+					executable(&pipe_vars->argv[i + 3], pipe_vars->envp);
+			}
 			else
 				executable(&pipe_vars->argv[i + 2], pipe_vars->envp);
 			exit(0);
@@ -77,40 +98,36 @@ void	fork_process(t_pipe *pipe_vars, int *fdin, int *fdout)
 	}
 }
 
-void	input_redir(char **argv, int *fdin, t_pipe *pipe_vars)
+void	first_input_redir(char **argv, int *fdin, t_pipe *pipe_vars)
 {
-	int		tmp;
 	char	*input;
 	
-	input = NULL;
 	(void)pipe_vars;
 
 	if (ft_strncmp(pipe_vars->argv[1], "here_doc", 9) == 0)
 	{
 		pipe_vars->here_doc_flag = 1;
 		pipe_vars->numcmd -= 1;
-		tmp = open("here_doc", O_WRONLY | O_CREAT, 0644);
-		if (tmp == -1)
+		pipe_vars->tmp = open("here_doc", O_WRONLY | O_CREAT, 0644);
+		if (pipe_vars->tmp == -1)
 		{
 			perror("here_doc");
 			exit(1);
 		}
 		while ((input = readline("> ")) != NULL)
 		{
-			if ((ft_strncmp(input, pipe_vars->argv[2], ft_strlen(pipe_vars->argv[2])) == 0))
+			if ((ft_strncmp(input, pipe_vars->argv[2], ft_strlen(pipe_vars->argv[2]) + 1) == 0))
 			{
 				free(input);
 				break ;
 			}
-			write(tmp, input, ft_strlen(input));
-			write(tmp, "\n", 1);
+			write(pipe_vars->tmp, input, ft_strlen(input));
+			write(pipe_vars->tmp, "\n", 1);
 			free(input);
 		}
-		close(tmp);
-		tmp = open("here_doc", O_RDONLY);
-		*fdin = tmp;
-		close(tmp);
-		// unlink("here_doc");
+		close(pipe_vars->tmp);
+		*fdin = open("here_doc", O_RDONLY);
+		unlink("here_doc");
 	}
 	else
 	{
@@ -140,7 +157,7 @@ int	main(int argc, char **argv, char **envp)
 	pipe_vars.envp = envp;
 	pipe_vars.here_doc_flag = 0;
 
-	input_redir(argv, &fdin, &pipe_vars);
+	first_input_redir(argv, &fdin, &pipe_vars);
 	fork_process(&pipe_vars, &fdin, &fdout);
 	
 	dup2(pipe_vars.tmpin, 0);

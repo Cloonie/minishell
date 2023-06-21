@@ -75,7 +75,7 @@ void	executable(char **input, char **envp)
 	char	**paths;
 	char	*current_path;
 	int		i;
-	
+
 	input = ft_split(input[0], ' ');
 	paths = ft_split(getenv("PATH"), ':');
 	i = 0;

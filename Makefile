@@ -38,6 +38,7 @@ PIPEX_FILES	=	utils		\
 
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
+SRCS2		=	$(addsuffix .c, $(PIPEX_FILES))
 OBJS2		=	$(addsuffix .o, $(PIPEX_FILES))
 
 all: $(NAME) $(NAME2)

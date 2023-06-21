@@ -6,7 +6,7 @@
 /*   By: kcheong <kcheong@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/06/20 00:29:09 by kcheong          ###   ########.fr       */
+/*   Updated: 2023/06/21 12:05:07 by kcheong          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef	struct	s_pipe {
 	int		here_doc_flag;
 	char	**argv;
 	char	**envp;
+	int		tmp;
 }	t_pipe;
 
 // # define Ctrl(x) ((x) & 0x1f)
