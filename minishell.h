@@ -33,8 +33,7 @@ typedef struct s_minishell
 	char	**input;
 	int		*token;
 	char	**envp;
-	// char	**commands;
-	// char	**operators;
+	char	cwd[1024];
 }	t_minishell;
 
 enum {
@@ -49,7 +48,7 @@ enum {
 };
 
 // main
-char		**get_input(t_minishell *ms, char *cwd, char **envp);
+char		**get_input(t_minishell *ms);
 
 // utils
 void		sigint_handler(int sig);

@@ -41,29 +41,24 @@ void	get_token(t_minishell *ms)
 	}
 }
 
-char	**get_input(t_minishell *ms, char *cwd, char **envp)
+char	**get_input(t_minishell *ms)
 {
 	char	*line;
 
 	line = readline(ft_strjoin(ft_strjoin
-				("\033[38;5;39m[minishell] \033[4;36m", cwd),
+				("\033[38;5;39m[minishell] \033[4;36m", ms->cwd),
 				"\033[0;36m> \033[0m"));
 	if (line == NULL)
 		exit(0);
 	ft_strtrim(line, " ");
 	add_history(line);
 	ms->input = lexer(line);
-	get_token(ms);
-	// remove_quotes(ms->input);
-	// check_dollar(ms->input, envp);
-	(void)envp;
 	return (ms->input);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*ms;
-	char		cwd[1024];
 
 	ms = malloc(sizeof(t_minishell));
 	ms->envp = envp;
@@ -73,10 +68,13 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
-		getcwd(cwd, sizeof(cwd));
-		ms->input = get_input(ms, cwd, envp);
+		getcwd(ms->cwd, sizeof(ms->cwd));
+		ms->input = get_input(ms);
+		get_token(ms);
+		// remove_quotes(ms->input);
+		// check_dollar(ms->input, ms->envp);
+		// cmd(ms->input, ms->cwd, ms->envp);
 		for (int i = 0; ms->input[i]; i++)
 			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		// cmd(ms->input, cwd, envp);
 	}
 }

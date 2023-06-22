@@ -51,13 +51,13 @@ static char	*word_dup(const char *str, int start, int finish)
 
 static void	split_words(char **array, const char *s)
 {
-	int		i; // string index
-	int		j; // array index
-	int		k; // start index
+	int			i;
+	int			j;
+	int			k;
 	const char	*operators;
-	char temp[2];
+	char		temp[2];
 
-	operators = "\"\'><$|";
+	operators = "><$|";
 	i = 0;
 	j = 0;
 	k = -1;
@@ -71,7 +71,7 @@ static void	split_words(char **array, const char *s)
 			array[j++] = word_dup(s, k, i);
 			k = -1;
 		}
-		else if (ft_strchr(operators, s[i]) && k >= 0)
+		else if ((s[i] == '\'' || s[i] == '\"' || ft_strchr(operators, s[i])) && k >= 0)
 		{
 			array[j++] = word_dup(s, k, --i);
 			if (ft_strchr(operators, s[++i]) && s[i] != '$')
