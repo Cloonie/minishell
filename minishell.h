@@ -76,10 +76,12 @@ int			executable(char **input, char **ev);
 // static int	count_words(char const *s);
 // static char	*word_dup(const char *str, int start, int finish);
 // static void	split_words(char **array, const char *s);
-char		**check_dollar(char **array, char **envp);
 void		remove_quotes(char **array);
-int			check_quotes(char *s);
 char		**lexer(char *s);
+
+// parser 
+char		**check_dollar(char **array, char **envp);
+int			check_quotes(char *s);
 
 // pipex
 int			pipex(char **input, char **envp);

@@ -23,7 +23,6 @@ void	sigint_handler(int sig)
 
 void	myexit(int status)
 {
-
 	if (status == EXIT_SUCCESS)
 		printf("EXIT_SUCCESS\n");
 	else if (status == EXIT_FAILURE)
