@@ -118,6 +118,17 @@ t_token	*lexer(char *input)
 				strcat(tok_quote->value, token);
 			}
 		}
+		else if (token[0] == '\'')
+		{
+			t_token	*tok_quote = create_token(SINGLEQ, token);
+			append_token(&head, tok_quote);
+			while (token[strlen(token) - 1] != '\'')
+			{
+				token = strtok(NULL, " ");
+				strcat(tok_quote->value, " ");
+				strcat(tok_quote->value, token);
+			}
+		}
 		else if (token[0] == '$')
 		{
 			t_token	*tok_dollar = create_token(DOLLAR, token);
@@ -136,7 +147,7 @@ t_token	*lexer(char *input)
 int	main()
 {
 	t_token	*token_list;
-	char str[43] = "echo$HOME";
+	char str[100] = "echo \"hi\" \'hi\'\'guys\'\'$USER\'";
 	token_list = lexer(str);
 	print_token(token_list);
 }

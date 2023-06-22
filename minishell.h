@@ -6,7 +6,7 @@
 /*   By: kcheong <kcheong@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:36:33 by mliew             #+#    #+#             */
-/*   Updated: 2023/06/21 12:05:07 by kcheong          ###   ########.fr       */
+/*   Updated: 2023/06/22 12:47:00 by kcheong          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # include "libft/includes/ft_printf.h"
 # include "libft/includes/get_next_line_bonus.h"
 
-typedef	struct	s_pipe {
+typedef	struct s_pipe {
 	int		numcmd;
 	int		tmpin;
 	int		tmpout;
@@ -64,5 +64,10 @@ void	executable(char **input, char **ev);
 // lexer
 
 // pipex
+void	fork_process(t_pipe *pipe_vars, int *fdin, int *fdout);
+void	run_child(t_pipe *pipe_vars, int i);
+void	redir(int i, int *fdin, int *fdout, t_pipe *pipe_vars);
+void	lastcmd(int *fdout, t_pipe *pipe_vars);
+void	parent_wait(t_pipe *pipe_vars);
 
 #endif

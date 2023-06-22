@@ -35,6 +35,7 @@ PIPEX_FILES	=	utils		\
 				build_ins	\
 				executable	\
 				pipex		\
+				pipex_main	\
 
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
