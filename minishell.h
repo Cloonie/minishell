@@ -32,6 +32,7 @@ typedef struct s_minishell
 {
 	char	**input;
 	int		*token;
+	char	**envp;
 	// char	**commands;
 	// char	**operators;
 }	t_minishell;
@@ -40,16 +41,11 @@ enum {
 	TOK_EOF,
 	TOK_CMD,
 	TOK_ARG,
-	TOK_BACKSLASH,
-	TOK_SEMICOLON,
-	TOK_SINGLEQ,
-	TOK_DOUBLEQ,
-	TOK_DOLLAR,
-	TOK_SINGLE_LEFT,
-	TOK_SINGLE_RIGHT,
-	TOK_DOUBLE_LEFT,
-	TOK_DOUBLE_RIGHT,
+	TOK_REDIRECT,
 	TOK_PIPE,
+	TOK_DOLLAR,
+	TOK_QUOTE,
+	TOK_ESCAPE,
 };
 
 // main
