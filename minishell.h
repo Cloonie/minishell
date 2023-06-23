@@ -74,7 +74,8 @@ int			executable(char **input, char **ev);
 void		remove_quotes(char **array);
 char		**lexer(char *s);
 
-// parser 
+// parser
+void		check_spaces(t_minishell *ms);
 char		**check_dollar(char **array, char **envp);
 int			check_quotes(char *s);
 

@@ -70,7 +70,7 @@ static void	split_words(char **array, const char *s)
 			array[j++] = word_dup(s, k, i);
 			k = -1;
 		}
-		else if ((s[i] == '\'' || s[i] == '\"'
+		else if ((s[i - 1] == '\'' || s[i - 1] == '\"'
 				|| ft_strchr(operators, s[i])) && k >= 0)
 		{
 			array[j++] = word_dup(s, k, --i);

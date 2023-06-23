@@ -12,10 +12,27 @@
 
 #include "minishell.h"
 
+// void	check_valid_cmd(t_minishell *ms)
+// {
+// 	if (input[0])
+// 	{
+// 		if (ft_strncmp(input[0], "echo\0", 5) == 0
+// 			|| ft_strncmp(input[0], "cd\0", 3) == 0
+// 			|| ft_strncmp(input[0], "pwd\0", 4) == 0
+// 			|| ft_strncmp(input[0], "export\0", 7) == 0
+// 			|| ft_strncmp(input[0], "unset\0", 6) == 0
+// 			|| ft_strncmp(input[0], "env\0", 4) == 0
+// 			|| ft_strncmp(input[0], "exit\0", 5) == 0
+// 			|| ft_strncmp(input[0], "./", 2) == 0
+// 			|| ft_strncmp(input[0], "/", 1) == 0
+// 			|| executable(input, envp))
+// 	}
+// }
+
 void	get_token(t_minishell *ms)
 {
 	int			i;
-	int			j;
+	// int			j;
 	const char	*operators;
 
 	operators = "\"\'><$|;\\";
@@ -23,7 +40,6 @@ void	get_token(t_minishell *ms)
 	ms->token = malloc(100);
 	while (ms->input[i] && ms->input[i][0])
 	{
-		j = 0;
 		if (ft_strchr(operators, ms->input[i][0]) != NULL)
 		{
 			if (ms->input[i][0] == '\"' || ms->input[i][0] == '\'')
@@ -71,6 +87,7 @@ int	main(int argc, char **argv, char **envp)
 		getcwd(ms->cwd, sizeof(ms->cwd));
 		ms->input = get_input(ms);
 		get_token(ms);
+		// check_spaces(ms);
 		// remove_quotes(ms->input);
 		// check_dollar(ms->input, ms->envp);
 		// cmd(ms->input, ms->cwd, ms->envp);
