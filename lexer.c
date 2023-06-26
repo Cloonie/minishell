@@ -102,7 +102,7 @@ static void	split_words(char **array, const char *s)
 	int			k;
 	const char	*operators;
 
-	operators = " ><$|";
+	operators = " ><|";
 	i = 0;
 	j = 0;
 	k = -1;
@@ -118,9 +118,10 @@ static void	split_words(char **array, const char *s)
 				while (s[++i] && s[i] != '\'')
 					;
 			else
-				while (!ft_strchr(operators, s[i + 1]))
+				while (!ft_strchr(operators, s[i + 1])
+					&& s[i + 1] != '\"' && s[i + 1] != '\"')
 					i++;
-			if (ft_strchr(operators, s[k]) && s[k] != '$')
+			if (ft_strchr(operators, s[k]))
 			{
 				if (s[k] != ' ')
 				{
