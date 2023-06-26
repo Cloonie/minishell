@@ -49,47 +49,95 @@ static char	*word_dup(const char *str, int start, int finish)
 	return (word);
 }
 
+// static void	split_words(char **array, const char *s)
+// {
+// 	int			i;
+// 	int			j;
+// 	int			k;
+// 	const char	*operators;
+// 	char		temp[2];
+
+// 	operators = "><$|";
+// 	i = 0;
+// 	j = 0;
+// 	k = -1;
+// 	while (i <= ft_strlen(s))
+// 	{
+// 		if (s[i] != ' ' && k < 0)
+// 			k = i;
+// 		else if ((!s[i] || s[i] == ' ') && k >= 0)
+// 		{
+// 			array[j++] = word_dup(s, k, i);
+// 			k = -1;
+// 		}
+// 		else if ((s[i - 1] == '\'' || s[i - 1] == '\"'
+// 				|| ft_strchr(operators, s[i])) && k >= 0)
+// 		{
+// 			array[j++] = word_dup(s, k, --i);
+// 			if (ft_strchr(operators, s[++i]) && s[i] != '$')
+// 			{
+// 				temp[0] = s[i];
+// 				temp[1] = '\0';
+// 				array[j++] = ft_strdup(temp);
+// 			}
+// 			else
+// 				i--;
+// 			k = -1;
+// 		}
+// 		if (s[i] == '\"' && k >= 0)
+// 			while (s[++i] && s[i] != '\"')
+// 				;
+// 		else if (s[i] == '\'' && k >= 0)
+// 			while (s[++i] && s[i] != '\'')
+// 				;
+// 		i++;
+// 	}
+// 	array[j] = 0;
+// }
+
 static void	split_words(char **array, const char *s)
 {
 	int			i;
 	int			j;
 	int			k;
 	const char	*operators;
-	char		temp[2];
 
-	operators = "><$|";
+	operators = " ><$|";
 	i = 0;
 	j = 0;
 	k = -1;
-	while (i <= ft_strlen(s))
+	while (s[i])
 	{
-		if (s[i] != ' ' && k < 0)
-			k = i;
-		else if ((!s[i] || s[i] == ' ') && k >= 0)
+		k = i;
+		if (s[i] != ' ')
 		{
-			array[j++] = word_dup(s, k, i);
-			k = -1;
-		}
-		else if ((s[i - 1] == '\'' || s[i - 1] == '\"'
-				|| ft_strchr(operators, s[i])) && k >= 0)
-		{
-			array[j++] = word_dup(s, k, --i);
-			if (ft_strchr(operators, s[++i]) && s[i] != '$')
-			{
-				temp[0] = s[i];
-				temp[1] = '\0';
-				array[j++] = ft_strdup(temp);
-			}
+			if (s[i] == '\"')
+				while (s[++i] && s[i] != '\"')
+					;
+			else if (s[i] == '\'')
+				while (s[++i] && s[i] != '\'')
+					;
 			else
-				i--;
-			k = -1;
+				while (!ft_strchr(operators, s[i + 1]))
+					i++;
+			if (ft_strchr(operators, s[k]) && s[k] != '$')
+			{
+				if (s[k] != ' ')
+				{
+					if ((s[k] == '>' && s[k + 1] == '>')
+						|| (s[k] == '<' && s[k + 1] == '<'))
+					{
+						array[j++] = word_dup(s, k, k + 1);
+						i++;
+					}
+					else
+						array[j++] = word_dup(s, k, k);
+				}
+				k++;
+			}
+			if (s[i] != ' ' && k < i)
+				array[j++] = word_dup(s, k, i);
 		}
-		if (s[i] == '\"' && k >= 0)
-			while (s[++i] && s[i] != '\"')
-				;
-		else if (s[i] == '\'' && k >= 0)
-			while (s[++i] && s[i] != '\'')
-				;
 		i++;
 	}
 	array[j] = 0;
