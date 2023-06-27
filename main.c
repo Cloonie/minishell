@@ -87,10 +87,9 @@ int	main(int argc, char **argv, char **envp)
 		getcwd(ms->cwd, sizeof(ms->cwd));
 		ms->input = get_input(ms);
 		get_token(ms);
-		// check_spaces(ms);
-		// remove_quotes(ms->input);
-		// check_dollar(ms->input, ms->envp);
-		// cmd(ms->input, ms->cwd, ms->envp);
+		remove_quotes(ms->input);
+		check_dollar(ms);
+		cmd(ms->input, ms->cwd, ms->envp);
 		for (int i = 0; ms->input[i]; i++)
 			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 	}

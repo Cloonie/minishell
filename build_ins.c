@@ -41,8 +41,8 @@ void	call_echo(char **input)
 	while (input[i])
 	{
 		printf("%s", input[i]);
-		// if (input[i + 1])
-		// 	printf(" ");
+		if (input[i + 1])
+			printf(" ");
 		i++;
 	}
 	if (newline)

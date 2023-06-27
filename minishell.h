@@ -53,6 +53,7 @@ char		**get_input(t_minishell *ms);
 // utils
 void		sigint_handler(int sig);
 void		myexit(int status);
+char		*ft_getenv(t_minishell *ms, char *envvar);
 
 // build_ins
 void		call_echo(char **input);
@@ -71,12 +72,11 @@ int			executable(char **input, char **ev);
 // static int	count_words(char const *s);
 // static char	*word_dup(const char *str, int start, int finish);
 // static void	split_words(char **array, const char *s);
-void		remove_quotes(char **array);
 char		**lexer(char *s);
 
 // parser
-void		check_spaces(t_minishell *ms);
-char		**check_dollar(char **array, char **envp);
+void		remove_quotes(char **array);
+void		check_dollar(t_minishell *ms);
 int			check_quotes(char *s);
 
 // pipex
