@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	executable(char **input, char **envp);
+int     executable(char **input, char **envp);
 
 void	parent_wait(t_pipe *pipe_vars)
 {
@@ -25,7 +25,7 @@ void	lastcmd(int *fdout, t_pipe *pipe_vars)
 		if (pipe_vars->here_doc_flag == 1)
 		{
 			*fdout = open(pipe_vars->argv[pipe_vars->argc - 1],
-					O_WRONLY | O_APPEND, 0644);
+					O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (*fdout == -1)
 			{
 				perror("Outfile");

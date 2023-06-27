@@ -12,48 +12,128 @@
 
 #include "minishell.h"
 
-char	**get_input(char *cwd)
-{
-	char	*input;
-	char	**av;
+// void	check_valid_cmd(t_minishell *ms)
+// {
+// 	if (input[0])
+// 	{
+// 		if (ft_strncmp(input[0], "echo\0", 5) == 0
+// 			|| ft_strncmp(input[0], "cd\0", 3) == 0
+// 			|| ft_strncmp(input[0], "pwd\0", 4) == 0
+// 			|| ft_strncmp(input[0], "export\0", 7) == 0
+// 			|| ft_strncmp(input[0], "unset\0", 6) == 0
+// 			|| ft_strncmp(input[0], "env\0", 4) == 0
+// 			|| ft_strncmp(input[0], "exit\0", 5) == 0
+// 			|| ft_strncmp(input[0], "./", 2) == 0
+// 			|| ft_strncmp(input[0], "/", 1) == 0
+// 			|| executable(input, envp))
+// 	}
+// }
 
-	input = readline(ft_strjoin(ft_strjoin
-				("\033[38;5;39m[minishell] \033[4;36m", cwd),
+int		is_executable(t_minishell *ms, int i)
+{
+	char	**paths;
+	char	*current_path;
+	int		j;
+
+	(void)i;
+	j = -1;
+	paths = NULL;
+	while (ms->envp[++j])
+		if (ms->envp[j] && !ft_strncmp(ms->envp[j], "PATH=", 5))
+			paths = ft_split(ft_strtrim(ms->envp[j], "PATH="), ':');
+	j = -1;
+	while (paths && paths[++j])
+	{
+		current_path = ft_strjoin(ft_strjoin(paths[j], "/"), ms->input[i]);
+		if (access(current_path, F_OK) == 0)
+		{
+			ms->token[i] = TOK_CMD;
+			return (0);
+		}
+	}
+	return (1);
+}
+
+void	get_token(t_minishell *ms)
+{
+	int			i;
+	// int			j;
+	const char	*operators;
+
+	operators = "\"\'><$|;\\";
+	i = 0;
+	ms->token = malloc(100);
+	while (ms->input[i] && ms->input[i][0])
+	{
+		if (ft_strchr(operators, ms->input[i][0]) != NULL)
+		{
+			if (ms->input[i][0] == '\"' || ms->input[i][0] == '\'')
+				ms->token[i] = TOK_QUOTE;
+			else if (ms->input[i][0] == '<' || ms->input[i][0] == '>')
+				ms->token[i] = TOK_REDIRECT;
+			else if (ms->input[i][0] == '$')
+				ms->token[i] = TOK_DOLLAR;
+			else if (ms->input[i][0] == '|')
+				ms->token[i] = TOK_PIPE;
+		}
+		else if ((ft_strncmp(ms->input[i], "echo\0", 5) == 0)
+					|| (ft_strncmp(ms->input[i], "cd\0", 3) == 0)
+					|| (ft_strncmp(ms->input[i], "pwd\0", 4) == 0)
+					|| (ft_strncmp(ms->input[i], "export\0", 7) == 0)
+					|| (ft_strncmp(ms->input[i], "unset\0", 6) == 0)
+					|| (ft_strncmp(ms->input[i], "env\0", 4) == 0)
+					|| (ft_strncmp(ms->input[i], "exit\0", 5) == 0))
+			ms->token[i] = TOK_CMD;
+		else if (is_executable(ms, i))
+			ms->token[i] = TOK_ARG;
+		i++;
+	}
+}
+
+char	**get_input(t_minishell *ms)
+{
+	char	*line;
+
+	line = readline(ft_strjoin(ft_strjoin
+				("\033[38;5;39m[minishell] \033[4;36m", ms->cwd),
 				"\033[0;36m> \033[0m"));
-	if (input == NULL)
+	if (line == NULL)
 		exit(0);
-	ft_strtrim(input, " ");
-	add_history(input);
-	av = ft_split(input, ' ');
-	return (av);
+	ft_strtrim(line, " ");
+	add_history(line);
+	ms->input = lexer(line);
+	return (ms->input);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	**input;
-	char	cwd[1024];
+	t_minishell	*ms;
+	int			i;
 
+	ms = malloc(sizeof(t_minishell));
+	ms->envp = envp;
+	i = 0;
 	if (!argv[0] || argc != 1)
 		myexit(1);
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
-		getcwd(cwd, sizeof(cwd));
-		input = get_input(cwd);
-		cmd(input, cwd, envp);
+		getcwd(ms->cwd, sizeof(ms->cwd));
+		ms->input = get_input(ms);
+		get_token(ms);
+		// check_spaces(ms);
+		// remove_quotes(ms->input);
+		// check_dollar(ms->input, ms->envp);
+		while (ms->input[i])
+		{
+			if (ms->token[i] == TOK_PIPE)
+				handle_pipe(ms);
+			i++;
+		}
+		
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+
 	}
 }
-
-	// t_list	*env;
-
-	// int i = 0;
-	// while (envp[i])
-	// {
-	// 	ft_lstadd_back(&env, ft_lstnew(envp[i++]));
-	// }
-	// while (env)
-	// {
-	// 	printf("%s\n", env->var);
-	// 	env = env->next;
-	// }

@@ -40,48 +40,58 @@ void	call_run(char **input, char **envp)
 			waitpid(pid, NULL, 0);
 			return ;
 		}
-
 	}
+	else
+		printf("Enter a valid command.\n");
 }
 
-void	cmd(char **input, char *cwd, char **envp)
-{
-	if (input[0])
+int	cmd(t_minishell *ms, int i)
+{ 
+	if (ms->input[i])
 	{
-		if (ft_strncmp(input[0], "echo", 4) == 0)
-			call_echo(input);
-		else if (ft_strncmp(input[0], "cd", 2) == 0)
-			call_cd(input, cwd);
-		else if (ft_strncmp(input[0], "pwd", 3) == 0)
-			printf("%s\n", cwd);
-		else if (ft_strncmp(input[0], "export", 6) == 0)
-			call_export(input, envp);
-		else if (ft_strncmp(input[0], "unset", 5) == 0)
-			call_unset(input, envp);
-		else if ((ft_strncmp(input[0], "env", 3) == 0))
-			call_env(envp);
-		else if (ft_strncmp(input[0], "exit", 4) == 0)
+		if (ft_strncmp(ms->input[i], "echo\0", 5) == 0)
+			call_echo(ms->input);
+		else if (ft_strncmp(ms->input[i], "cd\0", 3) == 0)
+			call_cd(ms->input, ms->cwd);
+		else if (ft_strncmp(ms->input[i], "pwd\0", 4) == 0)
+			printf("%s\n", ms->cwd);
+		else if (ft_strncmp(ms->input[i], "export\0", 7) == 0)
+			call_export(ms->input, ms->envp);
+		else if (ft_strncmp(ms->input[i], "unset\0", 6) == 0)
+			call_unset(ms->input, ms->envp);
+		else if ((ft_strncmp(ms->input[i], "env\0", 4) == 0))
+			call_env(ms->envp);
+		else if (ft_strncmp(ms->input[i], "exit\0", 5) == 0)
 			myexit(0);
-		else if (ft_strncmp(input[0], "./", 2) == 0)
-			call_run(input, envp);
-		else
-			executable(input, envp);
+		else if (ft_strncmp(ms->input[i], "./", 2) == 0
+			|| ft_strncmp(ms->input[i], "/", 1) == 0)
+			call_run(ms->input, ms->envp);
+		else if (executable(ms->input, ms->envp, i))
+		{
+			printf("Enter a valid command.\n");
+			return (1);
+		}
 	}
+	return (0);
 }
 
-void	executable(char **input, char **envp)
+int	executable(char **input, char **envp, int j)
 {
 	pid_t	pid;
 	char	**paths;
 	char	*current_path;
 	int		i;
 
-	input = ft_split(input[0], ' ');
-	paths = ft_split(getenv("PATH"), ':');
-	i = 0;
-	while (paths[i] != NULL)
+	i = -1;
+	paths = NULL;
+	while (envp[++i])
+		if (envp[i] && !ft_strncmp(envp[i], "PATH=", 5))
+			paths = ft_split(ft_strtrim(envp[i], "PATH="), ':');
+	i = -1;
+	while (paths && paths[++i])
 	{
-		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), input[0]);
+		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), input[j]);
+		// printf("(%s)\n", current_path);
 		if (access(current_path, F_OK) == 0)
 		{
 			execve(current_path, input, envp);
@@ -91,10 +101,42 @@ void	executable(char **input, char **envp)
 			else if (pid > 0)
 			{
 				waitpid(pid, NULL, 0);
-				break ;
+				return (0);
 			}
 		}
-		i++;
 	}
-	perror("execve");
+	// perror("execve");
+	return (1);
 }
+
+// int		executable(char **input, char **envp)
+// {
+// 	pid_t	pid;
+// 	char	**paths;
+// 	char	*current_path;
+// 	int		i;
+
+// 	input = ft_split(input[0], ' ');
+// 	paths = ft_split(getenv("PATH"), ':');
+// 	i = 0;
+// 	while (paths[i] != NULL)
+// 	{
+// 		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), input[0]);
+// 		if (access(current_path, F_OK) == 0)
+// 		{
+// 			execve(current_path, input, envp);
+// 			pid = fork();
+// 			if (pid == 0)
+// 				execve(current_path, input, envp);
+// 			else if (pid > 0)
+// 			{
+// 				waitpid(pid, NULL, 0);
+// 				break ;
+// 			}
+// 		}
+// 		i++;
+// 	}
+// 	perror("execve");
+// 	return (1);
+// }
+

@@ -30,6 +30,9 @@ FILES		=	main		\
 				utils		\
 				build_ins	\
 				executable	\
+				lexer		\
+				parser		\
+				ms_pipe		\
 
 PIPEX_FILES	=	utils		\
 				build_ins	\
