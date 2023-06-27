@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 16:38:25 by mliew             #+#    #+#             */
-/*   Updated: 2023/06/27 17:02:46 by mliew            ###   ########.fr       */
+/*   Updated: 2023/06/28 00:14:22 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,22 +55,27 @@ void	remove_quotes(char **array)
 
 void	check_dollar(t_minishell *ms)
 {
-	char	*envvar;
+	char	**envvar;
 	int		i;
+	int		j;
 
-	envvar = NULL;
 	i = -1;
 	while (ms->input[++i])
 	{
+		j = -1;
 		if (ft_strchr(ms->input[i], '$'))
 		{
-			envvar = ft_strchr(ms->input[i], '$') + 1;
+			envvar = ft_split(ft_strchr(ms->input[i], '$') + 1, '$');
 			ms->input[i] = ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$"));
-			ms->input[i] = ft_strjoin(ms->input[i], ft_getenv(ms, envvar));
-			// while (ft_strchr(envvar[j], '$'))
-			// {
-			// 	envvar[j + 1] = ft_strchr(envvar[j], '$') + 1;
-			// }
+			while (envvar[++j])
+			{
+				if (ft_getenv(ms, envvar[j]))
+					ms->input[i] = ft_strjoin(ms->input[i], ft_getenv(ms, envvar[j]));
+				if (!ms->input[i])
+					free(ms->input[i]);
+				free(envvar[j]);
+			}
+			free(envvar);
 		}
 	}
 }
