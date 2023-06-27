@@ -16,25 +16,6 @@
 #include <string.h>
 #include <ctype.h>
 
-static int	count_words(char const *s)
-{
-	int			words;
-
-	words = 0;
-	while (*s)
-	{
-		if (*s != ' ')
-		{
-			++words;
-			while (*s && (*s != ' '))
-				++s;
-		}
-		else
-			++s;
-	}
-	return (words);
-}
-
 static char	*word_dup(const char *str, int start, int finish)
 {
 	char	*word;
@@ -83,7 +64,7 @@ static void	split_words(char **array, const char *s)
 						|| (s[k] == '<' && s[k + 1] == '<'))
 					{
 						k++;
-						array[j++] = word_dup(s, k - 1 , k);
+						array[j++] = word_dup(s, k - 1, k);
 						i++;
 					}
 					else
@@ -99,40 +80,26 @@ static void	split_words(char **array, const char *s)
 	array[j] = 0;
 }
 
-int	check_quotes(char *s)
-{
-	int	i;
-	int	d_quote;
-	int	s_quote;
-
-	i = -1;
-	d_quote = 0;
-	s_quote = 0;
-	while (s[++i])
-	{
-		if (s[i] == '\"')
-			d_quote++;
-		if (s[i] == '\'')
-			s_quote++;
-	}
-	if ((d_quote % 2) != 0 || (s_quote % 2) != 0)
-	{
-		printf("Error quotes are not closed.\n");
-		return (1);
-	}
-	return (0);
-}
-
 char	**lexer(char *s)
 {
-	char	**array;
+	char		**array;
+	const char	*operators;
+	int			size;
+	int			i;
 
+	operators = " ><|";
+	size = 0;
+	i = 0;
 	if (!s)
 		return (NULL);
-	array = malloc((count_words(s) + 100) * sizeof(char *));
+	while (s[i++])
+		if (ft_strchr(operators, s[i]))
+			size++;
+	array = malloc((size * 2) * sizeof(char *) + 1);
 	if (!array)
 		return (NULL);
-	check_quotes(s);
+	if (check_quotes(s))
+		return (array);
 	split_words(array, s);
 	return (array);
 }
