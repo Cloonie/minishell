@@ -53,6 +53,22 @@ void	remove_quotes(char **array)
 	}
 }
 
+void	check_emptystr(t_minishell *ms)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (ms->input[++i])
+	{
+		j = i - 1;
+		if (!ft_strncmp(ms->input[i], "", ft_strlen(ms->input[i])))
+			while (ms->input[++j])
+				ms->input[j] = ms->input[j + 1];
+
+	}
+}
+
 void	check_dollar(t_minishell *ms)
 {
 	char	**envvar;
@@ -66,16 +82,17 @@ void	check_dollar(t_minishell *ms)
 		if (ft_strchr(ms->input[i], '$'))
 		{
 			envvar = ft_split(ft_strchr(ms->input[i], '$') + 1, '$');
+			while (envvar[++j])
+				envvar[j] = ft_strtrim(envvar[j], " |><");
+			// for(int x = 0; envvar[x]; x++)
+			// 	printf(" envvar[%d]: [%s]\n", x, envvar[x]);
 			ms->input[i] = ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$"));
+			j = -1;
 			while (envvar[++j])
 			{
 				if (ft_getenv(ms, envvar[j]))
 					ms->input[i] = ft_strjoin(ms->input[i], ft_getenv(ms, envvar[j]));
-				if (!ms->input[i])
-					free(ms->input[i]);
-				free(envvar[j]);
 			}
-			free(envvar);
 		}
 	}
 }

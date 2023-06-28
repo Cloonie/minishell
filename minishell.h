@@ -78,6 +78,7 @@ char		**lexer(char *s);
 void		remove_quotes(char **array);
 void		check_dollar(t_minishell *ms);
 int			check_quotes(char *s);
+void		check_emptystr(t_minishell *ms);
 
 // pipex
 int			pipex(char **input, char **envp);

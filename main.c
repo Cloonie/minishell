@@ -89,6 +89,7 @@ int	main(int argc, char **argv, char **envp)
 		get_token(ms);
 		remove_quotes(ms->input);
 		check_dollar(ms);
+		check_emptystr(ms);
 		cmd(ms->input, ms->cwd, ms->envp);
 		for (int i = 0; ms->input[i]; i++)
 			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
