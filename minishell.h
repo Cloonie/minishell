@@ -40,11 +40,11 @@ enum {
 	TOK_EOF,
 	TOK_CMD,
 	TOK_ARG,
-	TOK_REDIRECT,
-	TOK_PIPE,
-	TOK_DOLLAR,
 	TOK_SQUOTE,
 	TOK_DQUOTE,
+	TOK_DOLLAR,
+	TOK_REDIRECT,
+	TOK_PIPE,
 	TOK_ESCAPE,
 };
 
@@ -66,8 +66,8 @@ void		export2(char **input, char **envp);
 // executable
 void		call_env(char **envp);
 void		call_run(char **input, char **envp);
-int			cmd(char **input, char *cwd, char **ev);
-int			executable(char **input, char **ev);
+int			cmd(t_minishell *ms);
+int			executable(t_minishell *ms, char **input, char **envp);
 
 // lexer
 // static int	count_words(char const *s);

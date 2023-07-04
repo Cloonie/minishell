@@ -12,27 +12,35 @@
 
 #include "minishell.h"
 
-// void	check_valid_cmd(t_minishell *ms)
-// {
-// 	if (input[0])
-// 	{
-// 		if (ft_strncmp(input[0], "echo\0", 5) == 0
-// 			|| ft_strncmp(input[0], "cd\0", 3) == 0
-// 			|| ft_strncmp(input[0], "pwd\0", 4) == 0
-// 			|| ft_strncmp(input[0], "export\0", 7) == 0
-// 			|| ft_strncmp(input[0], "unset\0", 6) == 0
-// 			|| ft_strncmp(input[0], "env\0", 4) == 0
-// 			|| ft_strncmp(input[0], "exit\0", 5) == 0
-// 			|| ft_strncmp(input[0], "./", 2) == 0
-// 			|| ft_strncmp(input[0], "/", 1) == 0
-// 			|| executable(input, envp))
-// 	}
-// }
+int	check_valid_cmd(t_minishell *ms, char *input)
+{
+	char	**path;
+	int		i;
+
+	i = -1;
+	if (input && (ft_strncmp(input, "echo\0", 5) == 0
+			|| ft_strncmp(input, "cd\0", 3) == 0
+			|| ft_strncmp(input, "pwd\0", 4) == 0
+			|| ft_strncmp(input, "export\0", 7) == 0
+			|| ft_strncmp(input, "unset\0", 6) == 0
+			|| ft_strncmp(input, "env\0", 4) == 0
+			|| ft_strncmp(input, "exit\0", 5) == 0
+			|| ft_strncmp(input, "./", 2) == 0
+			|| ft_strncmp(input, "/", 1) == 0))
+		return (1);
+	else if (input && ft_getenv(ms, "PATH"))
+	{
+		path = ft_split(ft_getenv(ms, "PATH"), ':');
+		while (path[++i])
+			if (access(ft_strjoin(ft_strjoin(path[i], "/"), input), F_OK) == 0)
+				return (1);
+	}
+	return (0);
+}
 
 void	get_token(t_minishell *ms)
 {
 	int			i;
-	// int			j;
 	const char	*operators;
 
 	operators = "\"\'><$|;\\";
@@ -53,6 +61,8 @@ void	get_token(t_minishell *ms)
 			else if (ms->input[i][0] == '|')
 				ms->token[i] = TOK_PIPE;
 		}
+		else if (check_valid_cmd(ms, ms->input[i]))
+			ms->token[i] = TOK_CMD;
 		else
 			ms->token[i] = TOK_ARG;
 		i++;
@@ -92,7 +102,7 @@ int	main(int argc, char **argv, char **envp)
 		remove_quotes(ms->input);
 		check_dollar(ms);
 		check_emptystr(ms);
-		cmd(ms->input, ms->cwd, ms->envp);
+		cmd(ms);
 		for (int i = 0; ms->input[i]; i++)
 			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 	}

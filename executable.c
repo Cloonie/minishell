@@ -45,37 +45,39 @@ void	call_run(char **input, char **envp)
 		printf("Enter a valid command.\n");
 }
 
-int	cmd(char **input, char *cwd, char **envp)
+int	cmd(t_minishell *ms)
 {
-	if (input[0])
+	if (ms->input[0])
 	{
-		if (ft_strncmp(input[0], "echo\0", 5) == 0)
-			call_echo(input);
-		else if (ft_strncmp(input[0], "cd\0", 3) == 0)
-			call_cd(input, cwd);
-		else if (ft_strncmp(input[0], "pwd\0", 4) == 0)
-			printf("%s\n", cwd);
-		else if (ft_strncmp(input[0], "export\0", 7) == 0)
-			call_export(input, envp);
-		else if (ft_strncmp(input[0], "unset\0", 6) == 0)
-			call_unset(input, envp);
-		else if ((ft_strncmp(input[0], "env\0", 4) == 0))
-			call_env(envp);
-		else if (ft_strncmp(input[0], "exit\0", 5) == 0)
+		if (ft_strncmp(ms->input[0], "echo\0", 5) == 0)
+			call_echo(ms->input);
+		else if (ft_strncmp(ms->input[0], "cd\0", 3) == 0)
+			call_cd(ms->input, ms->cwd);
+		else if (ft_strncmp(ms->input[0], "pwd\0", 4) == 0)
+			printf("%s\n", ms->cwd);
+		else if (ft_strncmp(ms->input[0], "export\0", 7) == 0)
+			call_export(ms->input, ms->envp);
+		else if (ft_strncmp(ms->input[0], "unset\0", 6) == 0)
+			call_unset(ms->input, ms->envp);
+		else if ((ft_strncmp(ms->input[0], "env\0", 4) == 0))
+			call_env(ms->envp);
+		else if (ft_strncmp(ms->input[0], "exit\0", 5) == 0)
 			myexit(0);
-		else if (ft_strncmp(input[0], "./", 2) == 0
-			|| ft_strncmp(input[0], "/", 1) == 0)
-			call_run(input, envp);
-		else if (executable(input, envp))
+		else if (ft_strncmp(ms->input[0], "./", 2) == 0
+			|| ft_strncmp(ms->input[0], "/", 1) == 0)
+			call_run(ms->input, ms->envp);
+		else if (executable(ms, ms->input, ms->envp))
 		{
 			printf("Enter a valid command.\n");
-			return (1);
+			return (0);
 		}
+		else
+			return (0);
 	}
-	return (0);
+	return (1);
 }
 
-int	executable(char **input, char **envp)
+int	executable(t_minishell *ms, char **input, char **envp)
 {
 	pid_t	pid;
 	char	**paths;
@@ -83,11 +85,7 @@ int	executable(char **input, char **envp)
 	int		i;
 
 	i = -1;
-	paths = NULL;
-	while (envp[++i])
-		if (envp[i] && !ft_strncmp(envp[i], "PATH=", 5))
-			paths = ft_split(ft_strtrim(envp[i], "PATH="), ':');
-	i = -1;
+	paths = ft_split(ft_getenv(ms, "PATH"), ':');
 	while (paths && paths[++i])
 	{
 		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), input[0]);
