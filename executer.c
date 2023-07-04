@@ -12,39 +12,6 @@
 
 #include "minishell.h"
 
-void	call_env(char **envp)
-{
-	int	i;
-
-	i = 0;
-	while (envp[i])
-	{
-		if (ft_strchr(envp[i], '='))
-			printf("%s\n", envp[i++]);
-		else
-			i++;
-	}
-}
-
-void	call_run(char **input, char **envp)
-{
-	int		pid;
-
-	if (access(input[0], F_OK) == 0)
-	{
-		pid = fork();
-		if (pid == 0)
-			execve(input[0], input, envp);
-		else if (pid > 0)
-		{
-			waitpid(pid, NULL, 0);
-			return ;
-		}
-	}
-	else
-		printf("Enter a valid command.\n");
-}
-
 int	cmd(t_minishell *ms)
 {
 	if (ms->input[0])

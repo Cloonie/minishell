@@ -63,17 +63,21 @@ void		call_unset(char **input, char **envp);
 void		call_export(char **input, char **envp);
 void		export2(char **input, char **envp);
 
-// executable
+// build_ins2
 void		call_env(char **envp);
 void		call_run(char **input, char **envp);
+
+
+// executer
 int			cmd(t_minishell *ms);
 int			executable(t_minishell *ms, char **input, char **envp);
 
 // lexer
-// static int	count_words(char const *s);
-// static char	*word_dup(const char *str, int start, int finish);
-// static void	split_words(char **array, const char *s);
 char		**lexer(char *s, const char *op);
+
+// token
+int			check_valid_cmd(t_minishell *ms, char *input);
+void		get_token(t_minishell *ms);
 
 // parser
 void		remove_quotes(char **array);

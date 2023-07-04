@@ -12,10 +12,6 @@
 
 #include "minishell.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 static char	*word_dup(const char *str, int start, int finish)
 {
 	char	*word;
