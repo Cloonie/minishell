@@ -42,8 +42,10 @@ void	get_token(t_minishell *ms)
 	{
 		if (ft_strchr(operators, ms->input[i][0]) != NULL)
 		{
-			if (ms->input[i][0] == '\"' || ms->input[i][0] == '\'')
-				ms->token[i] = TOK_QUOTE;
+			if (ms->input[i][0] == '\"')
+				ms->token[i] = TOK_DQUOTE;
+			else if (ms->input[i][0] == '\'')
+				ms->token[i] = TOK_SQUOTE;
 			else if (ms->input[i][0] == '<' || ms->input[i][0] == '>')
 				ms->token[i] = TOK_REDIRECT;
 			else if (ms->input[i][0] == '$')
@@ -68,7 +70,7 @@ char	**get_input(t_minishell *ms)
 		exit(0);
 	ft_strtrim(line, " ");
 	add_history(line);
-	ms->input = lexer(line);
+	ms->input = lexer(line, " ><|");
 	return (ms->input);
 }
 

@@ -43,7 +43,8 @@ enum {
 	TOK_REDIRECT,
 	TOK_PIPE,
 	TOK_DOLLAR,
-	TOK_QUOTE,
+	TOK_SQUOTE,
+	TOK_DQUOTE,
 	TOK_ESCAPE,
 };
 
@@ -72,7 +73,7 @@ int			executable(char **input, char **ev);
 // static int	count_words(char const *s);
 // static char	*word_dup(const char *str, int start, int finish);
 // static void	split_words(char **array, const char *s);
-char		**lexer(char *s);
+char		**lexer(char *s, const char *op);
 
 // parser
 void		remove_quotes(char **array);
