@@ -34,18 +34,19 @@ FILES		=	main		\
 				parser		\
 				ms_pipe		\
 
-PIPEX_FILES	=	utils		\
-				build_ins	\
-				executable	\
-				pipex		\
-				pipex_main	\
+# PIPEX_FILES	=	utils		\
+# 				build_ins	\
+# 				executable	\
+# 				pipex		\
+# 				pipex_main	\
 
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
-SRCS2		=	$(addsuffix .c, $(PIPEX_FILES))
-OBJS2		=	$(addsuffix .o, $(PIPEX_FILES))
+# SRCS2		=	$(addsuffix .c, $(PIPEX_FILES))
+# OBJS2		=	$(addsuffix .o, $(PIPEX_FILES))
 
-all: $(NAME) $(NAME2)
+all: $(NAME)
+# all: $(NAME) $(NAME2)
 
 $(NAME): $(OBJS)
 	@make -s -C libft
@@ -53,11 +54,11 @@ $(NAME): $(OBJS)
 	@echo "$(B_GREEN)Compiling $(OBJS)$(C_END)"
 	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 
-$(NAME2): $(OBJS2)
-	@make -s -C libft
-	@gcc $(CFLAGS) $(OBJS2) $(LIBFLAGS) -o $(NAME2)
-	@echo "$(B_GREEN)Compiling $(OBJS2)$(C_END)"
-	@echo "$(C_GREEN)Makefile for pipex completed.$(C_END)"
+# $(NAME2): $(OBJS2)
+# 	@make -s -C libft
+# 	@gcc $(CFLAGS) $(OBJS2) $(LIBFLAGS) -o $(NAME2)
+# 	@echo "$(B_GREEN)Compiling $(OBJS2)$(C_END)"
+# 	@echo "$(C_GREEN)Makefile for pipex completed.$(C_END)"
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -66,13 +67,11 @@ $(NAME2): $(OBJS2)
 clean:
 	@$(RM) $(OBJS) $(OBJS2)
 	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
-	@echo "$(B_RED)Removing $(NAME2) object files$(C_END)"
 
 fclean:	clean
 	@$(RM) $(NAME) $(NAME2) $(NAME3)
 	@echo "$(C_RED)Removing $(NAME)$(C_END)"
-	@echo "$(C_RED)Removing $(NAME2)$(C_END)"
-	
+
 lclean:
 	@make fclean -s -C $(LIBFT)
 

@@ -42,6 +42,8 @@ typedef struct s_minishell
 	int		*token;
 	char	**envp;
 	char	cwd[1024];
+	char	*infile;
+	char	*outfile;
 }	t_minishell;
 
 enum {
@@ -90,7 +92,8 @@ int			check_quotes(char *s);
 // pipex
 // int			pipex(char **input, char **envp);
 void		handle_pipe(t_minishell *ms);
-int			fork_process(t_pipe *pipe_vars, t_minishell *ms);
+int			fork_process(t_pipe *p_vars, t_minishell *ms, int *fdin, int *fdout);
+void		redir(t_minishell *ms, t_pipe *p_vars, int i, int *fdin, int *fdout);
 int			parent_wait(t_pipe *pipe_vars);
 
 #endif

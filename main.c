@@ -63,14 +63,26 @@ void	get_token(t_minishell *ms)
 	operators = "\"\'><$|;\\";
 	i = 0;
 	ms->token = malloc(100);
+	ms->infile = NULL;
+	ms->outfile = NULL;
 	while (ms->input[i] && ms->input[i][0])
 	{
 		if (ft_strchr(operators, ms->input[i][0]) != NULL)
 		{
 			if (ms->input[i][0] == '\"' || ms->input[i][0] == '\'')
 				ms->token[i] = TOK_QUOTE;
-			else if (ms->input[i][0] == '<' || ms->input[i][0] == '>')
+			else if (ms->input[i][0] == '<')
+			{
 				ms->token[i] = TOK_REDIRECT;
+				free(ms->infile);
+				ms->infile = ft_strdup(ms->input[i + 1]);
+			}
+			else if (ms->input[i][0] == '>')
+			{
+				ms->token[i] = TOK_REDIRECT;
+				free(ms->outfile);
+				ms->outfile = ft_strdup(ms->input[i + 1]);
+			}
 			else if (ms->input[i][0] == '$')
 				ms->token[i] = TOK_DOLLAR;
 			else if (ms->input[i][0] == '|')
@@ -110,30 +122,28 @@ int	main(int argc, char **argv, char **envp)
 	t_minishell	*ms;
 	int			i;
 
+	(void)argc;
+	(void)argv;
 	ms = malloc(sizeof(t_minishell));
 	ms->envp = envp;
 	i = 0;
-	if (!argv[0] || argc != 1)
-		myexit(1);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
-	while (1)
-	{
 		getcwd(ms->cwd, sizeof(ms->cwd));
 		ms->input = get_input(ms);
 		get_token(ms);
 		// check_spaces(ms);
 		// remove_quotes(ms->input);
 		// check_dollar(ms->input, ms->envp);
-		while (ms->input[i])
+		for (int i = 0; ms->input[i]; i++)
+			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+		printf("Infile is [%s]\n", ms->infile);
+		printf("Outfile is [%s]\n", ms->outfile);
+		while (ms->input[i] != NULL)
 		{
 			if (ms->token[i] == TOK_PIPE)
+			{
+				printf("first\n");
 				handle_pipe(ms);
+			}
 			i++;
 		}
-		
-		// for (int i = 0; ms->input[i]; i++)
-		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-
-	}
 }
