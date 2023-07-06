@@ -27,11 +27,30 @@ char	**get_input(t_minishell *ms)
 	return (ms->input);
 }
 
+void	split_cmd(t_list **lst, char **input)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (input[++i])
+	{
+		ft_lstadd_back(lst, ft_lstnew(NULL));
+		j = -1;
+		while (!ft_strncmp(input[i], "|\0", 2))
+			(*lst)->cmd[++j] = input[i];
+		// for (int x = 0; (*lst)->cmd[x]; x++)
+		// 	printf("lst->cmd[x]: %s\n", (*lst)->cmd[x]);
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*ms;
+	t_list		**lst;
 
 	ms = malloc(sizeof(t_minishell));
+	lst = malloc(sizeof(t_list));
 	ms->envp = envp;
 	if (!argv[0] || argc != 1)
 		myexit(1);
@@ -45,6 +64,7 @@ int	main(int argc, char **argv, char **envp)
 		remove_quotes(ms->input);
 		check_dollar(ms);
 		check_emptystr(ms);
+		split_cmd(lst, ms->input);
 		cmd(ms);
 		for (int i = 0; ms->input[i]; i++)
 			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);

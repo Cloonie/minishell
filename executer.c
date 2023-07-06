@@ -14,32 +14,38 @@
 
 int	cmd(t_minishell *ms)
 {
-	if (ms->input[0])
+	int	i;
+
+	i = -1;
+	while (ms->input[++i])
 	{
-		if (ft_strncmp(ms->input[0], "echo\0", 5) == 0)
-			call_echo(ms->input);
-		else if (ft_strncmp(ms->input[0], "cd\0", 3) == 0)
-			call_cd(ms->input, ms->cwd);
-		else if (ft_strncmp(ms->input[0], "pwd\0", 4) == 0)
-			printf("%s\n", ms->cwd);
-		else if (ft_strncmp(ms->input[0], "export\0", 7) == 0)
-			call_export(ms->input, ms->envp);
-		else if (ft_strncmp(ms->input[0], "unset\0", 6) == 0)
-			call_unset(ms->input, ms->envp);
-		else if ((ft_strncmp(ms->input[0], "env\0", 4) == 0))
-			call_env(ms->envp);
-		else if (ft_strncmp(ms->input[0], "exit\0", 5) == 0)
-			myexit(0);
-		else if (ft_strncmp(ms->input[0], "./", 2) == 0
-			|| ft_strncmp(ms->input[0], "/", 1) == 0)
-			call_run(ms->input, ms->envp);
-		else if (executable(ms, ms->input, ms->envp))
+		if (ms->token[i] == TOK_CMD)
 		{
-			printf("Enter a valid command.\n");
-			return (0);
+			if (ft_strncmp(ms->input[i], "echo\0", 5) == 0)
+				call_echo(ms->input);
+			else if (ft_strncmp(ms->input[i], "cd\0", 3) == 0)
+				call_cd(ms->input, ms->cwd);
+			else if (ft_strncmp(ms->input[i], "pwd\0", 4) == 0)
+				printf("%s\n", ms->cwd);
+			else if (ft_strncmp(ms->input[i], "export\0", 7) == 0)
+				call_export(ms->input, ms->envp);
+			else if (ft_strncmp(ms->input[i], "unset\0", 6) == 0)
+				call_unset(ms->input, ms->envp);
+			else if ((ft_strncmp(ms->input[i], "env\0", 4) == 0))
+				call_env(ms->envp);
+			else if (ft_strncmp(ms->input[i], "exit\0", 5) == 0)
+				myexit(0);
+			else if (ft_strncmp(ms->input[i], "./", 2) == 0
+				|| ft_strncmp(ms->input[i], "/", 1) == 0)
+				call_run(ms->input, ms->envp);
+			else if (executable(ms, ms->input, ms->envp))
+			{
+				printf("Enter a valid command.\n");
+				return (0);
+			}
+			else
+				return (0);
 		}
-		else
-			return (0);
 	}
 	return (1);
 }

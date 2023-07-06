@@ -21,9 +21,7 @@
 typedef struct s_list
 {
 	void			*content;
-	char			*var;
-	int				token;
-	int				quoted;
+	char			**cmd;
 	struct s_list	*next;
 }	t_list;
 
@@ -69,7 +67,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 
 // BONUS
-t_list	*ft_lstnew(void *content);
+t_list	*ft_lstnew(char **cmd);
 void	ft_lstadd_front(t_list **lst, t_list *new);
 int		ft_lstsize(t_list *lst);
 t_list	*ft_lstlast(t_list *lst);
