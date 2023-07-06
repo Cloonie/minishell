@@ -117,16 +117,41 @@ char	**get_input(t_minishell *ms)
 	return (ms->input);
 }
 
+void	printlist(t_list *list)
+{
+	t_list *current;
+
+	current = list;
+	while (current != NULL)
+	{
+		printf("Command: %s\n", current->command);
+		printf("Argument: %s\n", current->args);
+		current = current->next;
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*ms;
 	int			i;
+	int			j;
+	char		*args;
+	t_list		**list;
+	t_list		*temp;
+	int			firstarg;
 
-	(void)argc;
-	(void)argv;
 	ms = malloc(sizeof(t_minishell));
 	ms->envp = envp;
 	i = 0;
+	firstarg = 1;
+	*list = NULL;
+	temp = NULL;
+	if (!argv[0] || argc != 1)
+		myexit(1);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	while (1)
+	{
 		getcwd(ms->cwd, sizeof(ms->cwd));
 		ms->input = get_input(ms);
 		get_token(ms);
@@ -139,11 +164,26 @@ int	main(int argc, char **argv, char **envp)
 		printf("Outfile is [%s]\n", ms->outfile);
 		while (ms->input[i] != NULL)
 		{
-			if (ms->token[i] == TOK_PIPE)
+			if (ms->token[i] == TOK_CMD)
 			{
-				printf("first\n");
-				handle_pipe(ms);
+				j = i + 1;
+				args = "";
+				while (ms->input[j] != NULL && ms->token[j] == TOK_ARG)
+				{
+					if (firstarg)
+					{
+						args =  ft_strjoin(args, ms->input[j]);
+						firstarg = 0;
+					}
+					else
+						args = ft_strjoin(ft_strjoin(args, " "), ms->input[j]);
+					j++;
+				}
+				temp = ft_lstnew(ms, ms->input[i], args);
+				ft_lstadd_back(list, temp);
 			}
 			i++;
 		}
+		printlist(list);
+	}
 }
