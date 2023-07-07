@@ -27,20 +27,53 @@ char	**get_input(t_minishell *ms)
 	return (ms->input);
 }
 
+int	get_mallocsize(char **input)
+{
+	static int	i;
+	static int	previous;
+
+	previous = i;
+	while (input[i] != NULL)
+	{
+		if (ft_strncmp(input[0], "|", 1) == 0)
+			break;
+		else
+			i++;
+	}
+	printf("i: %d | previous: %d\n", i, previous);
+	return (i - previous);
+}
+
 void	split_cmd(t_list **lst, char **input)
 {
-	int	i;
-	int	j;
+	char	**tmp;
+	int		i;
+	int		j;
 
 	i = -1;
+	j = -1;
+	printf("malloc: %d\n", get_mallocsize(input));
+	tmp = malloc(100);
 	while (input[++i])
 	{
-		ft_lstadd_back(lst, ft_lstnew(NULL));
-		j = -1;
-		while (!ft_strncmp(input[i], "|\0", 2))
-			(*lst)->cmd[++j] = input[i];
-		// for (int x = 0; (*lst)->cmd[x]; x++)
-		// 	printf("lst->cmd[x]: %s\n", (*lst)->cmd[x]);
+		if (!ft_strncmp(input[i], "|", 1))
+		{
+			tmp[++j] = NULL;
+			ft_lstadd_back(lst, ft_lstnew(tmp));
+			tmp = malloc(100);
+			j = -1;
+		}
+		else
+			tmp[++j] = ft_strdup(input[i]);
+	}
+	tmp[++j] = NULL;
+	ft_lstadd_back(lst, ft_lstnew(tmp));
+	while (*lst)
+	{
+		printf("NODE\n");
+		for (int x = 0; (*lst)->cmd[x]; x++)
+			printf("lst->cmd[%d]: %s\n", x, (*lst)->cmd[x]);
+		*lst = (*lst)->next;
 	}
 }
 
@@ -66,7 +99,7 @@ int	main(int argc, char **argv, char **envp)
 		check_emptystr(ms);
 		split_cmd(lst, ms->input);
 		cmd(ms);
-		for (int i = 0; ms->input[i]; i++)
-			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 	}
 }
