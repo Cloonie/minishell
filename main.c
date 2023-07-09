@@ -27,22 +27,25 @@ char	**get_input(t_minishell *ms)
 	return (ms->input);
 }
 
-int	get_mallocsize(char **input)
-{
-	static int	i;
-	static int	previous;
+// int	count_strings(char **input)
+// {
+// 	static int	i;
+// 	int			words;
 
-	previous = i;
-	while (input[i] != NULL)
-	{
-		if (ft_strncmp(input[0], "|", 1) == 0)
-			break;
-		else
-			i++;
-	}
-	printf("i: %d | previous: %d\n", i, previous);
-	return (i - previous);
-}
+// 	words = 0;
+// 	while (!ft_strncmp(input[i], "|", 1))
+// 		i++;
+// 	while (input[i])
+// 	{
+// 		printf("input: %s\n", input[i]);
+// 		if (!ft_strncmp(input[i], "|", 1))
+// 			break ;
+// 		words++;
+// 		i++;
+// 	}
+// 	printf("words: %d\n", words);
+// 	return (words);
+// }
 
 void	split_cmd(t_list **lst, char **input)
 {
@@ -52,15 +55,14 @@ void	split_cmd(t_list **lst, char **input)
 
 	i = -1;
 	j = -1;
-	printf("malloc: %d\n", get_mallocsize(input));
-	tmp = malloc(100);
+	tmp = (char **)malloc(100);
 	while (input[++i])
 	{
 		if (!ft_strncmp(input[i], "|", 1))
 		{
 			tmp[++j] = NULL;
 			ft_lstadd_back(lst, ft_lstnew(tmp));
-			tmp = malloc(100);
+			tmp = (char **)malloc(100);
 			j = -1;
 		}
 		else
@@ -68,13 +70,13 @@ void	split_cmd(t_list **lst, char **input)
 	}
 	tmp[++j] = NULL;
 	ft_lstadd_back(lst, ft_lstnew(tmp));
-	while (*lst)
-	{
-		printf("NODE\n");
-		for (int x = 0; (*lst)->cmd[x]; x++)
-			printf("lst->cmd[%d]: %s\n", x, (*lst)->cmd[x]);
-		*lst = (*lst)->next;
-	}
+	// while (*lst)
+	// {
+	// 	printf("NODE\n");
+	// 	for (int x = 0; (*lst)->cmd[x]; x++)
+	// 		printf("lst->cmd[%d]: %s\n", x, (*lst)->cmd[x]);
+	// 	*lst = (*lst)->next;
+	// }
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -98,8 +100,9 @@ int	main(int argc, char **argv, char **envp)
 		check_dollar(ms);
 		check_emptystr(ms);
 		split_cmd(lst, ms->input);
-		cmd(ms);
+		cmd(ms, lst);
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+		ft_free(ms, lst);
 	}
 }

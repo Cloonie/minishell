@@ -12,33 +12,33 @@
 
 #include "minishell.h"
 
-int	cmd(t_minishell *ms)
+int	cmd(t_minishell *ms, t_list **lst)
 {
-	int	i;
+	t_list	*tmp;
 
-	i = -1;
-	while (ms->input[++i])
+	tmp = *lst;
+	while (tmp->cmd[0])
 	{
-		if (ms->token[i] == TOK_CMD)
+		if (tmp->cmd[0])
 		{
-			if (ft_strncmp(ms->input[i], "echo\0", 5) == 0)
-				call_echo(ms->input);
-			else if (ft_strncmp(ms->input[i], "cd\0", 3) == 0)
-				call_cd(ms->input, ms->cwd);
-			else if (ft_strncmp(ms->input[i], "pwd\0", 4) == 0)
+			if (ft_strncmp(tmp->cmd[0], "echo\0", 5) == 0)
+				call_echo(tmp->cmd);
+			else if (ft_strncmp(tmp->cmd[0], "cd\0", 3) == 0)
+				call_cd(tmp->cmd, ms->cwd);
+			else if (ft_strncmp(tmp->cmd[0], "pwd\0", 4) == 0)
 				printf("%s\n", ms->cwd);
-			else if (ft_strncmp(ms->input[i], "export\0", 7) == 0)
-				call_export(ms->input, ms->envp);
-			else if (ft_strncmp(ms->input[i], "unset\0", 6) == 0)
-				call_unset(ms->input, ms->envp);
-			else if ((ft_strncmp(ms->input[i], "env\0", 4) == 0))
+			else if (ft_strncmp(tmp->cmd[0], "export\0", 7) == 0)
+				call_export(tmp->cmd, ms->envp);
+			else if (ft_strncmp(tmp->cmd[0], "unset\0", 6) == 0)
+				call_unset(tmp->cmd, ms->envp);
+			else if ((ft_strncmp(tmp->cmd[0], "env\0", 4) == 0))
 				call_env(ms->envp);
-			else if (ft_strncmp(ms->input[i], "exit\0", 5) == 0)
+			else if (ft_strncmp(tmp->cmd[0], "exit\0", 5) == 0)
 				myexit(0);
-			else if (ft_strncmp(ms->input[i], "./", 2) == 0
-				|| ft_strncmp(ms->input[i], "/", 1) == 0)
-				call_run(ms->input, ms->envp);
-			else if (executable(ms, ms->input, ms->envp))
+			else if (ft_strncmp(tmp->cmd[0], "./", 2) == 0
+				|| ft_strncmp(tmp->cmd[0], "/", 1) == 0)
+				call_run(tmp->cmd, ms->envp);
+			else if (executable(ms, tmp->cmd, ms->envp))
 			{
 				printf("Enter a valid command.\n");
 				return (0);
@@ -46,6 +46,7 @@ int	cmd(t_minishell *ms)
 			else
 				return (0);
 		}
+		tmp = tmp->next;
 	}
 	return (1);
 }

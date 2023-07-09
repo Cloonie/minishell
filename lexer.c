@@ -83,7 +83,7 @@ char	**lexer(char *s, const char *op)
 	while (s[i++])
 		if (ft_strchr(op, s[i]))
 			size++;
-	array = malloc((size) * sizeof(char *) + 1);
+	array = (char **)malloc(sizeof(char *) * (size) + 1);
 	if (!array)
 		return (NULL);
 	if (check_quotes(s))

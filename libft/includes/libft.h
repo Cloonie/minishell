@@ -22,6 +22,8 @@ typedef struct s_list
 {
 	void			*content;
 	char			**cmd;
+	char			*infile;
+	char			*outfile;
 	struct s_list	*next;
 }	t_list;
 

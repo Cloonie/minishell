@@ -55,6 +55,7 @@ char		**get_input(t_minishell *ms);
 void		sigint_handler(int sig);
 void		myexit(int status);
 char		*ft_getenv(t_minishell *ms, char *envvar);
+void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
 void		call_echo(char **input);
@@ -69,7 +70,7 @@ void		call_run(char **input, char **envp);
 
 
 // executer
-int			cmd(t_minishell *ms);
+int			cmd(t_minishell *ms, t_list **lst);
 int			executable(t_minishell *ms, char **input, char **envp);
 
 // lexer
