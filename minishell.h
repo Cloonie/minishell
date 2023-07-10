@@ -71,7 +71,7 @@ void		call_run(char **input, char **envp);
 
 // executer
 int			cmd(t_minishell *ms, t_list **lst);
-int			executable(t_minishell *ms, char **input, char **envp);
+int			executable(t_minishell *ms, t_list *lst);
 
 // lexer
 char		**lexer(char *s, const char *op);
@@ -87,6 +87,6 @@ int			check_quotes(char *s);
 void		check_emptystr(t_minishell *ms);
 
 // pipex
-int			pipex(char **input, char **envp);
+void		pipex(t_minishell *ms, t_list **lst);
 
 #endif

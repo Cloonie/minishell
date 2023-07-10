@@ -19,7 +19,7 @@ t_list	*ft_lstnew(char **cmd)
 	lst = malloc(sizeof(t_list));
 	if (!lst)
 		return (NULL);
-	lst->cmd = cmd;
+	lst->args = cmd;
 	lst->next = NULL;
 	return (lst);
 }

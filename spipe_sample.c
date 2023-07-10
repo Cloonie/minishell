@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	pipex(char **input, char **envp)
+void	pipex(t_minishell *ms, t_list **lst)
 {
 	int	pipefd[2];
 	int	child1;
@@ -25,23 +25,26 @@ int	pipex(char **input, char **envp)
 		perror("fork");
 	if (child1 == 0)
 	{
+		close(pipefd[0]);
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[1]);
-		close(pipefd[0]);
-		execlp("ls", "ls", NULL);
+		cmd(ms, lst);
 	}
+	*lst = (*lst)->next;
 	child2 = fork();
 	if (child2 == -1)
 		perror("fork");
 	if (child2 == 0)
 	{
+		close(pipefd[1]);
 		dup2(pipefd[0], STDIN_FILENO);
 		close(pipefd[0]);
-		close(pipefd[1]);
-		execlp("grep", "grep", "mini", NULL);
+		cmd(ms, lst);
 	}
 	close(pipefd[0]);
 	close(pipefd[1]);
 	waitpid(child2, NULL, 0);
 	waitpid(child1, NULL, 0);
+	// pipex(ms, lst);
 }
+
