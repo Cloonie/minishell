@@ -17,7 +17,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 	t_list	*tmp;
 
 	tmp = *lst;
-	while (tmp->cmd[0])
+	while (tmp)
 	{
 		if (tmp->cmd[0])
 		{
