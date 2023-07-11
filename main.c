@@ -101,7 +101,7 @@ int	main(int argc, char **argv, char **envp)
 		check_emptystr(ms);
 		split_cmd(lst, ms->input);
 		// cmd(ms, lst);
-		pipex(ms, lst);
+		// pipe(ms, lst);
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 		ft_free(ms, lst);

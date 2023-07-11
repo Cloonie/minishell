@@ -86,7 +86,6 @@ void		check_dollar(t_minishell *ms);
 int			check_quotes(char *s);
 void		check_emptystr(t_minishell *ms);
 
-// pipex
-void		pipex(t_minishell *ms, t_list **lst);
+// pipe
 
 #endif
