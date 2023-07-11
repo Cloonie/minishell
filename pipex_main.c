@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_main.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kcheong <kcheong@student.42kl.edu.my>      +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 12:42:04 by kcheong           #+#    #+#             */
-/*   Updated: 2023/06/27 10:25:12 by kcheong          ###   ########.fr       */
+/*   Updated: 2023/07/11 20:04:04 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ int	main(int argc, char **argv, char **envp)
 	t_pipe	pipe_vars;
 
 	pipe_vars.numcmd = argc - 3;
-	pipe_vars.tmpin = dup(0);
-	pipe_vars.tmpout = dup(1);
+	pipe_vars.ms->tmpin = dup(0);
+	pipe_vars.ms->tmpout = dup(1);
 	pipe_vars.argv = argv;
 	pipe_vars.argc = argc;
 	pipe_vars.envp = envp;
@@ -79,10 +79,10 @@ int	main(int argc, char **argv, char **envp)
 	first_input_redir(&fdin, &pipe_vars);
 	fork_process(&pipe_vars, &fdin, &fdout);
 
-	dup2(pipe_vars.tmpin, 0);
-	dup2(pipe_vars.tmpout, 1);
-	close(pipe_vars.tmpin);
-	close(pipe_vars.tmpout);
+	dup2(pipe_vars.ms->tmpin, 0);
+	dup2(pipe_vars.ms->tmpout, 1);
+	close(pipe_vars.ms->tmpin);
+	close(pipe_vars.ms->tmpout);
 
 	parent_wait(&pipe_vars);
 	return (0);

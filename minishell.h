@@ -28,13 +28,13 @@
 # include "libft/includes/ft_printf.h"
 # include "libft/includes/get_next_line_bonus.h"
 
-typedef	struct s_pipe {
-	int		numcmd;
-	int		tmpin;
-	int		tmpout;
-	int		here_doc_flag;
-	int		tmp;
-}	t_pipe;
+// typedef	struct s_pipe {
+// 	int		numcmd;
+// 	int		ms->tmpin;
+// 	int		ms->tmpout;
+// 	int		here_doc_flag;
+// 	int		tmp;
+// }	t_pipe;
 
 typedef struct s_minishell
 {
@@ -44,16 +44,21 @@ typedef struct s_minishell
 	char	cwd[1024];
 	char	*infile;
 	char	*outfile;
+	int		tmpin;
+	int		tmpout;
+	int		fdin;
+	int		fdout;
 }	t_minishell;
 
 enum {
 	TOK_EOF,
 	TOK_CMD,
 	TOK_ARG,
+	TOK_SQUOTE,
+	TOK_DQUOTE,
+	TOK_DOLLAR,
 	TOK_REDIRECT,
 	TOK_PIPE,
-	TOK_DOLLAR,
-	TOK_QUOTE,
 	TOK_ESCAPE,
 };
 
@@ -63,6 +68,8 @@ char		**get_input(t_minishell *ms);
 // utils
 void		sigint_handler(int sig);
 void		myexit(int status);
+char		*ft_getenv(t_minishell *ms, char *envvar);
+void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
 void		call_echo(char **input);
@@ -71,29 +78,30 @@ void		call_unset(char **input, char **envp);
 void		call_export(char **input, char **envp);
 void		export2(char **input, char **envp);
 
-// executable
+// build_ins2
 void		call_env(char **envp);
 void		call_run(char **input, char **envp);
-int			cmd(t_minishell *ms, int i);
-int			executable(char **input, char **envp , int i);
+
+
+// executer
+int			cmd(t_minishell *ms, t_list **lst);
+int			executable(t_minishell *ms, t_list *lst);
 
 // lexer
-// static int	count_words(char const *s);
-// static char	*word_dup(const char *str, int start, int finish);
-// static void	split_words(char **array, const char *s);
-void		remove_quotes(char **array);
-char		**lexer(char *s);
+char		**lexer(char *s, const char *op);
+
+// token
+int			check_valid_cmd(t_minishell *ms, char *input);
+void		get_token(t_minishell *ms);
 
 // parser
-void		check_spaces(t_minishell *ms);
-char		**check_dollar(char **array, char **envp);
+void		remove_quotes(char **array);
+void		check_dollar(t_minishell *ms);
 int			check_quotes(char *s);
+void		check_emptystr(t_minishell *ms);
 
 // pipex
-// int			pipex(char **input, char **envp);
-void		handle_pipe(t_minishell *ms);
-int			fork_process(t_pipe *p_vars, t_minishell *ms, int *fdin, int *fdout);
-void		redir(t_minishell *ms, t_pipe *p_vars, int i, int *fdin, int *fdout);
-int			parent_wait(t_pipe *pipe_vars);
+// void		pipex(t_minishell *ms, t_list **lst);
+int			handle_pipe(t_minishell *ms, t_list **lst);
 
 #endif

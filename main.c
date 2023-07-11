@@ -12,96 +12,6 @@
 
 #include "minishell.h"
 
-// void	check_valid_cmd(t_minishell *ms)
-// {
-// 	if (input[0])
-// 	{
-// 		if (ft_strncmp(input[0], "echo\0", 5) == 0
-// 			|| ft_strncmp(input[0], "cd\0", 3) == 0
-// 			|| ft_strncmp(input[0], "pwd\0", 4) == 0
-// 			|| ft_strncmp(input[0], "export\0", 7) == 0
-// 			|| ft_strncmp(input[0], "unset\0", 6) == 0
-// 			|| ft_strncmp(input[0], "env\0", 4) == 0
-// 			|| ft_strncmp(input[0], "exit\0", 5) == 0
-// 			|| ft_strncmp(input[0], "./", 2) == 0
-// 			|| ft_strncmp(input[0], "/", 1) == 0
-// 			|| executable(input, envp))
-// 	}
-// }
-
-int		is_executable(t_minishell *ms, int i)
-{
-	char	**paths;
-	char	*current_path;
-	int		j;
-
-	(void)i;
-	j = -1;
-	paths = NULL;
-	while (ms->envp[++j])
-		if (ms->envp[j] && !ft_strncmp(ms->envp[j], "PATH=", 5))
-			paths = ft_split(ft_strtrim(ms->envp[j], "PATH="), ':');
-	j = -1;
-	while (paths && paths[++j])
-	{
-		current_path = ft_strjoin(ft_strjoin(paths[j], "/"), ms->input[i]);
-		if (access(current_path, F_OK) == 0)
-		{
-			ms->token[i] = TOK_CMD;
-			return (0);
-		}
-	}
-	return (1);
-}
-
-void	get_token(t_minishell *ms)
-{
-	int			i;
-	// int			j;
-	const char	*operators;
-
-	operators = "\"\'><$|;\\";
-	i = 0;
-	ms->token = malloc(100);
-	ms->infile = NULL;
-	ms->outfile = NULL;
-	while (ms->input[i] && ms->input[i][0])
-	{
-		if (ft_strchr(operators, ms->input[i][0]) != NULL)
-		{
-			if (ms->input[i][0] == '\"' || ms->input[i][0] == '\'')
-				ms->token[i] = TOK_QUOTE;
-			else if (ms->input[i][0] == '<')
-			{
-				ms->token[i] = TOK_REDIRECT;
-				free(ms->infile);
-				ms->infile = ft_strdup(ms->input[i + 1]);
-			}
-			else if (ms->input[i][0] == '>')
-			{
-				ms->token[i] = TOK_REDIRECT;
-				free(ms->outfile);
-				ms->outfile = ft_strdup(ms->input[i + 1]);
-			}
-			else if (ms->input[i][0] == '$')
-				ms->token[i] = TOK_DOLLAR;
-			else if (ms->input[i][0] == '|')
-				ms->token[i] = TOK_PIPE;
-		}
-		else if ((ft_strncmp(ms->input[i], "echo\0", 5) == 0)
-					|| (ft_strncmp(ms->input[i], "cd\0", 3) == 0)
-					|| (ft_strncmp(ms->input[i], "pwd\0", 4) == 0)
-					|| (ft_strncmp(ms->input[i], "export\0", 7) == 0)
-					|| (ft_strncmp(ms->input[i], "unset\0", 6) == 0)
-					|| (ft_strncmp(ms->input[i], "env\0", 4) == 0)
-					|| (ft_strncmp(ms->input[i], "exit\0", 5) == 0))
-			ms->token[i] = TOK_CMD;
-		else if (is_executable(ms, i))
-			ms->token[i] = TOK_ARG;
-		i++;
-	}
-}
-
 char	**get_input(t_minishell *ms)
 {
 	char	*line;
@@ -113,39 +23,70 @@ char	**get_input(t_minishell *ms)
 		exit(0);
 	ft_strtrim(line, " ");
 	add_history(line);
-	ms->input = lexer(line);
+	ms->input = lexer(line, " ><|");
 	return (ms->input);
 }
 
-void	printlist(t_list *list)
-{
-	t_list *current;
+// int	count_strings(char **input)
+// {
+// 	static int	i;
+// 	int			words;
 
-	current = list;
-	while (current != NULL)
+// 	words = 0;
+// 	while (!ft_strncmp(input[i], "|", 1))
+// 		i++;
+// 	while (input[i])
+// 	{
+// 		printf("input: %s\n", input[i]);
+// 		if (!ft_strncmp(input[i], "|", 1))
+// 			break ;
+// 		words++;
+// 		i++;
+// 	}
+// 	printf("words: %d\n", words);
+// 	return (words);
+// }
+
+void	split_cmd(t_list **lst, char **input)
+{
+	char	**tmp;
+	int		i;
+	int		j;
+
+	i = -1;
+	j = -1;
+	tmp = (char **)malloc(100);
+	while (input[++i])
 	{
-		printf("Command: %s\n", current->command);
-		printf("Argument: %s\n", current->args);
-		current = current->next;
+		if (!ft_strncmp(input[i], "|", 1))
+		{
+			tmp[++j] = NULL;
+			ft_lstadd_back(lst, ft_lstnew(tmp));
+			tmp = (char **)malloc(100);
+			j = -1;
+		}
+		else
+			tmp[++j] = ft_strdup(input[i]);
 	}
+	tmp[++j] = NULL;
+	ft_lstadd_back(lst, ft_lstnew(tmp));
+	// while (*lst)
+	// {
+	// 	printf("NODE\n");
+	// 	for (int x = 0; (*lst)->cmd[x]; x++)
+	// 		printf("lst->args[%d]: %s\n", x, (*lst)->cmd[x]);
+	// 	*lst = (*lst)->next;
+	// }
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*ms;
-	int			i;
-	int			j;
-	char		*args;
-	t_list		**list;
-	t_list		*temp;
-	int			firstarg;
+	t_list		**lst;
 
 	ms = malloc(sizeof(t_minishell));
+	lst = malloc(sizeof(t_list));
 	ms->envp = envp;
-	i = 0;
-	firstarg = 1;
-	*list = NULL;
-	temp = NULL;
 	if (!argv[0] || argc != 1)
 		myexit(1);
 	signal(SIGINT, sigint_handler);
@@ -155,35 +96,15 @@ int	main(int argc, char **argv, char **envp)
 		getcwd(ms->cwd, sizeof(ms->cwd));
 		ms->input = get_input(ms);
 		get_token(ms);
-		// check_spaces(ms);
-		// remove_quotes(ms->input);
-		// check_dollar(ms->input, ms->envp);
-		for (int i = 0; ms->input[i]; i++)
-			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		printf("Infile is [%s]\n", ms->infile);
-		printf("Outfile is [%s]\n", ms->outfile);
-		while (ms->input[i] != NULL)
-		{
-			if (ms->token[i] == TOK_CMD)
-			{
-				j = i + 1;
-				args = "";
-				while (ms->input[j] != NULL && ms->token[j] == TOK_ARG)
-				{
-					if (firstarg)
-					{
-						args =  ft_strjoin(args, ms->input[j]);
-						firstarg = 0;
-					}
-					else
-						args = ft_strjoin(ft_strjoin(args, " "), ms->input[j]);
-					j++;
-				}
-				temp = ft_lstnew(ms, ms->input[i], args);
-				ft_lstadd_back(list, temp);
-			}
-			i++;
-		}
-		printlist(list);
+		remove_quotes(ms->input);
+		check_dollar(ms);
+		check_emptystr(ms);
+		split_cmd(lst, ms->input);
+		// cmd(ms, lst);
+		// pipex(ms, lst);
+		handle_pipe(ms, lst);
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+		ft_free(ms, lst);
 	}
 }
