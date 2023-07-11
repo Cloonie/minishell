@@ -1,47 +1,106 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/07 15:52:11 by mliew             #+#    #+#             */
-/*   Updated: 2023/05/07 15:52:11 by mliew            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
-int	pipex(char **input, char **envp)
-{
-	int	pipefd[2];
-	int	child1;
-	int	child2;
+int     executable(char **input, char **envp);
 
-	if (pipe(pipefd) == -1)
-		perror("pipe");
-	child1 = fork();
-	if (child1 == -1)
-		perror("fork");
-	if (child1 == 0)
+void	parent_wait(t_pipe *pipe_vars)
+{
+	int	i;
+
+	i = 0;
+	while (i < pipe_vars->numcmd)
 	{
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[1]);
-		close(pipefd[0]);
-		execlp("ls", "ls", NULL);
+		if (wait(NULL) == -1)
+		{
+			perror("Wait");
+			exit(1);
+		}
+		i++;
 	}
-	child2 = fork();
-	if (child2 == -1)
-		perror("fork");
-	if (child2 == 0)
+}
+
+void	lastcmd(int *fdout, t_pipe *pipe_vars)
+{
+	if (pipe_vars->argv[pipe_vars->argc - 1])
 	{
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
-		execlp("grep", "grep", "mini", NULL);
+		if (pipe_vars->here_doc_flag == 1)
+		{
+			*fdout = open(pipe_vars->argv[pipe_vars->argc - 1],
+					O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (*fdout == -1)
+			{
+				perror("Outfile");
+				exit(1);
+			}
+		}
+		else
+		{
+			*fdout = open(pipe_vars->argv[pipe_vars->argc - 1],
+					O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (*fdout == -1)
+			{
+				perror("Outfile");
+				exit(1);
+			}
+		}
 	}
-	close(pipefd[0]);
-	close(pipefd[1]);
-	waitpid(child2, NULL, 0);
-	waitpid(child1, NULL, 0);
+}
+
+void	redir(int i, int *fdin, int *fdout, t_pipe *pipe_vars)
+{
+	int	fdpipe[2];
+
+	if (dup2(*fdin, 0) == -1)
+	{
+		perror("dup2");
+		exit(1);
+	}
+	close(*fdin);
+	if (i == (pipe_vars->numcmd - 1))
+		lastcmd(fdout, pipe_vars);
+	else
+	{
+		pipe(fdpipe);
+		*fdout = fdpipe[1];
+		*fdin = fdpipe[0];
+	}
+	dup2(*fdout, 1);
+	close(*fdout);
+}
+
+void	run_child(t_pipe *pipe_vars, int i)
+{
+	if (pipe_vars->here_doc_flag == 1)
+	{
+		if (i == 0)
+			executable(&pipe_vars->argv[i + 3], pipe_vars->envp);
+		else
+			executable(&pipe_vars->argv[i + 3], pipe_vars->envp);
+	}
+	else
+		executable(&pipe_vars->argv[i + 2], pipe_vars->envp);
+}
+
+void	fork_process(t_pipe *pipe_vars, int *fdin, int *fdout)
+{
+	int	child;
+	int	i;
+
+	i = 0;
+
+	while (i < pipe_vars->numcmd)
+	{
+		redir(i, fdin, fdout, pipe_vars);
+		child = fork();
+		if (child == -1)
+		{
+			perror("fork");
+			exit(1);
+		}
+		else if (child == 0)
+		{
+			run_child(pipe_vars, i);
+			exit(0);
+		}
+		i++;
+	}
 }

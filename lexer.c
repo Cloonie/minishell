@@ -12,32 +12,25 @@
 
 #include "minishell.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 static char	*word_dup(const char *str, int start, int finish)
 {
 	char	*word;
 	int		i;
 
 	i = 0;
-	word = malloc((finish - start + 1) * sizeof(char));
-
+	word = malloc((finish - start + 2) * sizeof(char));
 	while (start <= finish)
 		word[i++] = str[start++];
 	word[i] = '\0';
 	return (word);
 }
 
-static void	split_words(char **array, const char *s)
+static void	split_words(char **array, const char *s, const char *op)
 {
-	int			i;
-	int			j;
-	int			k;
-	const char	*operators;
+	int	i;
+	int	j;
+	int	k;
 
-	operators = " ><|";
 	i = 0;
 	j = 0;
 	k = -1;
@@ -53,23 +46,20 @@ static void	split_words(char **array, const char *s)
 				while (s[++i] && s[i] != '\'')
 					;
 			else
-				while (!ft_strchr(operators, s[i + 1])
+				while (!ft_strchr(op, s[i + 1])
 					&& s[i + 1] != '\"' && s[i + 1] != '\"')
 					i++;
-			if (ft_strchr(operators, s[k]))
+			if (ft_strchr(op, s[k]) && s[k] != ' ')
 			{
-				if (s[k] != ' ')
+				if ((s[k] == '>' && s[k + 1] == '>')
+					|| (s[k] == '<' && s[k + 1] == '<'))
 				{
-					if ((s[k] == '>' && s[k + 1] == '>')
-						|| (s[k] == '<' && s[k + 1] == '<'))
-					{
-						k++;
-						array[j++] = word_dup(s, k - 1, k);
-						i++;
-					}
-					else
-						array[j++] = word_dup(s, k, k);
+					k++;
+					array[j++] = word_dup(s, k - 1, k);
+					i++;
 				}
+				else
+					array[j++] = word_dup(s, k, k);
 				k++;
 			}
 			if (s[i] != ' ' && k <= i)
@@ -80,26 +70,24 @@ static void	split_words(char **array, const char *s)
 	array[j] = 0;
 }
 
-char	**lexer(char *s)
+char	**lexer(char *s, const char *op)
 {
 	char		**array;
-	const char	*operators;
 	int			size;
 	int			i;
 
-	operators = " ><|";
 	size = 0;
 	i = 0;
 	if (!s)
 		return (NULL);
 	while (s[i++])
-		if (ft_strchr(operators, s[i]))
+		if (ft_strchr(op, s[i]))
 			size++;
-	array = malloc((size * 2) * sizeof(char *) + 1);
+	array = (char **)malloc(sizeof(char *) * (size) + 1);
 	if (!array)
 		return (NULL);
 	if (check_quotes(s))
 		return (array);
-	split_words(array, s);
+	split_words(array, s, op);
 	return (array);
 }

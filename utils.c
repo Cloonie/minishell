@@ -21,6 +21,27 @@ void	sigint_handler(int sig)
 	rl_redisplay();
 }
 
+void	ft_free(t_minishell	*ms, t_list **lst)
+{
+	int	i;
+
+	i = -1;
+	while (ms->input[++i])
+		free(ms->input[i]);
+	i = -1;
+	free(ms->input);
+	free(ms->token);
+	while (*lst)
+	{
+		i = -1;
+		while ((*lst)->cmd[++i])
+			free((*lst)->cmd[i]);
+		free((*lst)->infile);
+		free((*lst)->outfile);
+		(*lst) = (*lst)->next;
+	}
+}
+
 void	myexit(int status)
 {
 	if (status == EXIT_SUCCESS)

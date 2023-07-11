@@ -12,51 +12,6 @@
 
 #include "minishell.h"
 
-// void	check_valid_cmd(t_minishell *ms)
-// {
-// 	if (input[0])
-// 	{
-// 		if (ft_strncmp(input[0], "echo\0", 5) == 0
-// 			|| ft_strncmp(input[0], "cd\0", 3) == 0
-// 			|| ft_strncmp(input[0], "pwd\0", 4) == 0
-// 			|| ft_strncmp(input[0], "export\0", 7) == 0
-// 			|| ft_strncmp(input[0], "unset\0", 6) == 0
-// 			|| ft_strncmp(input[0], "env\0", 4) == 0
-// 			|| ft_strncmp(input[0], "exit\0", 5) == 0
-// 			|| ft_strncmp(input[0], "./", 2) == 0
-// 			|| ft_strncmp(input[0], "/", 1) == 0
-// 			|| executable(input, envp))
-// 	}
-// }
-
-void	get_token(t_minishell *ms)
-{
-	int			i;
-	// int			j;
-	const char	*operators;
-
-	operators = "\"\'><$|;\\";
-	i = 0;
-	ms->token = malloc(100);
-	while (ms->input[i] && ms->input[i][0])
-	{
-		if (ft_strchr(operators, ms->input[i][0]) != NULL)
-		{
-			if (ms->input[i][0] == '\"' || ms->input[i][0] == '\'')
-				ms->token[i] = TOK_QUOTE;
-			else if (ms->input[i][0] == '<' || ms->input[i][0] == '>')
-				ms->token[i] = TOK_REDIRECT;
-			else if (ms->input[i][0] == '$')
-				ms->token[i] = TOK_DOLLAR;
-			else if (ms->input[i][0] == '|')
-				ms->token[i] = TOK_PIPE;
-		}
-		else
-			ms->token[i] = TOK_ARG;
-		i++;
-	}
-}
-
 char	**get_input(t_minishell *ms)
 {
 	char	*line;
@@ -68,15 +23,69 @@ char	**get_input(t_minishell *ms)
 		exit(0);
 	ft_strtrim(line, " ");
 	add_history(line);
-	ms->input = lexer(line);
+	ms->input = lexer(line, " ><|");
 	return (ms->input);
+}
+
+// int	count_strings(char **input)
+// {
+// 	static int	i;
+// 	int			words;
+
+// 	words = 0;
+// 	while (!ft_strncmp(input[i], "|", 1))
+// 		i++;
+// 	while (input[i])
+// 	{
+// 		printf("input: %s\n", input[i]);
+// 		if (!ft_strncmp(input[i], "|", 1))
+// 			break ;
+// 		words++;
+// 		i++;
+// 	}
+// 	printf("words: %d\n", words);
+// 	return (words);
+// }
+
+void	split_cmd(t_list **lst, char **input)
+{
+	char	**tmp;
+	int		i;
+	int		j;
+
+	i = -1;
+	j = -1;
+	tmp = (char **)malloc(100);
+	while (input[++i])
+	{
+		if (!ft_strncmp(input[i], "|", 1))
+		{
+			tmp[++j] = NULL;
+			ft_lstadd_back(lst, ft_lstnew(tmp));
+			tmp = (char **)malloc(100);
+			j = -1;
+		}
+		else
+			tmp[++j] = ft_strdup(input[i]);
+	}
+	tmp[++j] = NULL;
+	ft_lstadd_back(lst, ft_lstnew(tmp));
+	// while (*lst)
+	// {
+	// 	printf("NODE\n");
+	// 	for (int x = 0; (*lst)->cmd[x]; x++)
+	// 		printf("lst->args[%d]: %s\n", x, (*lst)->cmd[x]);
+	// 	*lst = (*lst)->next;
+	// }
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*ms;
+	t_list		**lst;
 
 	ms = malloc(sizeof(t_minishell));
+	lst = malloc(sizeof(t_list));
 	ms->envp = envp;
 	if (!argv[0] || argc != 1)
 		myexit(1);
@@ -89,8 +98,12 @@ int	main(int argc, char **argv, char **envp)
 		get_token(ms);
 		remove_quotes(ms->input);
 		check_dollar(ms);
-		cmd(ms->input, ms->cwd, ms->envp);
-		for (int i = 0; ms->input[i]; i++)
-			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+		check_emptystr(ms);
+		split_cmd(lst, ms->input);
+		// cmd(ms, lst);
+		pipex(ms, lst);
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+		ft_free(ms, lst);
 	}
 }

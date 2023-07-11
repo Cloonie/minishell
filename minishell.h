@@ -40,10 +40,11 @@ enum {
 	TOK_EOF,
 	TOK_CMD,
 	TOK_ARG,
+	TOK_SQUOTE,
+	TOK_DQUOTE,
+	TOK_DOLLAR,
 	TOK_REDIRECT,
 	TOK_PIPE,
-	TOK_DOLLAR,
-	TOK_QUOTE,
 	TOK_ESCAPE,
 };
 
@@ -54,6 +55,7 @@ char		**get_input(t_minishell *ms);
 void		sigint_handler(int sig);
 void		myexit(int status);
 char		*ft_getenv(t_minishell *ms, char *envvar);
+void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
 void		call_echo(char **input);
@@ -62,24 +64,29 @@ void		call_unset(char **input, char **envp);
 void		call_export(char **input, char **envp);
 void		export2(char **input, char **envp);
 
-// executable
+// build_ins2
 void		call_env(char **envp);
 void		call_run(char **input, char **envp);
-int			cmd(char **input, char *cwd, char **ev);
-int			executable(char **input, char **ev);
+
+
+// executer
+int			cmd(t_minishell *ms, t_list **lst);
+int			executable(t_minishell *ms, t_list *lst);
 
 // lexer
-// static int	count_words(char const *s);
-// static char	*word_dup(const char *str, int start, int finish);
-// static void	split_words(char **array, const char *s);
-char		**lexer(char *s);
+char		**lexer(char *s, const char *op);
+
+// token
+int			check_valid_cmd(t_minishell *ms, char *input);
+void		get_token(t_minishell *ms);
 
 // parser
 void		remove_quotes(char **array);
 void		check_dollar(t_minishell *ms);
 int			check_quotes(char *s);
+void		check_emptystr(t_minishell *ms);
 
 // pipex
-int			pipex(char **input, char **envp);
+void		pipex(t_minishell *ms, t_list **lst);
 
 #endif

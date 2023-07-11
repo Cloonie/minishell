@@ -28,10 +28,13 @@ SANITIZE	=	-fsanitize=address -g3
 
 FILES		=	main		\
 				utils		\
-				build_ins	\
-				executable	\
 				lexer		\
+				token		\
 				parser		\
+				build_ins	\
+				build_ins2	\
+				executer	\
+				spipe_sample\
 
 SRCS		=	$(addsuffix .c, $(FILES))
 OBJS		=	$(addsuffix .o, $(FILES))
