@@ -17,6 +17,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 	t_list	*tmp;
 
 	tmp = *lst;
+	// printf("tmp->args[0]: %s\n", tmp->args[0]);
 	if (tmp->args[0])
 	{
 		if (ft_strncmp(tmp->args[0], "echo\0", 5) == 0)

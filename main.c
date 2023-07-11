@@ -70,13 +70,6 @@ void	split_cmd(t_list **lst, char **input)
 	}
 	tmp[++j] = NULL;
 	ft_lstadd_back(lst, ft_lstnew(tmp));
-	// while (*lst)
-	// {
-	// 	printf("NODE\n");
-	// 	for (int x = 0; (*lst)->cmd[x]; x++)
-	// 		printf("lst->args[%d]: %s\n", x, (*lst)->cmd[x]);
-	// 	*lst = (*lst)->next;
-	// }
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -100,8 +93,17 @@ int	main(int argc, char **argv, char **envp)
 		check_dollar(ms);
 		check_emptystr(ms);
 		split_cmd(lst, ms->input);
-		// cmd(ms, lst);
-		// pipe(ms, lst);
+		redirection(ms, lst);
+		if (ft_strncmp((*lst)->args[0], "exit\0", 5) == 0)
+			myexit(0);
+		pipex(ms, lst);
+		// while (*lst)
+		// {
+		// 	printf("NODE\n");
+		// 	for (int x = 0; (*lst)->args[x]; x++)
+		// 		printf("lst->args[%d]: %s\n", x, (*lst)->args[x]);
+		// 	*lst = (*lst)->next;
+		// }
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 		ft_free(ms, lst);

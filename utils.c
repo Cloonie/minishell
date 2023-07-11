@@ -34,10 +34,8 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 	while (*lst)
 	{
 		i = -1;
-		while ((*lst)->cmd[++i])
-			free((*lst)->cmd[i]);
-		free((*lst)->infile);
-		free((*lst)->outfile);
+		while ((*lst)->args[++i])
+			free((*lst)->args[i]);
 		(*lst) = (*lst)->next;
 	}
 }

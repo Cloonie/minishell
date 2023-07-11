@@ -34,6 +34,12 @@ typedef struct s_minishell
 	int		*token;
 	char	**envp;
 	char	cwd[1024];
+	int		ori_in;
+	int		ori_out;
+	char	*infile;
+	char	*outfile;
+	int		fdin;
+	int		fdout;
 }	t_minishell;
 
 enum {
@@ -87,5 +93,7 @@ int			check_quotes(char *s);
 void		check_emptystr(t_minishell *ms);
 
 // pipe
+void		pipex(t_minishell *ms, t_list **lst);
+void		redirection(t_minishell *ms, t_list **lst);
 
 #endif
