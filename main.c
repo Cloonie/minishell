@@ -94,8 +94,6 @@ int	main(int argc, char **argv, char **envp)
 		check_emptystr(ms);
 		split_cmd(lst, ms->input);
 		redirection(ms, lst);
-		if (ft_strncmp((*lst)->args[0], "exit\0", 5) == 0)
-			myexit(0);
 		pipex(ms, lst);
 		// while (*lst)
 		// {

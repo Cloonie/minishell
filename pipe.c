@@ -43,11 +43,6 @@ void	redirection(t_minishell *ms, t_list **lst)
 				ms->outfile = tmp->args[i + 1];
 				rm_2strs(i, tmp->args);
 			}
-			else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
-			{
-				ms->outfile = tmp->args[i + 1];
-				rm_2strs(i, tmp->args);
-			}
 			else
 				i++;
 		}
@@ -57,9 +52,6 @@ void	redirection(t_minishell *ms, t_list **lst)
 
 void	pipex(t_minishell *ms, t_list **lst)
 {
-	int	i;
-	int	ret;
-	int	fdpipe[2];
 	int	size;
 
 	size = ft_lstsize(*lst);
@@ -70,6 +62,8 @@ void	pipex(t_minishell *ms, t_list **lst)
 	else
 		ms->fdin = dup(ms->ori_in);
 
+	int	fdpipe[2];
+	int	i;
 	i = -1;
 	while (++i < size)
 	{
@@ -91,13 +85,14 @@ void	pipex(t_minishell *ms, t_list **lst)
 		}
 		dup2(ms->fdout, 1);
 		close(ms->fdout);
-		ret = fork();
-		if (ret == 0)
-		{
+
+		// int	ret;
+		// ret = fork();
+		// if (ret == 0)
+		// {
 			cmd(ms, lst);
-			// perror("fork");
-			exit(1);
-		}
+		// 	exit(1);
+		// }
 		if (ms->fdout != fdpipe[1])
 			ms->outfile = NULL;
 		(*lst) = (*lst)->next;
@@ -108,5 +103,5 @@ void	pipex(t_minishell *ms, t_list **lst)
 	close(ms->ori_in);
 	close(ms->ori_out);
 
-	waitpid(ret, NULL, 0);
+	// waitpid(ret, NULL, 0);
 }

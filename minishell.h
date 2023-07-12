@@ -65,7 +65,7 @@ void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
 void		call_echo(char **input);
-void		call_cd(char **input, char *cwd);
+void		call_cd(t_minishell *ms, char **input, char *cwd);
 void		call_unset(char **input, char **envp);
 void		call_export(char **input, char **envp);
 void		export2(char **input, char **envp);

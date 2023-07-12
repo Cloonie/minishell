@@ -22,8 +22,6 @@ int	cmd(t_minishell *ms, t_list **lst)
 	{
 		if (ft_strncmp(tmp->args[0], "echo\0", 5) == 0)
 			call_echo(tmp->args);
-		else if (ft_strncmp(tmp->args[0], "cd\0", 3) == 0)
-			call_cd(tmp->args, ms->cwd);
 		else if (ft_strncmp(tmp->args[0], "pwd\0", 4) == 0)
 			printf("%s\n", ms->cwd);
 		else if (ft_strncmp(tmp->args[0], "export\0", 7) == 0)
@@ -32,6 +30,8 @@ int	cmd(t_minishell *ms, t_list **lst)
 			call_unset(tmp->args, ms->envp);
 		else if ((ft_strncmp(tmp->args[0], "env\0", 4) == 0))
 			call_env(ms->envp);
+		else if (ft_strncmp(tmp->args[0], "cd\0", 3) == 0)
+			call_cd(ms, tmp->args, ms->cwd);
 		else if (ft_strncmp(tmp->args[0], "exit\0", 5) == 0)
 			myexit(0);
 		else if (ft_strncmp(tmp->args[0], "./", 2) == 0
@@ -50,7 +50,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 
 int	executable(t_minishell *ms, t_list *lst)
 {
-	// pid_t	pid;
+	pid_t	pid;
 	char	**paths;
 	char	*current_path;
 	int		i;
@@ -62,14 +62,14 @@ int	executable(t_minishell *ms, t_list *lst)
 		current_path = ft_strjoin(ft_strjoin(paths[i], "/"), lst->args[0]);
 		if (access(current_path, F_OK) == 0)
 		{
-			// pid = fork();
-			// if (pid == 0)
-			execve(current_path, lst->args, ms->envp);
-			// else if (pid > 0)
-			// {
-			// 	waitpid(pid, NULL, 0);
-			// 	return (0);
-			// }
+			pid = fork();
+			if (pid == 0)
+				execve(current_path, lst->args, ms->envp);
+			else if (pid > 0)
+			{
+				waitpid(pid, NULL, 0);
+				return (0);
+			}
 		}
 	}
 	return (1);

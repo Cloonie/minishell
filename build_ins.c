@@ -49,7 +49,7 @@ void	call_echo(char **input)
 		printf("\n");
 }
 
-void	call_cd(char **input, char *cwd)
+void	call_cd(t_minishell *ms, char **input, char *cwd)
 {
 	char	*path;
 
@@ -69,7 +69,7 @@ void	call_cd(char **input, char *cwd)
 			printf("%s: %s: No such file or directory\n", input[0], input[1]);
 	}
 	else
-		chdir(getenv("HOME"));
+		chdir(ft_getenv(ms, "HOME"));
 }
 
 void	call_unset(char **input, char **envp)
