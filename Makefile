@@ -34,6 +34,7 @@ FILES		=	main		\
 				build_ins	\
 				build_ins2	\
 				executer	\
+				redir		\
 				pipe		\
 
 SRCS		=	$(addsuffix .c, $(FILES))

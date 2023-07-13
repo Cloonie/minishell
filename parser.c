@@ -81,9 +81,11 @@ void	check_dollar(t_minishell *ms)
 	while (ms->input[++i])
 	{
 		j = -1;
-		if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
+		if (!ft_strncmp(ms->input[i], "$\0", 2))
+			;
+		else if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
 		{
-			envvar = ft_split(ft_strchr(ms->input[i], '$') + 1, '$');
+			envvar = ft_split(ft_strchr(ms->input[i], '$'), '$');
 			ms->input[i] = ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$"));
 			j = -1;
 			while (envvar[++j])

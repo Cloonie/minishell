@@ -12,44 +12,6 @@
 
 #include "minishell.h"
 
-void	rm_2strs(int i, char **array)
-{
-	while (array[i])
-	{
-		array[i] = array[i + 2];
-		i++;
-	}
-}
-
-void	redirection(t_minishell *ms, t_list **lst)
-{
-	int		i;
-	t_list	*tmp;
-
-
-	tmp = *lst;
-	while (tmp && tmp->args)
-	{
-		i = 0;
-		while (tmp->args[i])
-		{
-			if (!ft_strncmp(tmp->args[i], "<\0", 2))
-			{
-				ms->infile = tmp->args[i + 1];
-				rm_2strs(i, tmp->args);
-			}
-			else if (!ft_strncmp(tmp->args[i], ">\0", 2))
-			{
-				ms->outfile = tmp->args[i + 1];
-				rm_2strs(i, tmp->args);
-			}
-			else
-				i++;
-		}
-		tmp = tmp->next;
-	}
-}
-
 void	pipex(t_minishell *ms, t_list **lst)
 {
 	int	size;
@@ -62,6 +24,7 @@ void	pipex(t_minishell *ms, t_list **lst)
 	else
 		ms->fdin = dup(ms->ori_in);
 
+	// int	ret;
 	int	fdpipe[2];
 	int	i;
 	i = -1;
@@ -71,9 +34,12 @@ void	pipex(t_minishell *ms, t_list **lst)
 		close(ms->fdin);
 		if (i == size - 1)
 		{
-			if (ms->outfile)
+			if (ms->outfile && !ms->append)
 				ms->fdout = open(ms->outfile,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			else if (ms->outfile && ms->append)
+				ms->fdout = open(ms->outfile,
+						O_WRONLY | O_CREAT | O_APPEND, 0644);
 			else
 				ms->fdout = dup(ms->ori_out);
 		}
@@ -86,7 +52,6 @@ void	pipex(t_minishell *ms, t_list **lst)
 		dup2(ms->fdout, 1);
 		close(ms->fdout);
 
-		// int	ret;
 		// ret = fork();
 		// if (ret == 0)
 		// {

@@ -27,27 +27,7 @@ char	**get_input(t_minishell *ms)
 	return (ms->input);
 }
 
-// int	count_strings(char **input)
-// {
-// 	static int	i;
-// 	int			words;
-
-// 	words = 0;
-// 	while (!ft_strncmp(input[i], "|", 1))
-// 		i++;
-// 	while (input[i])
-// 	{
-// 		printf("input: %s\n", input[i]);
-// 		if (!ft_strncmp(input[i], "|", 1))
-// 			break ;
-// 		words++;
-// 		i++;
-// 	}
-// 	printf("words: %d\n", words);
-// 	return (words);
-// }
-
-void	split_cmd(t_list **lst, char **input)
+void	split_cmd(t_list **lst, t_minishell *ms)
 {
 	char	**tmp;
 	int		i;
@@ -56,9 +36,9 @@ void	split_cmd(t_list **lst, char **input)
 	i = -1;
 	j = -1;
 	tmp = (char **)malloc(100);
-	while (input[++i])
+	while (ms->input[++i])
 	{
-		if (!ft_strncmp(input[i], "|", 1))
+		if (!ft_strncmp(ms->input[i], "|", 1))
 		{
 			tmp[++j] = NULL;
 			ft_lstadd_back(lst, ft_lstnew(tmp));
@@ -66,10 +46,14 @@ void	split_cmd(t_list **lst, char **input)
 			j = -1;
 		}
 		else
-			tmp[++j] = ft_strdup(input[i]);
+		{
+			tmp[++j] = ft_strdup(ms->input[i]);
+			// (*lst)->token[j] = ms->token[i];
+		}
 	}
 	tmp[++j] = NULL;
-	ft_lstadd_back(lst, ft_lstnew(tmp));
+	if (tmp != NULL)
+		ft_lstadd_back(lst, ft_lstnew(tmp));
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -92,16 +76,16 @@ int	main(int argc, char **argv, char **envp)
 		remove_quotes(ms->input);
 		check_dollar(ms);
 		check_emptystr(ms);
-		split_cmd(lst, ms->input);
-		redirection(ms, lst);
-		pipex(ms, lst);
-		// while (*lst)
-		// {
-		// 	printf("NODE\n");
-		// 	for (int x = 0; (*lst)->args[x]; x++)
-		// 		printf("lst->args[%d]: %s\n", x, (*lst)->args[x]);
-		// 	*lst = (*lst)->next;
-		// }
+		split_cmd(lst, ms);
+		if (!redir(ms, lst))
+			pipex(ms, lst);
+		while (*lst)
+		{
+			printf("NODE\n");
+			for (int x = 0; (*lst)->args[x]; x++)
+				printf("lst->args[%d]: %s\n", x, (*lst)->args[x]);
+			*lst = (*lst)->next;
+		}
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 		ft_free(ms, lst);

@@ -22,6 +22,7 @@ typedef struct s_list
 {
 	void			*content;
 	char			**args;
+	int				*token;
 	char			*infile;
 	char			*outfile;
 	struct s_list	*next;
