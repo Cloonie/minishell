@@ -20,7 +20,15 @@ void	pipex(t_minishell *ms, t_list **lst)
 	ms->ori_in = dup(0);
 	ms->ori_out = dup(1);
 	if (ms->infile)
+	{
 		ms->fdin = open(ms->infile, O_RDONLY);
+		if (ms->fdin == -1)
+		{
+			ms->infile = NULL;
+			perror("Error opening file");
+			return ;
+		}
+	}
 	else
 		ms->fdin = dup(ms->ori_in);
 
