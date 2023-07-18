@@ -63,20 +63,20 @@ char		*ft_getenv(t_minishell *ms, char *envvar);
 void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
-void		call_echo(char **input);
-void		call_cd(t_minishell *ms, char **input, char *cwd);
+void		call_echo(t_list *lst);
+void		call_cd(t_minishell *ms, t_list *lst);
 void		call_unset(char **input, char **envp);
-void		call_export(char **input, char **envp);
-void		export2(char **input, char **envp);
+void		call_export(t_minishell *ms, t_list *lst);
+void		export2(t_minishell *ms, t_list *lst);
 
 // build_ins2
-void		call_env(char **envp);
+void		call_env(t_minishell *ms);
 void		call_run(char **input, char **envp);
 
 
 // executer
-int			cmd(t_minishell *ms, t_list **lst);
-int			executable(t_minishell *ms, t_list *lst);
+int			cmd(t_minishell *ms, t_list **lst, int pid);
+int			executable(t_minishell *ms, t_list *lst, int pid);
 
 // lexer
 char		**lexer(char *s, const char *op);

@@ -12,15 +12,15 @@
 
 #include "minishell.h"
 
-void	call_env(char **envp)
+void	call_env(t_minishell *ms)
 {
 	int	i;
 
 	i = 0;
-	while (envp[i])
+	while (ms->envp[i])
 	{
-		if (ft_strchr(envp[i], '='))
-			printf("%s\n", envp[i++]);
+		if (ft_strchr(ms->envp[i], '='))
+			printf("%s\n", ms->envp[i++]);
 		else
 			i++;
 	}

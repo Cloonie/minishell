@@ -33,8 +33,7 @@ void	pipex(t_minishell *ms, t_list **lst)
 	}
 	else
 		ms->fdin = dup(ms->ori_in);
-
-	// int	ret;
+	int	pid;
 	int	fdpipe[2];
 	int	i;
 	i = -1;
@@ -62,11 +61,14 @@ void	pipex(t_minishell *ms, t_list **lst)
 		dup2(ms->fdout, 1);
 		close(ms->fdout);
 
-		// ret = fork();
-		// if (ret == 0)
+		pid = fork();
+		cmd(ms, lst, pid);
+		// if (pid == 0)
 		// {
-			cmd(ms, lst);
-		// 	exit(1);
+			// if (cmd(ms, lst, pid) == 0)
+			// 	exit(0);
+			// else
+			// 	exit(127);
 		// }
 		(*lst) = (*lst)->next;
 	}
@@ -76,6 +78,6 @@ void	pipex(t_minishell *ms, t_list **lst)
 	close(ms->ori_in);
 	close(ms->ori_out);
 
-	// waitpid(ret, &ms->exit_status, 0);
+	// waitpid(pid, &ms->exit_status, 0);
 	// ms->exit_status = ms->exit_status >> 8;
 }

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	call_echo(char **input)
+void	call_echo(t_list *lst)
 {
 	int	i;
 	int	j;
@@ -21,27 +21,27 @@ void	call_echo(char **input)
 	i = 1;
 	j = 1;
 	newline = 1;
-	while (input[i])
+	while (lst->args[i])
 	{
-		if (input[i][j - 1] != '-')
+		if (lst->args[i][j - 1] != '-')
 			break ;
-		while (input[i][j])
+		while (lst->args[i][j])
 		{
-			if (i == 1 && input[i][j] == 'n' && !input[i][j + 1])
+			if (i == 1 && lst->args[i][j] == 'n' && !lst->args[i][j + 1])
 				newline = 0;
-			else if (input[i][j] != 'n')
+			else if (lst->args[i][j] != 'n')
 				break ;
 			j++;
 		}
-		if (input[i][j] && input[i][j] != 'n')
+		if (lst->args[i][j] && lst->args[i][j] != 'n')
 			break ;
 		j = 1;
 		i++;
 	}
-	while (input[i])
+	while (lst->args[i])
 	{
-		printf("%s", input[i]);
-		if (input[i + 1])
+		printf("%s", lst->args[i]);
+		if (lst->args[i + 1])
 			printf(" ");
 		i++;
 	}
@@ -49,24 +49,24 @@ void	call_echo(char **input)
 		printf("\n");
 }
 
-void	call_cd(t_minishell *ms, char **input, char *cwd)
+void	call_cd(t_minishell *ms, t_list *lst)
 {
 	char	*path;
 
-	if (input[1] && input[1][0] == '/')
+	if (lst->args[1] && lst->args[1][0] == '/')
 	{
-		if (chdir(input[1]) == 0)
+		if (chdir(lst->args[1]) == 0)
 			;
 		else
-			printf("%s: %s: No such file or directory\n", input[0], input[1]);
+			printf("%s: %s: No such file or directory\n", lst->args[0], lst->args[1]);
 	}
-	else if (input[1])
+	else if (lst->args[1])
 	{
-		path = ft_strjoin(ft_strjoin(cwd, "/"), input[1]);
+		path = ft_strjoin(ft_strjoin(ms->cwd, "/"), lst->args[1]);
 		if (chdir(path) == 0)
 			;
 		else
-			printf("%s: %s: No such file or directory\n", input[0], input[1]);
+			printf("%s: %s: No such file or directory\n", lst->args[0], lst->args[1]);
 	}
 	else
 		chdir(ft_getenv(ms, "HOME"));
@@ -103,52 +103,52 @@ void	call_unset(char **input, char **envp)
 	}
 }
 
-void	call_export(char **input, char **envp)
+void	call_export(t_minishell *ms, t_list *lst)
 {
 	int	i;
 
 	i = -1;
-	if (!input[1])
+	if (!lst->args[1])
 	{
-		while (envp[++i])
+		while (ms->envp[++i])
 		{
-			if (ft_strchr(envp[i], '='))
+			if (ft_strchr(ms->envp[i], '='))
 				printf("declare -x %s=\"%s\"\n",
-					ft_substr(envp[i], 0, ft_strpos(envp[i], "=")),
-					ft_strchr(envp[i], '=') + 1);
+					ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "=")),
+					ft_strchr(ms->envp[i], '=') + 1);
 			else
-				printf("declare -x %s\n", envp[i]);
+				printf("declare -x %s\n", ms->envp[i]);
 		}
 	}
-	export2(input, envp);
+	export2(ms, lst);
 }
 
-void	export2(char **input, char **envp)
+void	export2(t_minishell *ms, t_list *lst)
 {
 	int	i;
 	int	j;
 
 	j = 1;
-	while (input[j])
+	while (lst->args[j])
 	{
-		if (!ft_isalpha(input[j][0]))
+		if (!ft_isalpha(lst->args[j][0]))
 			printf("-minishell: export: `%s': not a valid identifier\n",
-				input[j]);
+				lst->args[j]);
 		else
 		{
 			i = -1;
-			while (envp[++i])
+			while (ms->envp[++i])
 			{
-				if (envp[i + 1] == NULL)
+				if (ms->envp[i + 1] == NULL)
 				{
-					envp[i + 1] = input[j];
-					envp[i + 2] = NULL;
+					ms->envp[i + 1] = lst->args[j];
+					ms->envp[i + 2] = NULL;
 					break ;
 				}
-				else if (ft_strncmp(envp[i + 1], input[j],
-						ft_strpos(envp[i + 1], "=") + 1) == 0)
+				else if (ft_strncmp(ms->envp[i + 1], lst->args[j],
+						ft_strpos(ms->envp[i + 1], "=") + 1) == 0)
 				{
-					envp[i + 1] = input[j];
+					ms->envp[i + 1] = lst->args[j];
 					break ;
 				}
 			}
