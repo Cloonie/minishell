@@ -19,12 +19,14 @@ void	pipex(t_minishell *ms, t_list **lst)
 	size = ft_lstsize(*lst);
 	ms->ori_in = dup(0);
 	ms->ori_out = dup(1);
-	if (ms->infile)
+	ms->fdin = 0;
+	ms->fdout = 0;
+	if ((*lst)->infile)
 	{
-		ms->fdin = open(ms->infile, O_RDONLY);
+		ms->fdin = open((*lst)->infile, O_RDONLY);
 		if (ms->fdin == -1)
 		{
-			ms->infile = NULL;
+			(*lst)->infile = NULL;
 			perror("Error opening file");
 			return ;
 		}
@@ -42,11 +44,11 @@ void	pipex(t_minishell *ms, t_list **lst)
 		close(ms->fdin);
 		if (i == size - 1)
 		{
-			if (ms->outfile && !ms->append)
-				ms->fdout = open(ms->outfile,
+			if ((*lst)->outfile && !(*lst)->append)
+				ms->fdout = open((*lst)->outfile,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			else if (ms->outfile && ms->append)
-				ms->fdout = open(ms->outfile,
+			else if ((*lst)->outfile && (*lst)->append)
+				ms->fdout = open((*lst)->outfile,
 						O_WRONLY | O_CREAT | O_APPEND, 0644);
 			else
 				ms->fdout = dup(ms->ori_out);
@@ -66,8 +68,6 @@ void	pipex(t_minishell *ms, t_list **lst)
 			cmd(ms, lst);
 		// 	exit(1);
 		// }
-		if (ms->fdout != fdpipe[1])
-			ms->outfile = NULL;
 		(*lst) = (*lst)->next;
 	}
 
@@ -76,5 +76,6 @@ void	pipex(t_minishell *ms, t_list **lst)
 	close(ms->ori_in);
 	close(ms->ori_out);
 
-	// waitpid(ret, NULL, 0);
+	// waitpid(ret, &ms->exit_status, 0);
+	// ms->exit_status = ms->exit_status >> 8;
 }

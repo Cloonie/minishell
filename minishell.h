@@ -36,11 +36,9 @@ typedef struct s_minishell
 	char	cwd[1024];
 	int		ori_in;
 	int		ori_out;
-	char	*infile;
-	char	*outfile;
 	int		fdin;
 	int		fdout;
-	int		append;
+	int		exit_status;
 }	t_minishell;
 
 enum {
@@ -95,8 +93,8 @@ void		check_emptystr(t_minishell *ms);
 
 // redirection
 int			rm_2strs(t_list *tmp, int i);
-int			redir_type(t_minishell *ms, t_list *tmp, int i);
-int			redir(t_minishell *ms, t_list **lst);
+int			redir_type(t_list *tmp, int i);
+int			redir(t_list **lst);
 
 // pipe
 void		pipex(t_minishell *ms, t_list **lst);

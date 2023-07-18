@@ -16,14 +16,17 @@ char	**get_input(t_minishell *ms)
 {
 	char	*line;
 
+	getcwd(ms->cwd, sizeof(ms->cwd));
 	line = readline(ft_strjoin(ft_strjoin
 				("\033[38;5;39m[minishell] \033[4;36m", ms->cwd),
 				"\033[0;36m> \033[0m"));
-	if (line == NULL)
+	if (!line)
 		exit(0);
 	ft_strtrim(line, " ");
 	add_history(line);
 	ms->input = lexer(line, " ><|");
+	if (!ms->exit_status)
+		ms->exit_status = 0;
 	return (ms->input);
 }
 
@@ -46,10 +49,7 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 			j = -1;
 		}
 		else
-		{
 			tmp[++j] = ft_strdup(ms->input[i]);
-			// (*lst)->token[j] = ms->token[i];
-		}
 	}
 	tmp[++j] = NULL;
 	if (tmp != NULL)
@@ -70,14 +70,13 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
-		getcwd(ms->cwd, sizeof(ms->cwd));
 		ms->input = get_input(ms);
 		get_token(ms);
 		remove_quotes(ms->input);
 		check_dollar(ms);
 		check_emptystr(ms);
 		split_cmd(lst, ms);
-		if (!redir(ms, lst))
+		if (!redir(lst))
 		{
 			pipex(ms, lst);
 		}

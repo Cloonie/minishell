@@ -67,7 +67,8 @@ int	executable(t_minishell *ms, t_list *lst)
 				execve(current_path, lst->args, ms->envp);
 			else if (pid > 0)
 			{
-				waitpid(pid, NULL, 0);
+				waitpid(pid, &ms->exit_status, 0);
+				ms->exit_status = ms->exit_status >> 8;
 				return (0);
 			}
 		}

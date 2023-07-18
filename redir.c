@@ -22,20 +22,21 @@ int	rm_2strs(t_list *tmp, int i)
 	return (0);
 }
 
-int	redir_type(t_minishell *ms, t_list *tmp, int i)
+int	redir_type(t_list *tmp, int i)
 {
 	if (!ft_strncmp(tmp->args[i], "<\0", 2))
-	{
-		ms->infile = tmp->args[i + 1];
-	}
+		tmp->infile = tmp->args[i + 1];
 	else if (!ft_strncmp(tmp->args[i], ">\0", 2))
+		tmp->outfile = tmp->args[i + 1];
+	else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
 	{
-		ms->outfile = tmp->args[i + 1];
+		tmp->outfile = tmp->args[i + 1];
+		tmp->append = 1;
 	}
 	else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
 	{
-		ms->outfile = tmp->args[i + 1];
-		ms->append = 1;
+		tmp->outfile = tmp->args[i + 1];
+		tmp->append = 1;
 	}
 	else
 		return (1);
@@ -62,21 +63,23 @@ int	redir_error(t_list *tmp, int i)
 	return (0);
 }
 
-int	redir(t_minishell *ms, t_list **lst)
+int	redir(t_list **lst)
 {
 	int		i;
 	t_list	*tmp;
 
 	tmp = *lst;
-	ms->append = 0;
 	while (tmp && tmp->args)
 	{
 		i = 0;
+		tmp->append = 0;
+		tmp->infile = NULL;
+		tmp->outfile = NULL;
 		while (tmp->args[i])
 		{
 			if (redir_error(tmp, i) == 1)
 				return (1);
-			if (redir_type(ms, tmp, i) == 1)
+			if (redir_type(tmp, i) == 1)
 				i++;
 		}
 		tmp = tmp->next;

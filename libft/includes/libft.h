@@ -22,9 +22,9 @@ typedef struct s_list
 {
 	void			*content;
 	char			**args;
-	int				*token;
 	char			*infile;
 	char			*outfile;
+	int				append;
 	struct s_list	*next;
 }	t_list;
 
