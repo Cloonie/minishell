@@ -33,10 +33,12 @@ int	redir_type(t_list *tmp, int i)
 		tmp->outfile = tmp->args[i + 1];
 		tmp->append = 1;
 	}
-	else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
+	else if (!ft_strncmp(tmp->args[i], "<<\0", 3))
 	{
-		tmp->outfile = tmp->args[i + 1];
-		tmp->append = 1;
+		tmp->outfile = "heredoc";
+		// char *line;
+		// line = readline(">");
+		// printf("line: %s\n", line);
 	}
 	else
 		return (1);

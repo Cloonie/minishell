@@ -15,18 +15,23 @@
 char	**get_input(t_minishell *ms)
 {
 	char	*line;
+	char	*trim;
+	char	tmp[100];
 
 	getcwd(ms->cwd, sizeof(ms->cwd));
-	line = readline(ft_strjoin(ft_strjoin
-				("\033[38;5;39m[minishell] \033[4;36m", ms->cwd),
-				"\033[0;36m> \033[0m"));
+	ft_strlcpy(tmp, "\033[38;5;39m[minishell] \033[4;36m", 30);
+	ft_strlcat(tmp, ms->cwd, 100);
+	ft_strlcat(tmp, "\033[0;36m> \033[0m", 100);
+	line = readline(tmp);
 	if (!line)
 		exit(0);
-	ft_strtrim(line, " ");
 	add_history(line);
-	ms->input = lexer(line, " ><|");
+	trim = ft_strtrim(line, " ");
+	ms->input = lexer(trim, " ><|");
 	if (!ms->exit_status)
 		ms->exit_status = 0;
+	free(trim);
+	free(line);
 	return (ms->input);
 }
 
@@ -65,21 +70,19 @@ int	main(int argc, char **argv, char **envp)
 	lst = malloc(sizeof(t_list));
 	ms->envp = envp;
 	if (!argv[0] || argc != 1)
-		myexit(1);
+		myexit(ms, lst, 1);
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		ms->input = get_input(ms);
 		get_token(ms);
-		remove_quotes(ms->input);
+		remove_quotes(ms);
 		check_dollar(ms);
-		check_emptystr(ms);
-		split_cmd(lst, ms);
-		if (!redir(lst))
-		{
-			pipex(ms, lst);
-		}
+		// check_emptystr(ms);
+		// split_cmd(lst, ms);
+		// if (!redir(lst))
+		// 	pipex(ms, lst);
 		// while (*lst)
 		// {
 		// 	printf("NODE\n");
@@ -90,5 +93,6 @@ int	main(int argc, char **argv, char **envp)
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 		ft_free(ms, lst);
+		myexit(ms, lst, 0);
 	}
 }

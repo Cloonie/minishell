@@ -72,29 +72,29 @@ void	call_cd(t_minishell *ms, t_list *lst)
 		chdir(ft_getenv(ms, "HOME"));
 }
 
-void	call_unset(char **input, char **envp)
+void	call_unset(t_minishell *ms, t_list *lst)
 {
 	char	*var;
 	int		i;
 	int		j;
 
-	if (!input[1])
+	if (!lst->args[1])
 		return ;
 	j = 0;
-	while (input[++j])
+	while (lst->args[++j])
 	{
 		i = -1;
-		while (envp[++i])
+		while (ms->envp[++i])
 		{
-			if (ft_strpos(envp[i], "="))
-				var = ft_substr(envp[i], 0, ft_strpos(envp[i], "="));
+			if (ft_strpos(ms->envp[i], "="))
+				var = ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "="));
 			else
-				var = ft_substr(envp[i], 0, ft_strlen(envp[i]));
-			if (!ft_strncmp(input[j], var, ft_strlen(var) + 1))
+				var = ft_substr(ms->envp[i], 0, ft_strlen(ms->envp[i]));
+			if (!ft_strncmp(lst->args[j], var, ft_strlen(var) + 1))
 			{
-				while (envp[i])
+				while (ms->envp[i])
 				{
-					envp[i] = envp[i + 1];
+					ms->envp[i] = ms->envp[i + 1];
 					i++;
 				}
 				break ;

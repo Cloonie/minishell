@@ -58,14 +58,14 @@ char		**get_input(t_minishell *ms);
 
 // utils
 void		sigint_handler(int sig);
-void		myexit(int status);
+void		myexit(t_minishell	*ms, t_list **lst, int status);
 char		*ft_getenv(t_minishell *ms, char *envvar);
 void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
 void		call_echo(t_list *lst);
 void		call_cd(t_minishell *ms, t_list *lst);
-void		call_unset(char **input, char **envp);
+void		call_unset(t_minishell *ms, t_list *lst);
 void		call_export(t_minishell *ms, t_list *lst);
 void		export2(t_minishell *ms, t_list *lst);
 
@@ -75,8 +75,8 @@ void		call_run(char **input, char **envp);
 
 
 // executer
-int			cmd(t_minishell *ms, t_list **lst, int pid);
-int			executable(t_minishell *ms, t_list *lst, int pid);
+int			cmd(t_minishell *ms, t_list **lst);
+int			executable(t_minishell *ms, t_list *lst);
 
 // lexer
 char		**lexer(char *s, const char *op);
@@ -86,7 +86,7 @@ int			check_valid_cmd(t_minishell *ms, char *input);
 void		get_token(t_minishell *ms);
 
 // parser
-void		remove_quotes(char **array);
+void		remove_quotes(t_minishell *ms);
 void		check_dollar(t_minishell *ms);
 int			check_quotes(char *s);
 void		check_emptystr(t_minishell *ms);

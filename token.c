@@ -14,10 +14,12 @@
 
 int	check_valid_cmd(t_minishell *ms, char *input)
 {
+	char	buf[100];
 	char	**path;
 	int		i;
 
 	i = -1;
+	path = NULL;
 	if (input && (ft_strncmp(input, "echo\0", 5) == 0
 			|| ft_strncmp(input, "cd\0", 3) == 0
 			|| ft_strncmp(input, "pwd\0", 4) == 0
@@ -32,9 +34,20 @@ int	check_valid_cmd(t_minishell *ms, char *input)
 	{
 		path = ft_split(ft_getenv(ms, "PATH"), ':');
 		while (path[++i])
-			if (access(ft_strjoin(ft_strjoin(path[i], "/"), input), F_OK) == 0)
-				return (1);
+		{
+			ft_strlcpy(buf, path[i], 100);
+			ft_strlcat(buf, "/", 100);
+			ft_strlcat(buf, input, 100);
+			if (access(buf, F_OK) == 0)
+				break ;
+		}
 	}
+	i = -1;
+	while (path[++i])
+		free(path[i]);
+	free(path);
+	if (access(buf, F_OK) == 0)
+		return (1);
 	return (0);
 }
 

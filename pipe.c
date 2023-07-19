@@ -33,7 +33,7 @@ void	pipex(t_minishell *ms, t_list **lst)
 	}
 	else
 		ms->fdin = dup(ms->ori_in);
-	int	pid;
+	// int	pid;
 	int	fdpipe[2];
 	int	i;
 	i = -1;
@@ -61,11 +61,11 @@ void	pipex(t_minishell *ms, t_list **lst)
 		dup2(ms->fdout, 1);
 		close(ms->fdout);
 
-		pid = fork();
-		cmd(ms, lst, pid);
+		// pid = fork();
+		cmd(ms, lst);
 		// if (pid == 0)
 		// {
-			// if (cmd(ms, lst, pid) == 0)
+			// if (cmd(ms, lst) == 0)
 			// 	exit(0);
 			// else
 			// 	exit(127);

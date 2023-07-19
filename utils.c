@@ -16,32 +16,49 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	ft_printf("\n");
-	rl_replace_line("", 0);
+	// rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }
 
 void	ft_free(t_minishell	*ms, t_list **lst)
 {
-	int	i;
+	int		i;
+	// t_list	*tmp;
+	// t_list	*next;
 
+	(void)lst;
+	// tmp = *lst;
 	i = -1;
 	while (ms->input[++i])
 		free(ms->input[i]);
-	i = -1;
 	free(ms->input);
 	free(ms->token);
-	while (*lst)
-	{
-		i = -1;
-		while ((*lst)->args[++i])
-			free((*lst)->args[i]);
-		(*lst) = (*lst)->next;
-	}
+	// i = -1;
+	// while (tmp)
+	// {
+	// 	i = -1;
+	// 	while (tmp->args[++i])
+	// 		free(tmp->args[i]);
+	// 	tmp = tmp->next;
+	// }
+	// while ((*lst))
+	// {
+	// 	next = (*lst)->next;
+	// 	free((*lst));
+	// 	(*lst) = next;
+	// }
 }
 
-void	myexit(int status)
+void	myexit(t_minishell	*ms, t_list **lst, int status)
 {
+	int	i;
+
+	i = -1;
+	(void)lst;
+	(void)ms;
+	// ft_free(ms, lst);
+	free(ms);
 	if (status == EXIT_SUCCESS)
 		printf("EXIT_SUCCESS\n");
 	else if (status == EXIT_FAILURE)
@@ -53,15 +70,17 @@ void	myexit(int status)
 char	*ft_getenv(t_minishell *ms, char *envvar)
 {
 	char	*envval;
+	char	*var;
 	int		i;
 
 	i = 0;
 	envval = NULL;
 	while (ms->envp[++i])
 	{
-		if (!ft_strncmp(ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "=")),
-				envvar, ft_strlen(envvar) + 1))
+		var = ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "="));
+		if (!ft_strncmp(var, envvar, ft_strlen(envvar) + 1))
 			envval = ft_strchr(ms->envp[i], '=') + 1;
+		free(var);
 	}
 	return (envval);
 }
