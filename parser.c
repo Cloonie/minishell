@@ -75,21 +75,52 @@ void	check_emptystr(t_minishell *ms)
 			while (ms->input[++j])
 				ms->input[j] = ms->input[j + 1];
 		}
-
 	}
 }
+
+// void	multiple_dollar(t_minishell *ms, int i)
+// {
+// 	int		k;
+// 	char	**envvar;
+
+// 	envvar = lexer(ms->input[i], "$");
+// 	k = 0;
+// 	while (envvar[++k])
+// 	{
+// 		if (!ft_strncmp(envvar[k], "$\0", 2) && ft_getenv(ms, envvar[k + 1]))
+// 		{
+// 			free(envvar[k]);
+// 			envvar[k] = NULL;
+// 			free(envvar[k + 1]);
+// 			envvar[k + 1] = ft_strdup(ft_getenv(ms, envvar[k + 1]));
+// 		}
+// 	}
+// 	// while (envvar[++k])
+// 	// {
+// 	// 	j = -1;
+// 	// 	while (ft_isalnum(envvar[k][++j]))
+// 	// 		;
+// 	// 	between = ft_strchr(envvar[k], envvar[k][j]);
+// 	// 	tmp = ft_substr(envvar[k], 0, j);
+// 	// 	if (ft_getenv(ms, envvar[k]))
+// 	// 		ft_strlcat(buf, ft_getenv(ms, envvar[k]), 100);
+// 	// 	ft_strlcat(buf, between, 100);
+// 	// }
+// 	k = -1;
+// 	while (envvar[++k])
+// 		printf("envvar[%d]: %s\n", k, envvar[k]);
+// 	// 	free(envvar[k]);
+// 	// free(envvar);
+// }
 
 void	multiple_dollar(t_minishell *ms, int i, int j)
 {
 	int		k;
 	char	**envvar;
 	char	*between;
-	char	*tmp;
 
 	envvar = ft_split(ft_strchr(ms->input[i], '$'), '$');
-	tmp = ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$"));
-	ms->input[i] = tmp;
-	free(tmp);
+	ms->input[i] = ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$"));
 	k = -1;
 	while (envvar[++k])
 	{
@@ -100,27 +131,21 @@ void	multiple_dollar(t_minishell *ms, int i, int j)
 		between = ft_strchr(envvar[k], envvar[k][j]);
 		envvar[k] = ft_substr(envvar[k], 0, j);
 		if (ft_getenv(ms, envvar[k]))
-		{
-			tmp = ft_strjoin(ms->input[i], ft_getenv(ms, envvar[k]));
-			ms->input[i] = tmp;
-			free(tmp);
-		}
+			ms->input[i] = ft_strjoin(ms->input[i], ft_getenv(ms, envvar[k]));
 		// else if (!ft_strncmp(envvar[k], "?\0", 2))
 		// 	ms->input[i] = ft_itoa(ms->exit_status);
-		tmp = ft_strjoin(ms->input[i], between);
-		ms->input[i] = tmp;
-		free(tmp);
+		ms->input[i] = ft_strjoin(ms->input[i], between);
 	}
-	k = -1;
-	while (envvar[++k])
-		free(envvar[k]);
-	free(envvar);
+	// k = -1;
+	// while (envvar[++k])
+	// 	free(envvar[k]);
+	// free(envvar);
 }
 
 void	check_dollar(t_minishell *ms)
 {
-	int		i;
-	int		j;
+	int	i;
+	int	j;
 
 	i = -1;
 	while (ms->input[++i])
@@ -128,14 +153,14 @@ void	check_dollar(t_minishell *ms)
 		j = -1;
 		while (ms->input[i][++j])
 		{
-			if (ms->input[i][j] && ms->input[i][j] == '$')
-				;
-			else if (!ft_strncmp(ms->input[i], "$?\0", 3))
-			{
-				free(ms->input[i]);
-				ms->input[i] = ft_itoa(ms->exit_status);
-			}
-			else if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
+			// if (ms->input[i][j] && ms->input[i][j] == '$')
+			// 	;
+			// else if (!ft_strncmp(ms->input[i], "$?\0", 3))
+			// {
+			// 	free(ms->input[i]);
+			// 	ms->input[i] = ft_itoa(ms->exit_status);
+			// }
+			if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
 				multiple_dollar(ms, i, j);
 		}
 	}
