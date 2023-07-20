@@ -52,9 +52,9 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 
 void	myexit(t_minishell	*ms, t_list **lst, int status)
 {
-	int	i;
+	// int	i;
 
-	i = -1;
+	// i = -1;
 	(void)lst;
 	(void)ms;
 	// ft_free(ms, lst);
