@@ -17,21 +17,19 @@ void	pipex(t_minishell *ms, t_list **lst)
 	int	size;
 	int	fdpipe[2];
 	int	i;
-	// int	piped;
+	int	piped;
 
 	size = ft_lstsize(*lst);
 	ms->ori_in = dup(0);
 	ms->ori_out = dup(1);
 	ms->fdin = 0;
 	ms->fdout = 0;
-	// piped = 0;
+	piped = 0;
 
 	i = -1;
 	while (++i < size)
 	{
-		if (ms->fdout == fdpipe[1])
-			ms->fdin = fdpipe[0];
-		else if ((*lst)->infile)
+		if ((*lst)->infile)
 		{
 			ms->fdin = open((*lst)->infile, O_RDONLY);
 			if (ms->fdin == -1)
@@ -41,6 +39,8 @@ void	pipex(t_minishell *ms, t_list **lst)
 				return ;
 			}
 		}
+		else if (piped)
+			piped = 0;
 		else
 			ms->fdin = dup(ms->ori_in);
 		dup2(ms->fdin, 0);
@@ -56,10 +56,10 @@ void	pipex(t_minishell *ms, t_list **lst)
 		{
 			pipe(fdpipe);
 			ms->fdout = fdpipe[1];
+			ms->fdin = fdpipe[0];
 		}
 		else
 			ms->fdout = dup(ms->ori_out);
-
 		dup2(ms->fdout, 1);
 		close(ms->fdout);
 
@@ -67,9 +67,12 @@ void	pipex(t_minishell *ms, t_list **lst)
 
 		if ((*lst)->next)
 		{
+			pipe(fdpipe);
 			ms->fdout = fdpipe[1];
 			dup2(ms->fdout, 1);
 			close(ms->fdout);
+			ms->fdin = fdpipe[0];
+			piped = 1;
 		}
 		(*lst) = (*lst)->next;
 	}
