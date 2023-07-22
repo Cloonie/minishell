@@ -27,7 +27,12 @@ int	redir_type(t_list *tmp, int i)
 	if (!ft_strncmp(tmp->args[i], "<\0", 2))
 		tmp->infile = tmp->args[i + 1];
 	else if (!ft_strncmp(tmp->args[i], ">\0", 2))
+	{
 		tmp->outfile = tmp->args[i + 1];
+		int tmpfd = open(tmp->outfile,
+			O_CREAT, 0644);
+		close(tmpfd);
+	}
 	else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
 	{
 		tmp->outfile = tmp->args[i + 1];
@@ -35,26 +40,7 @@ int	redir_type(t_list *tmp, int i)
 	}
 	else if (!ft_strncmp(tmp->args[i], "<<\0", 3))
 	{
-		tmp->delimeter = tmp->args[i + 1];
-		int	tmp_fd;
-		char *input;
-
-		tmp_fd = open("here_doc", O_WRONLY | O_CREAT, 0644);
-		input = readline("> ");
-		while (input != NULL)
-		{
-			if ((ft_strncmp(input, tmp->delimeter, ft_strlen(tmp->args[i + 1] + 1)) == 0))
-			{
-				free(input);
-				break ;
-			}
-			write(tmp_fd, input, ft_strlen(input));
-			write(tmp_fd, "\n", 1);
-			free(input);
-			input = readline("> ");
-		}
-		close(tmp_fd);
-		// unlink("here_doc");
+		tmp->delimeter = ft_strjoin(tmp->args[i + 1], "\0");
 	}
 	else
 		return (1);
@@ -91,6 +77,7 @@ int	redir(t_list **lst)
 	{
 		i = 0;
 		tmp->append = 0;
+		tmp->delimeter = NULL;
 		tmp->infile = NULL;
 		tmp->outfile = NULL;
 		while (tmp->args[i])

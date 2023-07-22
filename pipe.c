@@ -29,7 +29,34 @@ void	pipex(t_minishell *ms, t_list **lst)
 	i = -1;
 	while (++i < size)
 	{
-		if ((*lst)->infile)
+		if ((*lst)->delimeter)
+		{
+			int		tmp_fd;
+			char	*input;
+			tmp_fd = open("here_doc", O_WRONLY | O_CREAT, 0644);
+			input = readline("> ");
+			while (input != NULL)
+			{
+				if ((ft_strncmp(input, tmp->delimeter, ft_strlen(tmp->delimeter) + 1) == 0))
+				{
+					free(input);
+					break ;
+				}
+				write(tmp_fd, input, ft_strlen(input));
+				write(tmp_fd, "\n", 1);
+				free(input);
+				input = readline("> ");
+			}
+			close(tmp_fd);
+			ms->fdin = open("here_doc", O_RDONLY);
+			if (ms->fdin == -1)
+			{
+				(*lst)->infile = NULL;
+				perror("Error opening file");
+				return ;
+			}
+		}
+		else if ((*lst)->infile)
 		{
 			ms->fdin = open((*lst)->infile, O_RDONLY);
 			if (ms->fdin == -1)
@@ -64,7 +91,6 @@ void	pipex(t_minishell *ms, t_list **lst)
 		close(ms->fdout);
 
 		cmd(ms, lst);
-
 		if ((*lst)->next)
 		{
 			pipe(fdpipe);
@@ -77,6 +103,7 @@ void	pipex(t_minishell *ms, t_list **lst)
 		(*lst) = (*lst)->next;
 	}
 
+	unlink("here_doc");
 	dup2(ms->ori_in, 0);
 	dup2(ms->ori_out, 1);
 	close(ms->ori_in);
