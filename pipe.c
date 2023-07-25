@@ -14,30 +14,32 @@
 
 void	pipex(t_minishell *ms, t_list **lst)
 {
-	int	size;
-	int	fdpipe[2];
-	int	i;
-	int	piped;
+	int		fdpipe[2];
+	int		piped;
 
-	size = ft_lstsize(*lst);
 	ms->ori_in = dup(0);
 	ms->ori_out = dup(1);
 	ms->fdin = 0;
 	ms->fdout = 0;
 	piped = 0;
 
-	i = -1;
-	while (++i < size)
+	while ((*lst))
 	{
-		if ((*lst)->delimeter)
+		if ((*lst)->delimiter)
 		{
 			int		tmp_fd;
 			char	*input;
-			tmp_fd = open("here_doc", O_WRONLY | O_CREAT, 0644);
+			ms->fdin = dup(ms->ori_in);
+			ms->fdout = dup(ms->ori_out);
+			dup2(ms->fdin, 0);
+			dup2(ms->fdout, 1);
+			close(ms->fdin);
+			close(ms->fdout);
+			tmp_fd = open("here_doc", O_WRONLY | O_CREAT | O_APPEND, 0644);
 			input = readline("> ");
 			while (input != NULL)
 			{
-				if ((ft_strncmp(input, tmp->delimeter, ft_strlen(tmp->delimeter) + 1) == 0))
+				if ((!ft_strncmp(input, (*lst)->delimiter, ft_strlen((*lst)->delimiter) + 1)))
 				{
 					free(input);
 					break ;
@@ -49,30 +51,23 @@ void	pipex(t_minishell *ms, t_list **lst)
 			}
 			close(tmp_fd);
 			ms->fdin = open("here_doc", O_RDONLY);
-			if (ms->fdin == -1)
-			{
-				(*lst)->infile = NULL;
-				perror("Error opening file");
-				return ;
-			}
 		}
 		else if ((*lst)->infile)
-		{
 			ms->fdin = open((*lst)->infile, O_RDONLY);
-			if (ms->fdin == -1)
-			{
-				(*lst)->infile = NULL;
-				perror("Error opening file");
-				return ;
-			}
-		}
 		else if (piped)
 			piped = 0;
 		else
 			ms->fdin = dup(ms->ori_in);
+		if (ms->fdin == -1)
+		{
+			(*lst)->infile = NULL;
+			perror("Error opening file");
+			return ;
+		}
 		dup2(ms->fdin, 0);
 		close(ms->fdin);
 
+		pipe(fdpipe);
 		if ((*lst)->outfile && !(*lst)->append)
 			ms->fdout = open((*lst)->outfile,
 					O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -81,9 +76,9 @@ void	pipex(t_minishell *ms, t_list **lst)
 					O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else if ((*lst)->next)
 		{
-			pipe(fdpipe);
 			ms->fdout = fdpipe[1];
 			ms->fdin = fdpipe[0];
+			piped = 1;
 		}
 		else
 			ms->fdout = dup(ms->ori_out);
@@ -91,19 +86,18 @@ void	pipex(t_minishell *ms, t_list **lst)
 		close(ms->fdout);
 
 		cmd(ms, lst);
-		if ((*lst)->next)
+
+		unlink("here_doc");
+		if ((*lst)->next && !piped)
 		{
-			pipe(fdpipe);
 			ms->fdout = fdpipe[1];
 			dup2(ms->fdout, 1);
 			close(ms->fdout);
-			ms->fdin = fdpipe[0];
 			piped = 1;
 		}
 		(*lst) = (*lst)->next;
 	}
 
-	unlink("here_doc");
 	dup2(ms->ori_in, 0);
 	dup2(ms->ori_out, 1);
 	close(ms->ori_in);

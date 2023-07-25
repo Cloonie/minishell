@@ -24,24 +24,25 @@ int	rm_2strs(t_list *tmp, int i)
 
 int	redir_type(t_list *tmp, int i)
 {
+	int	tmpfd;
+
 	if (!ft_strncmp(tmp->args[i], "<\0", 2))
 		tmp->infile = tmp->args[i + 1];
 	else if (!ft_strncmp(tmp->args[i], ">\0", 2))
 	{
 		tmp->outfile = tmp->args[i + 1];
-		int tmpfd = open(tmp->outfile,
-			O_CREAT, 0644);
+		tmpfd = open(tmp->outfile, O_CREAT, 0644);
 		close(tmpfd);
 	}
 	else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
 	{
 		tmp->outfile = tmp->args[i + 1];
 		tmp->append = 1;
+		tmpfd = open(tmp->outfile, O_CREAT, 0644);
+		close(tmpfd);
 	}
 	else if (!ft_strncmp(tmp->args[i], "<<\0", 3))
-	{
-		tmp->delimeter = ft_strjoin(tmp->args[i + 1], "\0");
-	}
+		tmp->delimiter = ft_strjoin(tmp->args[i + 1], "\0");
 	else
 		return (1);
 	rm_2strs(tmp, i);
@@ -77,7 +78,7 @@ int	redir(t_list **lst)
 	{
 		i = 0;
 		tmp->append = 0;
-		tmp->delimeter = NULL;
+		tmp->delimiter = NULL;
 		tmp->infile = NULL;
 		tmp->outfile = NULL;
 		while (tmp->args[i])

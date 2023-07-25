@@ -24,7 +24,7 @@ typedef struct s_list
 	char			**args;
 	char			*infile;
 	char			*outfile;
-	char			*delimeter;
+	char			*delimiter;
 	int				append;
 	struct s_list	*next;
 }	t_list;

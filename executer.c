@@ -35,7 +35,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 		else if (!ft_strncmp(tmp->args[0], "exit\0", 5))
 			myexit(ms, lst, 0);
 		else if ((!ft_strncmp(tmp->args[0], "./", 2)
-			|| !ft_strncmp(tmp->args[0], "/", 1)))
+				|| !ft_strncmp(tmp->args[0], "/", 1)))
 			call_run(tmp->args, ms->envp);
 		else if (executable(ms, tmp))
 		{
