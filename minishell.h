@@ -38,6 +38,7 @@ typedef struct s_minishell
 	int		ori_out;
 	int		fdin;
 	int		fdout;
+	int		piped;
 	int		exit_status;
 }	t_minishell;
 
