@@ -64,16 +64,15 @@ char		*ft_getenv(t_minishell *ms, char *envvar);
 void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
-void		call_echo(t_list *lst);
+void		call_echo(t_minishell *ms, t_list *lst);
 void		call_cd(t_minishell *ms, t_list *lst);
 void		call_unset(t_minishell *ms, t_list *lst);
 void		call_export(t_minishell *ms, t_list *lst);
 void		export2(t_minishell *ms, t_list *lst);
 
 // build_ins2
-void		call_env(t_minishell *ms);
-void		call_run(char **input, char **envp);
-
+void		call_env(t_minishell *ms, t_list *lst);
+void		call_run(t_minishell *ms, t_list *lst);
 
 // executer
 int			cmd(t_minishell *ms, t_list **lst);

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	call_echo(t_list *lst)
+void	call_echo(t_minishell *ms, t_list *lst)
 {
 	int	i;
 	int	j;
@@ -47,29 +47,33 @@ void	call_echo(t_list *lst)
 	}
 	if (newline)
 		printf("\n");
+	ms->exit_status = 0;
 }
 
 void	call_cd(t_minishell *ms, t_list *lst)
 {
-	char	*path;
+	char	path[100];
 
-	if (lst->args[1] && lst->args[1][0] == '/')
+	if (lst->args[1])
 	{
-		if (chdir(lst->args[1]) == 0)
-			;
+		ft_strlcpy(path, ms->cwd, 100);
+		ft_strlcat(path, "/", 100);
+		ft_strlcat(path, lst->args[1], 100);
+		if (lst->args[1][0] == '/')
+			chdir(lst->args[1]);
+		else if (!access(path, F_OK))
+			chdir(path);
 		else
-			printf("%s: %s: No such file or directory\n", lst->args[0], lst->args[1]);
-	}
-	else if (lst->args[1])
-	{
-		path = ft_strjoin(ft_strjoin(ms->cwd, "/"), lst->args[1]);
-		if (chdir(path) == 0)
-			;
-		else
-			printf("%s: %s: No such file or directory\n", lst->args[0], lst->args[1]);
+		{
+			printf("%s: %s: No such file or directory\n",
+				lst->args[0], lst->args[1]);
+			ms->exit_status = 1;
+			return ;
+		}
 	}
 	else
 		chdir(ft_getenv(ms, "HOME"));
+	ms->exit_status = 0;
 }
 
 void	call_unset(t_minishell *ms, t_list *lst)
@@ -101,6 +105,7 @@ void	call_unset(t_minishell *ms, t_list *lst)
 			}
 		}
 	}
+	ms->exit_status = 0;
 }
 
 void	call_export(t_minishell *ms, t_list *lst)
@@ -132,8 +137,12 @@ void	export2(t_minishell *ms, t_list *lst)
 	while (lst->args[j])
 	{
 		if (!ft_isalpha(lst->args[j][0]))
+		{
 			printf("-minishell: export: `%s': not a valid identifier\n",
 				lst->args[j]);
+			ms->exit_status = 1;
+			return ;
+		}
 		else
 		{
 			i = -1;
@@ -155,4 +164,5 @@ void	export2(t_minishell *ms, t_list *lst)
 		}
 		j++;
 	}
+	ms->exit_status = 0;
 }

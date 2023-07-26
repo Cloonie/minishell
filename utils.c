@@ -16,7 +16,7 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	ft_printf("\n");
-	// rl_replace_line("", 0);
+	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }
@@ -25,7 +25,7 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 {
 	int		i;
 	t_list	*tmp;
-	t_list	*next;
+	// t_list	*next;
 
 	(void)lst;
 	tmp = *lst;
@@ -42,18 +42,23 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 			free(tmp->args[i]);
 		tmp = tmp->next;
 	}
-	while ((*lst))
-	{
-		next = (*lst)->next;
-		free((*lst));
-		(*lst) = next;
-	}
+// 	while ((*lst))
+// 	{
+// 		next = (*lst)->next;
+// 		free((*lst));
+// 		(*lst) = next;
+// 	}
 }
 
 void	myexit(t_minishell	*ms, t_list **lst, int status)
 {
 	(void)lst;
 	(void)ms;
+	if ((*lst)->args[1])
+	{
+		perror((*lst)->args[1]);
+		return ;
+	}
 	// ft_free(ms, lst);
 	free(ms);
 	if (status == EXIT_SUCCESS)

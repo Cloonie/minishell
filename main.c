@@ -25,7 +25,8 @@ char	**get_input(t_minishell *ms)
 	line = readline(tmp);
 	if (!line)
 		exit(0);
-	add_history(line);
+	if (ft_strncmp(line, "", 1))
+		add_history(line);
 	trim = ft_strtrim(line, " ");
 	ms->input = lexer(trim, " ><|");
 	if (!ms->exit_status)
@@ -72,7 +73,7 @@ int	main(int argc, char **argv, char **envp)
 	if (!argv[0] || argc != 1)
 		myexit(ms, lst, 1);
 	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, sigint_handler);
 	while (1)
 	{
 		ms->input = get_input(ms);

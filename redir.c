@@ -61,8 +61,7 @@ int	redir_error(t_list *tmp, int i)
 			|| !ft_strncmp(tmp->args[i + 1], ">>\0", 3)
 			|| !ft_strncmp(tmp->args[i + 1], "<<\0", 3)))
 	{
-		printf("-minishell: syntax error near unexpected token `%s'\n",
-			tmp->args[i + 1]);
+		printf("-minishell: syntax error\n");
 		return (1);
 	}
 	return (0);

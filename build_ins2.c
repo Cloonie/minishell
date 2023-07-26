@@ -12,11 +12,17 @@
 
 #include "minishell.h"
 
-void	call_env(t_minishell *ms)
+void	call_env(t_minishell *ms, t_list *lst)
 {
 	int	i;
 
 	i = 0;
+	if (lst->args[1])
+	{
+		perror(lst->args[1]);
+		ms->exit_status = 127;
+		return ;
+	}
 	while (ms->envp[i])
 	{
 		if (ft_strchr(ms->envp[i], '='))
@@ -24,17 +30,18 @@ void	call_env(t_minishell *ms)
 		else
 			i++;
 	}
+	ms->exit_status = 0;
 }
 
-void	call_run(char **input, char **envp)
+void	call_run(t_minishell *ms, t_list *lst)
 {
 	int		pid;
 
-	if (access(input[0], F_OK) == 0)
+	if (access(lst->args[0], F_OK) == 0)
 	{
 		pid = fork();
 		if (pid == 0)
-			execve(input[0], input, envp);
+			execve(lst->args[0], lst->args, ms->envp);
 		else if (pid > 0)
 		{
 			waitpid(pid, NULL, 0);
@@ -42,5 +49,10 @@ void	call_run(char **input, char **envp)
 		}
 	}
 	else
-		printf("Enter a valid command.\n");
+	{
+		perror(lst->args[0]);
+		ms->exit_status = 127;
+		return ;
+	}
+	ms->exit_status = 0;
 }

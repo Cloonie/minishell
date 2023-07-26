@@ -15,10 +15,10 @@
 void	stdio_readline(t_minishell *ms)
 {
 	ms->fdin = dup(ms->ori_in);
-	ms->fdout = dup(ms->ori_out);
 	dup2(ms->fdin, 0);
-	dup2(ms->fdout, 1);
 	close(ms->fdin);
+	ms->fdout = dup(ms->ori_out);
+	dup2(ms->fdout, 1);
 	close(ms->fdout);
 }
 
@@ -47,7 +47,7 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	ms->fdin = open("here_doc", O_RDONLY);
 }
 
-void	input(t_minishell *ms, t_list **lst)
+int	input(t_minishell *ms, t_list **lst)
 {
 	if ((*lst)->delimiter)
 		here_doc(ms, lst);
@@ -59,12 +59,13 @@ void	input(t_minishell *ms, t_list **lst)
 		ms->fdin = dup(ms->ori_in);
 	if (ms->fdin == -1)
 	{
+		perror((*lst)->infile);
 		(*lst)->infile = NULL;
-		perror("Error opening file");
-		return ;
+		return (1);
 	}
 	dup2(ms->fdin, 0);
 	close(ms->fdin);
+	return (0);
 }
 
 void	output(t_minishell *ms, t_list **lst, int *fdpipe)
@@ -98,7 +99,8 @@ void	pipex(t_minishell *ms, t_list **lst)
 	ms->piped = 0;
 	while ((*lst))
 	{
-		input(ms, lst);
+		if (input(ms, lst) == 1)
+			return ;
 		pipe(fdpipe);
 		output(ms, lst, fdpipe);
 		cmd(ms, lst);
