@@ -69,7 +69,7 @@ void	check_emptystr(t_minishell *ms)
 	while (ms->input[++i])
 	{
 		j = i - 1;
-		if (!ft_strncmp(ms->input[i], "", ft_strlen(ms->input[i])))
+		if (j >= 0 && !ft_strncmp(ms->input[i], "", ft_strlen(ms->input[i])))
 		{
 			free(ms->input[j]);
 			while (ms->input[++j])

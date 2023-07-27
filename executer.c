@@ -12,11 +12,8 @@
 
 #include "minishell.h"
 
-int	cmd_helper(t_minishell *ms, t_list **lst)
+int	cmd_helper(t_minishell *ms, t_list *tmp)
 {
-	t_list	*tmp;
-
-	tmp = *lst;
 	if (!ft_strncmp(tmp->args[0], "echo\0", 5))
 		call_echo(ms, tmp);
 	else if (!ft_strncmp(tmp->args[0], "pwd\0", 4))
@@ -37,14 +34,11 @@ int	cmd_helper(t_minishell *ms, t_list **lst)
 	return (0);
 }
 
-int	cmd(t_minishell *ms, t_list **lst)
+int	cmd(t_minishell *ms, t_list **lst, t_list *tmp)
 {
-	t_list	*tmp;
-
-	tmp = *lst;
 	if (tmp->args[0])
 	{
-		if (!cmd_helper(ms, lst))
+		if (!cmd_helper(ms, tmp))
 			;
 		else if (!ft_strncmp(tmp->args[0], "exit\0", 5))
 			myexit(ms, lst, 0);
@@ -65,30 +59,32 @@ int	executable(t_minishell *ms, t_list *lst)
 {
 	pid_t	pid;
 	char	**paths;
-	char	*current_path;
-	char	*tmp;
+	char	buf[100];
 	int		i;
 
 	i = -1;
 	paths = ft_split(ft_getenv(ms, "PATH"), ':');
 	while (paths && paths[++i])
 	{
-		tmp = ft_strjoin(paths[i], "/");
-		current_path = ft_strjoin(tmp, lst->args[0]);
-		if (access(current_path, F_OK) == 0)
+		ft_strlcpy(buf, paths[i], 100);
+		ft_strlcat(buf, "/", 100);
+		ft_strlcat(buf, lst->args[0], 100);
+		if (access(buf, F_OK) == 0)
 		{
 			pid = fork();
 			if (pid == 0)
-				execve(current_path, lst->args, ms->envp);
+				execve(buf, lst->args, ms->envp);
 			else if (pid > 0)
 			{
 				waitpid(pid, &ms->exit_status, 0);
 				ms->exit_status = ms->exit_status >> 8;
+				i = -1;
+				while (paths[++i])
+					free(paths[i]);
+				free(paths);
 				return (0);
 			}
 		}
-		free(tmp);
-		free(current_path);
 	}
 	i = -1;
 	while (paths[++i])

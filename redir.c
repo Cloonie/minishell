@@ -16,6 +16,7 @@ int	rm_2strs(t_list *tmp, int i)
 {
 	while (tmp->args[i])
 	{
+		free(tmp->args[i]);
 		tmp->args[i] = tmp->args[i + 2];
 		i++;
 	}
@@ -42,7 +43,11 @@ int	redir_type(t_list *tmp, int i)
 		close(tmpfd);
 	}
 	else if (!ft_strncmp(tmp->args[i], "<<\0", 3))
+	{
+		if (tmp->delimiter)
+			free(tmp->delimiter);
 		tmp->delimiter = ft_strjoin(tmp->args[i + 1], "\0");
+	}
 	else
 		return (1);
 	rm_2strs(tmp, i);

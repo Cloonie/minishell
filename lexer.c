@@ -37,7 +37,7 @@ static void	split_words(char **array, const char *s, const char *op)
 	while (s[i])
 	{
 		k = i;
-		if (s[i] != ' ')
+		if (i == 0 || s[i] != ' ')
 		{
 			if (s[i] == '\"')
 				while (s[++i] && s[i] != '\"')

@@ -22,18 +22,18 @@ void	stdio_readline(t_minishell *ms)
 	close(ms->fdout);
 }
 
-void	here_doc(t_minishell *ms, t_list **lst)
+void	here_doc(t_minishell *ms, t_list *tmp)
 {
 	int		tmp_fd;
 	char	*input;
 
 	stdio_readline(ms);
-	tmp_fd = open("here_doc", O_WRONLY | O_CREAT | O_APPEND, 0644);
+	tmp_fd = open("here_doc", O_WRONLY | O_CREAT, 0644);
 	input = readline("> ");
 	while (input != NULL)
 	{
-		if ((!ft_strncmp(input, (*lst)->delimiter,
-					ft_strlen((*lst)->delimiter) + 1)))
+		if ((!ft_strncmp(input, tmp->delimiter,
+					ft_strlen(tmp->delimiter) + 1)))
 		{
 			free(input);
 			break ;
@@ -47,20 +47,20 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	ms->fdin = open("here_doc", O_RDONLY);
 }
 
-int	input(t_minishell *ms, t_list **lst)
+int	input(t_minishell *ms, t_list *tmp)
 {
-	if ((*lst)->delimiter)
-		here_doc(ms, lst);
-	else if ((*lst)->infile)
-		ms->fdin = open((*lst)->infile, O_RDONLY);
+	if (tmp->delimiter)
+		here_doc(ms, tmp);
+	else if (tmp->infile)
+		ms->fdin = open(tmp->infile, O_RDONLY);
 	else if (ms->piped)
 		ms->piped = 0;
 	else
 		ms->fdin = dup(ms->ori_in);
 	if (ms->fdin == -1)
 	{
-		perror((*lst)->infile);
-		(*lst)->infile = NULL;
+		perror(tmp->infile);
+		tmp->infile = NULL;
 		return (1);
 	}
 	dup2(ms->fdin, 0);
@@ -68,15 +68,15 @@ int	input(t_minishell *ms, t_list **lst)
 	return (0);
 }
 
-void	output(t_minishell *ms, t_list **lst, int *fdpipe)
+void	output(t_minishell *ms, t_list *tmp, int *fdpipe)
 {
-	if ((*lst)->outfile && !(*lst)->append)
-			ms->fdout = open((*lst)->outfile,
+	if (tmp->outfile && !tmp->append)
+			ms->fdout = open(tmp->outfile,
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	else if ((*lst)->outfile && (*lst)->append)
-		ms->fdout = open((*lst)->outfile,
+	else if (tmp->outfile && tmp->append)
+		ms->fdout = open(tmp->outfile,
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if ((*lst)->next)
+	else if (tmp->next)
 	{
 		ms->fdout = fdpipe[1];
 		ms->fdin = fdpipe[0];
@@ -91,25 +91,30 @@ void	output(t_minishell *ms, t_list **lst, int *fdpipe)
 void	pipex(t_minishell *ms, t_list **lst)
 {
 	int		fdpipe[2];
+	t_list	*tmp;
 
 	ms->ori_in = dup(0);
 	ms->ori_out = dup(1);
 	ms->fdin = 0;
 	ms->fdout = 0;
 	ms->piped = 0;
-	while ((*lst))
+	tmp = *lst;
+	while (tmp)
 	{
-		if (input(ms, lst) == 1)
+		if (input(ms, tmp) == 1)
 			return ;
 		pipe(fdpipe);
-		output(ms, lst, fdpipe);
-		cmd(ms, lst);
+		output(ms, tmp, fdpipe);
+		cmd(ms, lst, tmp);
 		unlink("here_doc");
-		ms->fdout = fdpipe[1];
-		dup2(ms->fdout, 1);
-		close(ms->fdout);
-		ms->piped = 1;
-		(*lst) = (*lst)->next;
+		if (tmp->next)
+		{
+			ms->fdout = fdpipe[1];
+			dup2(ms->fdout, 1);
+			close(ms->fdout);
+			ms->piped = 1;
+		}
+		tmp = tmp->next;
 	}
 	dup2(ms->ori_in, 0);
 	dup2(ms->ori_out, 1);
