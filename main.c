@@ -93,7 +93,7 @@ int	main(int argc, char **argv, char **envp)
 		// }
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		ft_free(ms, lst);
+		// ft_free(ms, lst);
 		// myexit(ms, *lst, 0);
 	}
 }

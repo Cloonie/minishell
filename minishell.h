@@ -75,7 +75,7 @@ void		call_env(t_minishell *ms, t_list *lst);
 void		call_run(t_minishell *ms, t_list *lst);
 
 // executer
-int			cmd(t_minishell *ms, t_list **lst, t_list *tmp);
+int			cmd(t_minishell *ms, t_list **lst);
 int			executable(t_minishell *ms, t_list *lst);
 
 // lexer

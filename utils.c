@@ -29,6 +29,7 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 
 	i = -1;
 	tmp = *lst;
+	(void)tmp;
 	// while (tmp)
 	// {
 	// 	i = -1;
@@ -56,7 +57,7 @@ void	myexit(t_minishell	*ms, t_list **lst, int status)
 		printf("EXIT_SUCCESS\n");
 	else if (status == EXIT_FAILURE)
 		printf("EXIT_FAILURE\n");
-	system("leaks minishell");
+	// system("leaks minishell");
 	exit(status);
 }
 

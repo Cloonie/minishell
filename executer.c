@@ -34,8 +34,11 @@ int	cmd_helper(t_minishell *ms, t_list *tmp)
 	return (0);
 }
 
-int	cmd(t_minishell *ms, t_list **lst, t_list *tmp)
+int	cmd(t_minishell *ms, t_list **lst)
 {
+	t_list	*tmp;
+
+	tmp = *lst;
 	if (tmp->args[0])
 	{
 		if (!cmd_helper(ms, tmp))
