@@ -88,6 +88,14 @@ void	output(t_minishell *ms, t_list **lst, int *fdpipe)
 	close(ms->fdout);
 }
 
+void	repipe(t_minishell *ms, int *fdpipe)
+{
+	ms->fdout = fdpipe[1];
+	dup2(ms->fdout, 1);
+	close(ms->fdout);
+	ms->piped = 1;
+}
+
 void	pipex(t_minishell *ms, t_list **lst)
 {
 	int		fdpipe[2];
@@ -107,10 +115,7 @@ void	pipex(t_minishell *ms, t_list **lst)
 		output(ms, tmp, fdpipe);
 		cmd(ms, tmp);
 		unlink("here_doc");
-		ms->fdout = fdpipe[1];
-		dup2(ms->fdout, 1);
-		close(ms->fdout);
-		ms->piped = 1;
+		repipe(ms, fdpipe);
 		(*tmp) = (*tmp)->next;
 	}
 	dup2(ms->ori_in, 0);

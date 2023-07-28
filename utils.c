@@ -25,19 +25,16 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 {
 	int		i;
 	t_list	*tmp;
-	// t_list	*next;
 
 	i = -1;
 	tmp = *lst;
 	(void)tmp;
-	// while (tmp)
-	// {
-	// 	i = -1;
-	// 	next = tmp->next;
-	// 	free(tmp->args);
-	// 	// free(tmp);
-	// 	tmp = next;
-	// }
+	while (tmp)
+	{
+		i = -1;
+		free(tmp->args);
+		tmp = tmp->next;
+	}
 	i = -1;
 	while (ms->input[++i])
 		free(ms->input[i]);
@@ -52,6 +49,7 @@ void	myexit(t_minishell	*ms, t_list **lst, int status)
 	if ((*lst)->args[1])
 		perror((*lst)->args[1]);
 	ft_free(ms, lst);
+	free(lst);
 	free(ms);
 	if (status == EXIT_SUCCESS)
 		printf("EXIT_SUCCESS\n");

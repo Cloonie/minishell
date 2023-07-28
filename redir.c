@@ -16,7 +16,6 @@ int	rm_2strs(t_list *tmp, int i)
 {
 	while (tmp->args[i])
 	{
-		free(tmp->args[i]);
 		tmp->args[i] = tmp->args[i + 2];
 		i++;
 	}
