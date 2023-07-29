@@ -83,24 +83,33 @@ void	multiple_dollar(t_minishell *ms, int i, int j)
 	int		k;
 	char	**envvar;
 	char	*between;
+	char	tmp[100];
 
-	envvar = ft_split(ms->input[i], '$');
-	ms->input[i] = ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$"));
+	envvar = ft_split(ft_strchr(ms->input[i], '$'), '$');
+	// for (int f = 0; envvar[f]; f++)
+	// 	printf("envvar[%d]: %s\n", f, envvar[f]);
+	ft_strlcpy(tmp, ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$")), 100);
 	k = -1;
 	while (envvar[++k])
 	{
-		// printf("envvar[%d]: %s\n", k, envvar[k]);
 		j = -1;
+		if (!ft_strncmp(envvar[k], "?", 1))
+		{
+			ft_strlcat(tmp, ft_itoa(ms->exit_status), 100);
+			envvar[k] = ft_strchr(envvar[k], '?') + 1;
+		}
 		while (ft_isalnum(envvar[k][++j]))
 			;
 		between = ft_strchr(envvar[k], envvar[k][j]);
 		envvar[k] = ft_substr(envvar[k], 0, j);
 		if (ft_getenv(ms, envvar[k]))
-			ms->input[i] = ft_strjoin(ms->input[i], ft_getenv(ms, envvar[k]));
-		else if (!ft_strncmp(envvar[k], "?\0", 2))
-			ms->input[i] = ft_itoa(ms->exit_status);
-		ms->input[i] = ft_strjoin(ms->input[i], between);
+			ft_strlcat(tmp, ft_getenv(ms, envvar[k]), 100);
+		if (between)
+			ft_strlcat(tmp, between, 100);
+		// printf("input[%d]: |%s|\n", i, ms->input[i]);
+		// printf("between: %s\n", between);
 	}
+	ft_strlcpy(ms->input[i], tmp, ft_strlen(tmp) + 1);
 }
 
 void	check_dollar(t_minishell *ms)
@@ -116,14 +125,14 @@ void	check_dollar(t_minishell *ms)
 		{
 			if (ms->input[i][j] && ms->input[i][j] == '$')
 				;
-			else if (!ft_strncmp(ms->input[i], "$?\0", 3)
-				&& ms->token[i] != TOK_SQUOTE)
-			{
-				free(ms->input[i]);
-				ms->input[i] = ft_itoa(ms->exit_status);
-			}
 			else if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
 				multiple_dollar(ms, i, j);
+			// else if (!ft_strncmp(ms->input[i], "$?\0", 3)
+			// 	&& ms->token[i] != TOK_SQUOTE)
+			// {
+			// 	free(ms->input[i]);
+			// 	ms->input[i] = ft_itoa(ms->exit_status);
+			// }
 		}
 	}
 }

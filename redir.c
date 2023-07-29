@@ -53,7 +53,7 @@ int	redir_type(t_list *tmp, int i)
 	return (0);
 }
 
-int	redir_error(t_list *tmp, int i)
+int	redir_error(t_minishell *ms, t_list *tmp, int i)
 {
 	if ((!ft_strncmp(tmp->args[i], "<\0", 2)
 			|| !ft_strncmp(tmp->args[i], ">\0", 2)
@@ -66,12 +66,13 @@ int	redir_error(t_list *tmp, int i)
 			|| !ft_strncmp(tmp->args[i + 1], "<<\0", 3)))
 	{
 		printf("-minishell: syntax error\n");
+		ms->exit_status = 2;
 		return (1);
 	}
 	return (0);
 }
 
-int	redir(t_list **lst)
+int	redir(t_minishell *ms, t_list **lst)
 {
 	int		i;
 	t_list	*tmp;
@@ -86,7 +87,7 @@ int	redir(t_list **lst)
 		tmp->outfile = NULL;
 		while (tmp->args[i])
 		{
-			if (redir_error(tmp, i) == 1)
+			if (redir_error(ms, tmp, i) == 1)
 				return (1);
 			if (redir_type(tmp, i) == 1)
 				i++;

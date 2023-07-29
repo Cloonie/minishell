@@ -82,7 +82,7 @@ int	main(int argc, char **argv, char **envp)
 		check_dollar(ms);
 		check_emptystr(ms);
 		split_cmd(lst, ms);
-		if (!redir(lst))
+		if (!redir(ms, lst))
 			pipex(ms, lst);
 		// while (*lst)
 		// {

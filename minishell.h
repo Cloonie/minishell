@@ -94,7 +94,8 @@ void		check_emptystr(t_minishell *ms);
 // redirection
 int			rm_2strs(t_list *tmp, int i);
 int			redir_type(t_list *tmp, int i);
-int			redir(t_list **lst);
+int			redir_error(t_minishell *ms, t_list *tmp, int i);
+int			redir(t_minishell *ms, t_list **lst);
 
 // pipe
 void		pipex(t_minishell *ms, t_list **lst);
