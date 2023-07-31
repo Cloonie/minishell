@@ -78,61 +78,54 @@ void	check_emptystr(t_minishell *ms)
 	}
 }
 
-void	multiple_dollar(t_minishell *ms, int i, int j)
+void	multiple_dollar(t_minishell *ms, int i)
 {
+	int		j;
 	int		k;
 	char	**envvar;
-	char	*between;
-	char	tmp[100];
+	char	*tmp;
+	char	res[1000];
 
 	envvar = ft_split(ft_strchr(ms->input[i], '$'), '$');
 	// for (int f = 0; envvar[f]; f++)
 	// 	printf("envvar[%d]: %s\n", f, envvar[f]);
-	ft_strlcpy(tmp, ft_substr(ms->input[i], 0, ft_strpos(ms->input[i], "$")), 100);
+	ft_strlcpy(res, ms->input[i], ft_strpos(ms->input[i], "$") + 1);
 	k = -1;
 	while (envvar[++k])
 	{
-		j = -1;
 		if (!ft_strncmp(envvar[k], "?", 1))
 		{
-			ft_strlcat(tmp, ft_itoa(ms->exit_status), 100);
+			ft_strlcat(res, ft_itoa(ms->exit_status), ft_strlen(res) + ft_strlen(ft_itoa(ms->exit_status)) + 1);
 			envvar[k] = ft_strchr(envvar[k], '?') + 1;
 		}
+		j = -1;
 		while (ft_isalnum(envvar[k][++j]))
 			;
-		between = ft_strchr(envvar[k], envvar[k][j]);
-		envvar[k] = ft_substr(envvar[k], 0, j);
-		if (ft_getenv(ms, envvar[k]))
-			ft_strlcat(tmp, ft_getenv(ms, envvar[k]), 100);
-		if (between)
-			ft_strlcat(tmp, between, 100);
-		// printf("input[%d]: |%s|\n", i, ms->input[i]);
-		// printf("between: %s\n", between);
+		tmp = ft_substr(envvar[k], 0, j);
+		// printf("ENVVAR: %s\n", tmp);
+		if (ft_getenv(ms, tmp))
+			ft_strlcat(res, ft_getenv(ms, tmp), ft_strlen(res) + ft_strlen(ft_getenv(ms, tmp)) + 1);
+		free(tmp);
+		tmp = ft_strchr(envvar[k], envvar[k][j]);
+		// printf("tmp: %s\n", tmp);
+		if (tmp)
+			ft_strlcat(res, tmp, ft_strlen(res) + ft_strlen(tmp) + 1);
 	}
-	ft_strlcpy(ms->input[i], tmp, ft_strlen(tmp) + 1);
+	// printf("res: |%s|\n", res);
+	free(ms->input[i]);
+	ms->input[i] = ft_strdup(res);
+	// printf("input[%d]: |%s|\n", i, ms->input[i]);
+	// printf("~~~~\n");
 }
 
 void	check_dollar(t_minishell *ms)
 {
 	int		i;
-	int		j;
 
 	i = -1;
 	while (ms->input[++i])
 	{
-		j = -1;
-		while (ms->input[i][++j])
-		{
-			if (ms->input[i][j] && ms->input[i][j] == '$')
-				;
-			else if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
-				multiple_dollar(ms, i, j);
-			// else if (!ft_strncmp(ms->input[i], "$?\0", 3)
-			// 	&& ms->token[i] != TOK_SQUOTE)
-			// {
-			// 	free(ms->input[i]);
-			// 	ms->input[i] = ft_itoa(ms->exit_status);
-			// }
-		}
+		if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
+			multiple_dollar(ms, i);
 	}
 }
