@@ -41,22 +41,32 @@ void	remove_quotes(t_minishell *ms)
 	char	*tmp;
 	int		i;
 
-	i = 0;
-	while (ms->input[i])
+	i = -1;
+	while (ms->input[++i])
+		;
+	ms->token = malloc(i + 1);
+	i = -1;
+	while (ms->input[++i])
 	{
+		ms->token[i] = 0;
 		tmp = NULL;
 		if (ms->input[i][0] == '\"'
 				&& ms->input[i][ft_strlen(ms->input[i]) - 1] == '\"')
+		{
 			tmp = ft_strtrim(ms->input[i], "\"");
+			ms->token[i] = 2;
+		}
 		else if (ms->input[i][0] == '\''
 				&& ms->input[i][ft_strlen(ms->input[i]) - 1] == '\'')
+		{
 			tmp = ft_strtrim(ms->input[i], "\'");
+			ms->token[i] = 1;
+		}
 		if (tmp)
 		{
 			free(ms->input[i]);
 			ms->input[i] = tmp;
 		}
-		i++;
 	}
 }
 
@@ -80,39 +90,46 @@ void	check_emptystr(t_minishell *ms)
 
 void	multiple_dollar(t_minishell *ms, int i)
 {
-	int		j;
 	int		k;
 	char	**envvar;
+	int		j;
 	char	*tmp;
 	char	res[1000];
 
-	envvar = ft_split(ft_strchr(ms->input[i], '$'), '$');
-	// for (int f = 0; envvar[f]; f++)
-	// 	printf("envvar[%d]: %s\n", f, envvar[f]);
+	envvar = lexer(ft_strchr(ms->input[i], '$'), "$");
+	for (int f = 0; envvar[f]; f++)
+		printf("envvar[%d]: %s\n", f, envvar[f]);
 	ft_strlcpy(res, ms->input[i], ft_strpos(ms->input[i], "$") + 1);
 	k = -1;
 	while (envvar[++k])
 	{
-		if (!ft_strncmp(envvar[k], "?", 1))
+		if (!ft_strncmp(envvar[k], "$", 1) && envvar[k + 1] && envvar[k + 1][0] && ft_isalnum(envvar[k + 1][0]))
 		{
-			ft_strlcat(res, ft_itoa(ms->exit_status), ft_strlen(res) + ft_strlen(ft_itoa(ms->exit_status)) + 1);
-			envvar[k] = ft_strchr(envvar[k], '?') + 1;
+			k++;
+			if (!ft_strncmp(envvar[k], "?", 1))
+			{
+				ft_strlcat(res, ft_itoa(ms->exit_status), ft_strlen(res) + ft_strlen(ft_itoa(ms->exit_status)) + 1);
+				envvar[k] = ft_strchr(envvar[k], '?') + 1;
+			}
+			j = -1;
+			while (ft_isalnum(envvar[k][++j]))
+				;
+			tmp = ft_substr(envvar[k], 0, j);
+			// printf("ENVVAR: %s\n", tmp);
+			if (ft_getenv(ms, tmp))
+				ft_strlcat(res, ft_getenv(ms, tmp), ft_strlen(res) + ft_strlen(ft_getenv(ms, tmp)) + 1);
+			// free(tmp);
+			tmp = ft_strchr(envvar[k], envvar[k][j]);
+			// printf("tmp: %s\n", tmp);
+			if (tmp)
+				ft_strlcat(res, tmp, ft_strlen(res) + ft_strlen(tmp) + 1);
 		}
-		j = -1;
-		while (ft_isalnum(envvar[k][++j]))
-			;
-		tmp = ft_substr(envvar[k], 0, j);
-		// printf("ENVVAR: %s\n", tmp);
-		if (ft_getenv(ms, tmp))
-			ft_strlcat(res, ft_getenv(ms, tmp), ft_strlen(res) + ft_strlen(ft_getenv(ms, tmp)) + 1);
-		free(tmp);
-		tmp = ft_strchr(envvar[k], envvar[k][j]);
-		// printf("tmp: %s\n", tmp);
-		if (tmp)
-			ft_strlcat(res, tmp, ft_strlen(res) + ft_strlen(tmp) + 1);
+		else
+			ft_strlcat(res, envvar[k], ft_strlen(res) + ft_strlen(envvar[k]) + 1);
+		printf("res: |%s|\n", res);
 	}
-	// printf("res: |%s|\n", res);
-	free(ms->input[i]);
+	// free(envvar);
+	// free(ms->input[i]);
 	ms->input[i] = ft_strdup(res);
 	// printf("input[%d]: |%s|\n", i, ms->input[i]);
 	// printf("~~~~\n");
@@ -125,7 +142,7 @@ void	check_dollar(t_minishell *ms)
 	i = -1;
 	while (ms->input[++i])
 	{
-		if (ft_strchr(ms->input[i], '$') && ms->token[i] != TOK_SQUOTE)
+		if (ft_strchr(ms->input[i], '$') && ms->token[i] != 1)
 			multiple_dollar(ms, i);
 	}
 }

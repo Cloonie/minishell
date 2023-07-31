@@ -51,7 +51,7 @@ void	myexit(t_minishell	*ms, t_list **lst, int status)
 		printf("EXIT_SUCCESS\n");
 	else if (status == EXIT_FAILURE)
 		printf("EXIT_FAILURE\n");
-	system("leaks minishell");
+	// system("leaks minishell");
 	exit(status);
 }
 

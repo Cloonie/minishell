@@ -77,13 +77,13 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		ms->input = get_input(ms);
-		get_token(ms);
+		// get_token(ms);
 		remove_quotes(ms);
 		check_dollar(ms);
 		// check_emptystr(ms);
-		// split_cmd(lst, ms);
-		// if (!redir(ms, lst))
-		// 	pipex(ms, lst);
+		split_cmd(lst, ms);
+		if (!redir(ms, lst))
+			pipex(ms, lst);
 		// while (*lst)
 		// {
 		// 	printf("NODE\n");
@@ -91,8 +91,10 @@ int	main(int argc, char **argv, char **envp)
 		// 		printf("lst->args[%d]: %s\n", x, (*lst)->args[x]);
 		// 	*lst = (*lst)->next;
 		// }
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 		for (int i = 0; ms->input[i]; i++)
-			printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
+			printf("input[%d]: [%s]\n", i , ms->input[i]);
 		ft_free(ms, lst);
 		// myexit(ms, lst, 0);
 	}

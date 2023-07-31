@@ -20,6 +20,7 @@ int	check_valid_cmd(t_minishell *ms, char *input)
 
 	i = -1;
 	path = NULL;
+	printf("here\n");
 	if (input && (ft_strncmp(input, "echo\0", 5) == 0
 			|| ft_strncmp(input, "cd\0", 3) == 0
 			|| ft_strncmp(input, "pwd\0", 4) == 0
@@ -42,6 +43,7 @@ int	check_valid_cmd(t_minishell *ms, char *input)
 				break ;
 		}
 	}
+	printf("pass\n");
 	i = -1;
 	while (path[++i])
 		free(path[i]);
@@ -57,13 +59,13 @@ void	get_token(t_minishell *ms)
 	int			j;
 	const char	*operators;
 
-	operators = "\"\'><$|;\\";
+	operators = "\"\'><|$";
 	i = 0;
 	j = 0;
 	ms->token = malloc(100);
 	while (ms->input[i] && ms->input[i][0])
 	{
-		if (ft_strchr(operators, ms->input[i][0]) != NULL)
+		if (ft_strchr(operators, ms->input[i][0]))
 		{
 			if (ms->input[i][0] == '\"')
 				ms->token[i] = TOK_DQUOTE;
@@ -74,8 +76,10 @@ void	get_token(t_minishell *ms)
 			else if (ms->input[i][0] == '$')
 				ms->token[i] = TOK_DOLLAR;
 			else if (ms->input[i][0] == '|')
+			{
 				ms->token[i] = TOK_PIPE;
-			j = 0;
+				j = 0;
+			}
 		}
 		else if (check_valid_cmd(ms, ms->input[i]) && j == 0)
 		{
