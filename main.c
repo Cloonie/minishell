@@ -70,7 +70,7 @@ int	main(int argc, char **argv, char **envp)
 	ms = malloc(sizeof(t_minishell));
 	lst = malloc(sizeof(t_list));
 	ms->envp = envp;
-	if (!argv[0] || argc != 1)
+	if (argv[1] || argc > 1)
 		myexit(ms, lst, 1);
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, sigint_handler);

@@ -16,7 +16,7 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	ft_printf("\n");
-	// rl_replace_line("", 0);
+	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }
@@ -29,14 +29,14 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 	i = -1;
 	tmp = *lst;
 	(void)tmp;
-	while (tmp)
+	while (tmp && tmp->args)
 	{
 		i = -1;
 		free(tmp->args);
 		tmp = tmp->next;
 	}
 	i = -1;
-	while (ms->input[++i])
+	while (ms->input && ms->input[++i])
 		free(ms->input[i]);
 	free(ms->input);
 	free(ms->token);
@@ -44,10 +44,6 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 
 void	myexit(t_minishell	*ms, t_list **lst, int status)
 {
-	(void)lst;
-	(void)ms;
-	if ((*lst)->args[1])
-		perror((*lst)->args[1]);
 	ft_free(ms, lst);
 	free(lst);
 	free(ms);
