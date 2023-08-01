@@ -44,12 +44,12 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@make -s -C libft
-	@gcc $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
+	@$(CC) -g $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
 	@echo "$(B_GREEN)Compiling $(OBJS)$(C_END)"
 	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 
 %.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) -g $(CFLAGS) -c $< -o $@
 	@echo "$(B_GREEN)Creating object file: $<$(C_END)"
 
 

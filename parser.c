@@ -47,10 +47,7 @@ void	remove_quotes(t_minishell *ms)
 	char	*tmp;
 	int		i;
 
-	i = -1;
-	while (ms->input[++i])
-		;
-	ms->token = malloc(i + 1);
+	ms->token = malloc(MAX_BUF);
 	i = -1;
 	while (ms->input[++i])
 	{
@@ -96,61 +93,73 @@ void	check_emptystr(t_minishell *ms)
 	}
 }
 
-void	multiple_dollar(t_minishell *ms, int i)
+void	dollar_handler(t_minishell *ms, char **envvar, char	*res, int k)
 {
-	int		k;
-	char	**envvar;
 	int		j;
 	char	*tmp;
+	char	*between;
+
+	if (!ft_strncmp(envvar[k], "?", 1))
+	{
+		ft_strlcat(res, ft_itoa(ms->exit_status),
+			ft_strlen(res) + ft_strlen(ft_itoa(ms->exit_status)) + 1);
+		envvar[k] = ft_strchr(envvar[k], '?') + 1;
+	}
+	j = -1;
+	while (ft_isalnum(envvar[k][++j]))
+		;
+	tmp = ft_substr(envvar[k], 0, j);
+	if (ft_getenv(ms, tmp))
+		ft_strlcat(res, ft_getenv(ms, tmp),
+			ft_strlen(res) + ft_strlen(ft_getenv(ms, tmp)) + 1);
+	free(tmp);
+	between = ft_strchr(envvar[k], envvar[k][j]);
+	if (between)
+		ft_strlcat(res, between, ft_strlen(res) + ft_strlen(between) + 1);
+}
+
+void	multiple_dollar(t_minishell *ms, char **envvar, int i, int k)
+{
 	char	res[MAX_BUF];
 
-	envvar = lexer(ft_strchr(ms->input[i], '$'), "$");
-	// for (int f = 0; envvar[f]; f++)
-	// 	printf("envvar[%d]: %s\n", f, envvar[f]);
 	ft_strlcpy(res, ms->input[i], ft_strpos(ms->input[i], "$") + 1);
 	k = -1;
 	while (envvar[++k])
 	{
-		if (!ft_strncmp(envvar[k], "$", 1) && envvar[k + 1] && envvar[k + 1][0] && ft_isalnum(envvar[k + 1][0]))
+		if (!ft_strncmp(envvar[k], "$", 1) && envvar[k + 1]
+			&& envvar[k + 1][0] && ft_isalnum(envvar[k + 1][0]))
 		{
 			k++;
-			if (!ft_strncmp(envvar[k], "?", 1))
-			{
-				ft_strlcat(res, ft_itoa(ms->exit_status), ft_strlen(res) + ft_strlen(ft_itoa(ms->exit_status)) + 1);
-				envvar[k] = ft_strchr(envvar[k], '?') + 1;
-			}
-			j = -1;
-			while (ft_isalnum(envvar[k][++j]))
-				;
-			tmp = ft_substr(envvar[k], 0, j);
-			if (ft_getenv(ms, tmp))
-				ft_strlcat(res, ft_getenv(ms, tmp), ft_strlen(res) + ft_strlen(ft_getenv(ms, tmp)) + 1);
-			free(tmp);
-			tmp = ft_strchr(envvar[k], envvar[k][j]);
-			// printf("tmp: %s\n", tmp);
-			if (tmp)
-				ft_strlcat(res, tmp, ft_strlen(res) + ft_strlen(tmp) + 1);
+			dollar_handler(ms, envvar, res, k);
 		}
 		else
-			ft_strlcat(res, envvar[k], ft_strlen(res) + ft_strlen(envvar[k]) + 1);
-		// printf("res: |%s|\n", res);
+			ft_strlcat(res, envvar[k],
+				ft_strlen(res) + ft_strlen(envvar[k]) + 1);
 	}
-	k = -1;
-	while (envvar[++k])
-		free(envvar[k]);
-	free(envvar);
 	free(ms->input[i]);
 	ms->input[i] = ft_strdup(res);
 }
 
 void	check_dollar(t_minishell *ms)
 {
+	char	**envvar;
 	int		i;
+	int		k;
 
 	i = -1;
+	k = -1;
 	while (ms->input[++i])
 	{
 		if (ft_strchr(ms->input[i], '$') && ms->token[i] != 1)
-			multiple_dollar(ms, i);
+		{
+			envvar = lexer(ft_strchr(ms->input[i], '$'), "$");
+			// for (int f = 0; envvar[f]; f++)
+				// 	printf("envvar[%d]: %s\n", f, envvar[f]);
+			multiple_dollar(ms, envvar, i, k);
+			k = -1;
+			while (envvar[++k])
+				free(envvar[k]);
+			free(envvar);
+		}
 	}
 }

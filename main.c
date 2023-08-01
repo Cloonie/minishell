@@ -29,8 +29,7 @@ void	get_input(t_minishell *ms)
 		add_history(line);
 	trim = ft_strtrim(line, " ");
 	ms->input = lexer(trim, " ><|");
-	if (!ms->exit_status)
-		ms->exit_status = 0;
+	ms->exit_status = 0;
 	free(trim);
 	free(line);
 }
@@ -50,6 +49,10 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 		{
 			tmp[++j] = NULL;
 			ft_lstadd_back(lst, ft_lstnew(tmp));
+			j = -1;
+			while (tmp[++j])
+				free(tmp[j]);
+			free(tmp);
 			tmp = (char **)malloc(MAX_BUF);
 			j = -1;
 		}
@@ -57,8 +60,7 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 			tmp[++j] = ft_strdup(ms->input[i]);
 	}
 	tmp[++j] = NULL;
-	if (tmp != NULL)
-		ft_lstadd_back(lst, ft_lstnew(tmp));
+	ft_lstadd_back(lst, ft_lstnew(tmp));
 }
 
 int	main(int argc, char **argv, char **envp)
