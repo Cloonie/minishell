@@ -83,11 +83,9 @@ char	**lexer(char *s, const char *op)
 	while (s[i++])
 		if (ft_strchr(op, s[i]))
 			size++;
-	array = (char **)malloc(sizeof(char *) * (size) + 1);
+	array = (char **)malloc(sizeof(char *) * (size * 3) + 1);
 	if (!array)
 		return (NULL);
-	if (check_quotes(s))
-		return (array);
 	split_words(array, s, op);
 	return (array);
 }

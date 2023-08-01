@@ -28,6 +28,8 @@
 # include "libft/includes/ft_printf.h"
 # include "libft/includes/get_next_line_bonus.h"
 
+# define MAX_BUF 10000
+
 typedef struct s_minishell
 {
 	char	**input;
@@ -55,7 +57,7 @@ enum {
 };
 
 // main
-char		**get_input(t_minishell *ms);
+void		get_input(t_minishell *ms);
 
 // utils
 void		sigint_handler(int sig);
@@ -88,7 +90,7 @@ void		get_token(t_minishell *ms);
 // parser
 void		remove_quotes(t_minishell *ms);
 void		check_dollar(t_minishell *ms);
-int			check_quotes(char *s);
+int			check_quotes(t_minishell *ms);
 void		check_emptystr(t_minishell *ms);
 
 // redirection

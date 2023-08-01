@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-char	**get_input(t_minishell *ms)
+void	get_input(t_minishell *ms)
 {
 	char	*line;
 	char	*trim;
@@ -33,7 +33,6 @@ char	**get_input(t_minishell *ms)
 		ms->exit_status = 0;
 	free(trim);
 	free(line);
-	return (ms->input);
 }
 
 void	split_cmd(t_list **lst, t_minishell *ms)
@@ -44,14 +43,14 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 
 	i = -1;
 	j = -1;
-	tmp = (char **)malloc(100);
+	tmp = (char **)malloc(MAX_BUF);
 	while (ms->input[++i])
 	{
 		if (!ft_strncmp(ms->input[i], "|", 1))
 		{
 			tmp[++j] = NULL;
 			ft_lstadd_back(lst, ft_lstnew(tmp));
-			tmp = (char **)malloc(100);
+			tmp = (char **)malloc(MAX_BUF);
 			j = -1;
 		}
 		else
@@ -76,14 +75,18 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, sigint_handler);
 	while (1)
 	{
-		ms->input = get_input(ms);
+		get_input(ms);
 		// get_token(ms);
-		remove_quotes(ms);
-		check_dollar(ms);
-		// check_emptystr(ms);
-		split_cmd(lst, ms);
-		if (!redir(ms, lst))
-			pipex(ms, lst);
+		if (!check_quotes(ms))
+		{
+			remove_quotes(ms);
+			check_dollar(ms);
+			check_emptystr(ms);
+			split_cmd(lst, ms);
+			if (!redir(ms, lst))
+				pipex(ms, lst);
+		}
+		ft_free(ms, lst);
 		// while (*lst)
 		// {
 		// 	printf("NODE\n");
@@ -93,9 +96,8 @@ int	main(int argc, char **argv, char **envp)
 		// }
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		for (int i = 0; ms->input[i]; i++)
-			printf("input[%d]: [%s]\n", i , ms->input[i]);
-		ft_free(ms, lst);
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s]\n", i , ms->input[i]);
 		// myexit(ms, lst, 0);
 	}
 }

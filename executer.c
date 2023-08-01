@@ -89,8 +89,9 @@ int	executable(t_minishell *ms, t_list *lst)
 			}
 		}
 	}
+	// printf("debug\n");
 	i = -1;
-	while (paths[++i])
+	while (paths && paths[++i])
 		free(paths[i]);
 	free(paths);
 	return (1);

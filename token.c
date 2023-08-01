@@ -43,7 +43,6 @@ int	check_valid_cmd(t_minishell *ms, char *input)
 				break ;
 		}
 	}
-	printf("pass\n");
 	i = -1;
 	while (path[++i])
 		free(path[i]);

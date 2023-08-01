@@ -12,25 +12,31 @@
 
 #include "minishell.h"
 
-int	check_quotes(char *s)
+int	check_quotes(t_minishell *ms)
 {
 	int	i;
+	int	j;
 	int	d_quote;
 	int	s_quote;
 
 	i = -1;
 	d_quote = 0;
 	s_quote = 0;
-	while (s[++i])
+	while (ms->input[++i])
 	{
-		if (s[i] == '\"')
-			d_quote++;
-		if (s[i] == '\'')
-			s_quote++;
+		j = -1;
+		while (ms->input[i][++j])
+		{
+			if (ms->input[i][j] == '\"')
+				d_quote++;
+			else if (ms->input[i][j] == '\'')
+				s_quote++;
+		}
 	}
 	if ((d_quote % 2) != 0 || (s_quote % 2) != 0)
 	{
 		printf("Error quotes are not closed.\n");
+		ms->exit_status = 130;
 		return (1);
 	}
 	return (0);
@@ -73,17 +79,19 @@ void	remove_quotes(t_minishell *ms)
 void	check_emptystr(t_minishell *ms)
 {
 	int	i;
-	int	j;
 
 	i = -1;
 	while (ms->input[++i])
 	{
-		j = i - 1;
-		if (j >= 0 && !ft_strncmp(ms->input[i], "", ft_strlen(ms->input[i])))
+		if (!ft_strncmp(ms->input[i], "", ft_strlen(ms->input[i])))
 		{
-			free(ms->input[j]);
-			while (ms->input[++j])
-				ms->input[j] = ms->input[j + 1];
+			free(ms->input[i]);
+			while (ms->input[i])
+			{
+				ms->input[i] = ms->input[i + 1];
+				i++;
+			}
+			i = -1;
 		}
 	}
 }
@@ -94,11 +102,11 @@ void	multiple_dollar(t_minishell *ms, int i)
 	char	**envvar;
 	int		j;
 	char	*tmp;
-	char	res[1000];
+	char	res[MAX_BUF];
 
 	envvar = lexer(ft_strchr(ms->input[i], '$'), "$");
-	for (int f = 0; envvar[f]; f++)
-		printf("envvar[%d]: %s\n", f, envvar[f]);
+	// for (int f = 0; envvar[f]; f++)
+	// 	printf("envvar[%d]: %s\n", f, envvar[f]);
 	ft_strlcpy(res, ms->input[i], ft_strpos(ms->input[i], "$") + 1);
 	k = -1;
 	while (envvar[++k])
@@ -115,10 +123,9 @@ void	multiple_dollar(t_minishell *ms, int i)
 			while (ft_isalnum(envvar[k][++j]))
 				;
 			tmp = ft_substr(envvar[k], 0, j);
-			// printf("ENVVAR: %s\n", tmp);
 			if (ft_getenv(ms, tmp))
 				ft_strlcat(res, ft_getenv(ms, tmp), ft_strlen(res) + ft_strlen(ft_getenv(ms, tmp)) + 1);
-			// free(tmp);
+			free(tmp);
 			tmp = ft_strchr(envvar[k], envvar[k][j]);
 			// printf("tmp: %s\n", tmp);
 			if (tmp)
@@ -126,13 +133,14 @@ void	multiple_dollar(t_minishell *ms, int i)
 		}
 		else
 			ft_strlcat(res, envvar[k], ft_strlen(res) + ft_strlen(envvar[k]) + 1);
-		printf("res: |%s|\n", res);
+		// printf("res: |%s|\n", res);
 	}
-	// free(envvar);
-	// free(ms->input[i]);
+	k = -1;
+	while (envvar[++k])
+		free(envvar[k]);
+	free(envvar);
+	free(ms->input[i]);
 	ms->input[i] = ft_strdup(res);
-	// printf("input[%d]: |%s|\n", i, ms->input[i]);
-	// printf("~~~~\n");
 }
 
 void	check_dollar(t_minishell *ms)
