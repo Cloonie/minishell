@@ -26,39 +26,32 @@ LIBFLAGS	+=	-Llibft -lft
 # LIBFLAGS	+=	-L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 SANITIZE	=	-fsanitize=address -g3
 
-FILES		=	main		\
-				utils		\
-				lexer		\
-				token		\
-				parser		\
-				build_ins	\
-				build_ins2	\
-				executer	\
-				redir		\
-				pipe		\
+INCLUDES	=	./includes
+SRC_PATH	=	./src
+OBJ_PATH	=	./obj
 
-SRCS		=	$(addsuffix .c, $(FILES))
-OBJS		=	$(addsuffix .o, $(FILES))
+SRCS	=	$(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*, .c*)))
+OBJS	=	$(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRCS)))))
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	@make -s -C libft
-	@$(CC) -g $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
 	@echo "$(B_GREEN)Compiling $(OBJS)$(C_END)"
 	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 
-%.o: %.c
-	@$(CC) -g $(CFLAGS) -c $< -o $@
-	@echo "$(B_GREEN)Creating object file: $<$(C_END)"
-
+$(OBJ_PATH)/%.o:	$(SRC_PATH)/%.c*
+					@mkdir -p $(OBJ_PATH)
+					@echo "$(B_GREEN)Creating object file: $<$(C_ENDR)"
+					@$(CC) $(CFLAGS) -c -I$(INCLUDES) $< -o $@
 
 clean:
-	@$(RM) $(OBJS)
+	@rm -rf $(OBJS) $(OBJ_PATH)
 	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
 
 fclean:	clean
-	@$(RM) $(NAME)
+	@$(RM) $(NAME) 
 	@echo "$(C_RED)Removing $(NAME)$(C_END)"
 
 lclean:
