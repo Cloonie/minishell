@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/25 13:36:47 by mliew             #+#    #+#             */
-/*   Updated: 2022/05/26 08:38:48 by mliew            ###   ########.fr       */
+/*   Updated: 2023/08/03 15:28:56 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/libft.h"
 
 // The strchr() function locates the first occurrence of c 
 // (converted to a char) in the string pointed to by s.

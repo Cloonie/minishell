@@ -18,7 +18,7 @@ C_BLUE	=	\033[1;34m
 C_END 	=	\033[0m
 
 NAME		=	minishell
-CFLAGS		=	-Wall -Wextra -Werror
+CFLAGS		=	-Wall -Wextra -Werror -g
 CC			=	gcc
 LIBFT		=	libft
 LIBFLAGS	+=	-lreadline

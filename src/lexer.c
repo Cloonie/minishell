@@ -10,20 +10,20 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
-static char	*word_dup(const char *str, int start, int finish)
-{
-	char	*word;
-	int		i;
+// static char	*word_dup(const char *str, int start, int finish)
+// {
+// 	char	*word;
+// 	int		i;
 
-	i = 0;
-	word = malloc((finish - start + 2) * sizeof(char));
-	while (start <= finish)
-		word[i++] = str[start++];
-	word[i] = '\0';
-	return (word);
-}
+// 	i = 0;
+// 	word = malloc(((finish - start) * sizeof(char)) + 2);
+// 	while (start < finish)
+// 		word[i++] = str[start++];
+// 	word[i] = '\0';
+// 	return (word);
+// }
 
 static void	split_words(char **array, const char *s, const char *op)
 {
@@ -31,61 +31,77 @@ static void	split_words(char **array, const char *s, const char *op)
 	int	j;
 	int	k;
 
-	i = 0;
+	i = -1;
 	j = 0;
 	k = -1;
-	while (s[i])
+	(void)op;
+	while (++i <= ft_strlen(s))
 	{
-		k = i;
-		if (i == 0 || s[i] != ' ')
+		if (s[i] != ' ' && k < 0)
+			k = i;
+		// if (s[i] == '\"')
+		// 	while (s[++i] && s[i] != '\"')
+		// 		;
+		// else if (s[i] == '\'')
+		// 	while (s[++i] && s[i] != '\'')
+		// 		;
+		// if (ft_strchr(op, s[i]) && s[i] != ' ')
+		// {
+		// 	k = i;
+		// 	if ((s[i] == '>' && s[i + 1] == '>')
+		// 		|| (s[i] == '<' && s[i + 1] == '<'))
+		// 		i++;
+		// 	array[++j] = ft_substr(s, k, i);
+		// 	k = -1;
+		// }
+		if ((s[i + 1] == ' ' || i + 1 == ft_strlen(s)) && k >= 0)
 		{
-			if (s[i] == '\"')
-				while (s[++i] && s[i] != '\"')
-					;
-			else if (s[i] == '\'')
-				while (s[++i] && s[i] != '\'')
-					;
-			else
-				while (!ft_strchr(op, s[i + 1])
-					&& s[i + 1] != '\"' && s[i + 1] != '\"')
-					i++;
-			if (ft_strchr(op, s[k]) && s[k] != ' ')
-			{
-				if ((s[k] == '>' && s[k + 1] == '>')
-					|| (s[k] == '<' && s[k + 1] == '<'))
-				{
-					k++;
-					array[j++] = word_dup(s, k - 1, k);
-					i++;
-				}
-				else
-					array[j++] = word_dup(s, k, k);
-				k++;
-			}
-			if (s[i] != ' ' && k <= i)
-				array[j++] = word_dup(s, k, i);
+			printf("%s\n", s);
+			printf("k: %d |%c|\n", k, s[k]);
+			printf("i: %d |%c|\n", i, s[i]);
+			array[j++] = ft_substr(s, k, i + 1);
+			k = -1;
 		}
-		i++;
 	}
 	array[j] = 0;
+}
+
+int	getsize(char *s, const char *op)
+{
+	int	size;
+	int	i;
+
+	i = -1;
+	size = 0;
+	while (s[++i])
+	{
+		if (!size)
+			size++;
+		if (s[i] == '\"')
+			while (s[++i] != '\"')
+				;
+		else if (s[i] == '\'')
+			while (s[++i] != '\'')
+				;
+		if ((s[i] == ' ' && s[i - 1] != ' ')
+			|| (ft_strchr(op, s[i]) && s[i - 1] != ' '))
+			size++;
+	}
+	return (size);
 }
 
 char	**lexer(char *s, const char *op)
 {
 	char		**array;
-	int			size;
-	int			i;
 
-	size = 0;
-	i = 0;
 	if (!s)
 		return (NULL);
-	while (s[i++])
-		if (ft_strchr(op, s[i]))
-			size++;
-	array = (char **)malloc(sizeof(char *) * (size * 3) + 1);
+	printf("SIZE: %d\n", getsize(s, op));
+	array = malloc((sizeof(char *) * getsize(s, op)) + 1);
 	if (!array)
 		return (NULL);
 	split_words(array, s, op);
+	for (int i = 0; array[i]; i++)
+		printf("array[%d]: [%s]\n", i , array[i]);
 	return (array);
 }

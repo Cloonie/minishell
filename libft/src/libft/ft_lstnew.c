@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/libft.h"
 
 t_list	*ft_lstnew(char **cmd)
 {
@@ -20,6 +20,10 @@ t_list	*ft_lstnew(char **cmd)
 	if (!lst)
 		return (NULL);
 	lst->args = cmd;
+	lst->append = 0;
+	lst->delimiter = 0;
+	lst->infile = 0;
+	lst->outfile = 0;
 	lst->next = NULL;
 	return (lst);
 }
