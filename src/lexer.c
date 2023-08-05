@@ -25,6 +25,34 @@
 // 	return (word);
 // }
 
+// static void	split_words(char **array, const char *s, const char *op)
+// {
+// 	int	i;
+// 	int	j;
+// 	int	k;
+
+// 	i = 0;
+// 	j = 0;
+// 	k = -1;
+// 	while (s[i])
+// 	{
+// 		if (s[i] != ' ' && k < 0)
+// 			k = i;
+// 		if (ft_strchr(op, s[i]))
+// 		{
+// 			array[j++] = ft_substr(s, k, i);
+// 			k = -1;
+// 		}
+// 		if (s[i] == ' ' || k >= 0)
+// 		{
+// 			array[j++] = ft_substr(s, k, i);
+// 			k = -1;
+// 		}
+// 		i++;
+// 	}
+// 	array[j] = 0;
+// }
+
 static void	split_words(char **array, const char *s, const char *op)
 {
 	int	i;
@@ -39,28 +67,30 @@ static void	split_words(char **array, const char *s, const char *op)
 	{
 		if (s[i] != ' ' && k < 0)
 			k = i;
-		// if (s[i] == '\"')
-		// 	while (s[++i] && s[i] != '\"')
-		// 		;
-		// else if (s[i] == '\'')
-		// 	while (s[++i] && s[i] != '\'')
-		// 		;
-		// if (ft_strchr(op, s[i]) && s[i] != ' ')
-		// {
-		// 	k = i;
-		// 	if ((s[i] == '>' && s[i + 1] == '>')
-		// 		|| (s[i] == '<' && s[i + 1] == '<'))
-		// 		i++;
-		// 	array[++j] = ft_substr(s, k, i);
-		// 	k = -1;
-		// }
-		if ((s[i + 1] == ' ' || i + 1 == ft_strlen(s)) && k >= 0)
+		if (s[i] == '\"')
+			while (s[++i] && s[i] != '\"')
+				;
+		else if (s[i] == '\'')
+			while (s[++i] && s[i] != '\'')
+				;
+		if ((s[i] == ' ' || i == ft_strlen(s)
+			|| (ft_strchr(op, s[i])))
+			&& k >= 0)
 		{
-			printf("%s\n", s);
-			printf("k: %d |%c|\n", k, s[k]);
-			printf("i: %d |%c|\n", i, s[i]);
-			array[j++] = ft_substr(s, k, i + 1);
+			array[j++] = ft_substr(s, k, i - k);
 			k = -1;
+		}
+		if (s[i] && ft_strchr(op, s[i]) && s[i] != ' ')
+		{
+			if ((s[i] == '>' && s[i + 1] == '>')
+				|| (s[i] == '<' && s[i + 1] == '<'))
+			{
+				array[j++] = ft_substr(s, i, 2);
+				i++;
+			}
+			else
+				array[j++] = ft_substr(s, i, 1);
+			i++;
 		}
 	}
 	array[j] = 0;

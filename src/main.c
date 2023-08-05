@@ -28,7 +28,7 @@ void	get_input(t_minishell *ms)
 	if (ft_strncmp(line, "", 1))
 		add_history(line);
 	trim = ft_strtrim(line, " ");
-	ms->input = lexer(trim, " ><|");
+	ms->input = lexer(trim, "<>|");
 	ms->exit_status = 0;
 	free(trim);
 	free(line);
