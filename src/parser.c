@@ -121,11 +121,12 @@ void	dollar_handler(t_minishell *ms, char **envvar, char	*res, int k)
 		ft_strlcat(res, between, ft_strlen(res) + ft_strlen(between) + 1);
 }
 
-void	multiple_dollar(t_minishell *ms, char **envvar, int i, int k)
+char	*multiple_dollar(t_minishell *ms, char **envvar, int k)
 {
 	char	res[MAX_BUF];
+	char	*ret;
 
-	ft_strlcpy(res, ms->input[i], ft_strpos(ms->input[i], "$") + 1);
+	ft_strlcpy(res, "", MAX_BUF);
 	k = -1;
 	while (envvar[++k])
 	{
@@ -139,33 +140,58 @@ void	multiple_dollar(t_minishell *ms, char **envvar, int i, int k)
 			ft_strlcat(res, envvar[k],
 				ft_strlen(res) + ft_strlen(envvar[k]) + 1);
 	}
-	free(ms->input[i]);
-	ms->input[i] = ft_strdup(res);
+	ret = ft_strdup(res);
+	return (ret);
 }
 
 void	check_dollar(t_minishell *ms)
 {
 	char	**envvar;
+	char	buf[1024];
+	char	*tmp;
 	int		i;
 	int		j;
 	int		k;
+	int		flag;
 
 	i = -1;
-	j = -1;
-	k = -1;
-	(void)j;
+	flag = 0;
+	buf = "";
+	tmp = NULL;
 	while (ms->input[++i])
 	{
-		if (ft_strchr(ms->input[i], '$') && ms->token[i] != 1)
+		j = -1;
+		while (ms->input[i][++j])
 		{
-			envvar = lexer(ft_strchr(ms->input[i], '$'), "$");
-			for (int f = 0; envvar[f]; f++)
-					printf("envvar[%d]: %s\n", f, envvar[f]);
-			multiple_dollar(ms, envvar, i, k);
 			k = -1;
-			while (envvar[++k])
-				free(envvar[k]);
-			free(envvar);
+			if (ms->input[i][j] == '\'')
+			{
+				k = ++j;
+				while (ms->input[i][++j] && ms->input[i][j] != '\'')
+					buf;
+				flag = 1;
+			}
+			else if (ms->input[i][j] == '\"')
+			{
+				k = ++j;
+				while (ms->input[i][++j] && ms->input[i][j] != '\"')
+					;
+				// printf("char j: %c, i: %d, j: %d\n",ms->input[i][j], i, j);
+				tmp = ft_substr(ms->input[i], k, j - k);
+			}
+			if ((tmp || ft_strchr(ms->input[i], '$')) && flag == 0)
+			{
+				envvar = lexer(tmp, "$");
+				free(tmp);
+				// for (int f = 0; envvar[f]; f++)
+				// 	printf("envvar[%d]: %s\n", f, envvar[f]);
+				printf("RESULTS: %s\n", multiple_dollar(ms, envvar, k));
+				// k = -1;
+				// while (envvar[++k])
+				// 	free(envvar[k]);
+				// free(envvar);
+			}
+			ft_strlcat(BUF, tmp, sizeof(BUF) + sizeof(tmp) + 1);
 		}
 	}
 }
