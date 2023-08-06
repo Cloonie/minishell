@@ -146,52 +146,48 @@ char	*multiple_dollar(t_minishell *ms, char **envvar, int k)
 
 void	check_dollar(t_minishell *ms)
 {
-	char	**envvar;
-	char	buf[1024];
-	char	*tmp;
+	char	result[1024];
+	char	temp[1024];
 	int		i;
 	int		j;
 	int		k;
-	int		flag;
 
 	i = -1;
-	flag = 0;
-	buf = "";
-	tmp = NULL;
 	while (ms->input[++i])
 	{
 		j = -1;
+		ft_strlcpy(result, "", 1024);
 		while (ms->input[i][++j])
 		{
+			ft_memset(temp, 0, 1024);
 			k = -1;
 			if (ms->input[i][j] == '\'')
 			{
-				k = ++j;
 				while (ms->input[i][++j] && ms->input[i][j] != '\'')
-					buf;
-				flag = 1;
+					temp[++k] = ms->input[i][j];
+				temp[++k] = '\0';
+				ft_strlcat(result, temp, ft_strlen(result) + ft_strlen(temp) + 1);
+				// printf("temp: %s\n", temp);
 			}
-			else if (ms->input[i][j] == '\"')
+			else if (ms->input[i][j] == '$' && ft_isalnum(ms->input[i][j + 1]))
 			{
-				k = ++j;
-				while (ms->input[i][++j] && ms->input[i][j] != '\"')
-					;
-				// printf("char j: %c, i: %d, j: %d\n",ms->input[i][j], i, j);
-				tmp = ft_substr(ms->input[i], k, j - k);
+				while (ms->input[i][++j] && ft_isalnum(ms->input[i][j]))
+					temp[++k] = ms->input[i][j];
+				temp[++k] = '\0';
+				ft_strlcat(result, ft_getenv(ms, temp), ft_strlen(result) + ft_strlen(ft_getenv(ms, temp)) + 1);
+				// printf("temp: %s\n", temp);
+				j--;
 			}
-			if ((tmp || ft_strchr(ms->input[i], '$')) && flag == 0)
+			else if (ms->input[i][j] != '\"')
 			{
-				envvar = lexer(tmp, "$");
-				free(tmp);
-				// for (int f = 0; envvar[f]; f++)
-				// 	printf("envvar[%d]: %s\n", f, envvar[f]);
-				printf("RESULTS: %s\n", multiple_dollar(ms, envvar, k));
-				// k = -1;
-				// while (envvar[++k])
-				// 	free(envvar[k]);
-				// free(envvar);
+				temp[++k] = ms->input[i][j];
+				temp[++k] = '\0';
+				ft_strlcat(result, temp, ft_strlen(result) + ft_strlen(temp) + 1);
+				// printf("temp: %s\n", temp);
 			}
-			ft_strlcat(BUF, tmp, sizeof(BUF) + sizeof(tmp) + 1);
 		}
+		free(ms->input[i]);
+		ms->input[i] = ft_strdup(result);
+		// printf("result: %s\n", result);
 	}
 }
