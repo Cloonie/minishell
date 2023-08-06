@@ -60,7 +60,7 @@ static void	split_words(char **array, const char *s, const char *op)
 	int	k;
 
 	i = -1;
-	j = 0;
+	j = -1;
 	k = -1;
 	(void)op;
 	while (++i <= ft_strlen(s))
@@ -74,26 +74,29 @@ static void	split_words(char **array, const char *s, const char *op)
 			while (s[++i] && s[i] != '\'')
 				;
 		if ((s[i] == ' ' || i == ft_strlen(s)
-			|| (ft_strchr(op, s[i])))
+			|| (s[i] && ft_strchr(op, s[i])))
 			&& k >= 0)
 		{
-			array[j++] = ft_substr(s, k, i - k);
+			if ((i - k) != 0)
+				array[++j] = ft_substr(s, k, i - k);
+			// printf("array: |%s|\n", array[j]);
+			if (s[i] && ft_strchr(op, s[i]))
+			{
+				k = i;
+				// printf("inside operator handle: %c\n", s[i]);
+				if ((s[i] == '>' && s[i + 1] == '>')
+					|| (s[i] == '<' && s[i + 1] == '<'))
+				{
+					array[++j] = ft_substr(s, k, 2);
+					i++;
+				}
+				else
+					array[++j] = ft_substr(s, k, 1);
+			}
 			k = -1;
 		}
-		if (s[i] && ft_strchr(op, s[i]) && s[i] != ' ')
-		{
-			if ((s[i] == '>' && s[i + 1] == '>')
-				|| (s[i] == '<' && s[i + 1] == '<'))
-			{
-				array[j++] = ft_substr(s, i, 2);
-				i++;
-			}
-			else
-				array[j++] = ft_substr(s, i, 1);
-			i++;
-		}
 	}
-	array[j] = 0;
+	array[++j] = NULL;
 }
 
 int	getsize(char *s, const char *op)
@@ -108,10 +111,10 @@ int	getsize(char *s, const char *op)
 		if (!size)
 			size++;
 		if (s[i] == '\"')
-			while (s[++i] != '\"')
+			while (s[++i] && s[i] != '\"')
 				;
 		else if (s[i] == '\'')
-			while (s[++i] != '\'')
+			while (s[++i] && s[i] != '\'')
 				;
 		if ((s[i] == ' ' && s[i - 1] != ' ')
 			|| (ft_strchr(op, s[i]) && s[i - 1] != ' '))
@@ -126,12 +129,10 @@ char	**lexer(char *s, const char *op)
 
 	if (!s)
 		return (NULL);
-	printf("SIZE: %d\n", getsize(s, op));
+	// printf("SIZE: %d\n", getsize(s, op));
 	array = malloc((sizeof(char *) * getsize(s, op)) + 1);
 	if (!array)
 		return (NULL);
 	split_words(array, s, op);
-	for (int i = 0; array[i]; i++)
-		printf("array[%d]: [%s]\n", i , array[i]);
 	return (array);
 }

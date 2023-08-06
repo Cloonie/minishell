@@ -76,9 +76,9 @@ int	main(int argc, char **argv, char **envp)
 	{
 		get_input(ms);
 		// get_token(ms);
-		// check_quotes(ms);
+		check_quotes(ms);
 		// remove_quotes(ms);
-		// check_dollar(ms);
+		check_dollar(ms);
 		// check_emptystr(ms);
 		// split_cmd(lst, ms);
 		// if (!redir(ms, lst))
@@ -93,8 +93,8 @@ int	main(int argc, char **argv, char **envp)
 		// }
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		// for (int i = 0; ms->input[i]; i++)
-		// 	printf("input[%d]: [%s]\n", i , ms->input[i]);
+		for (int i = 0; ms->input[i]; i++)
+			printf("input[%d]: [%s]\n", i , ms->input[i]);
 		// myexit(ms, lst, 0);
 	}
 }

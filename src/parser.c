@@ -12,7 +12,10 @@
 
 #include "../includes/minishell.h"
 
-int	check_quotes(t_minishell *ms)
+// if quote = 0 means its close ""
+// if quote = 1 means its open " and will look for the same type of quote
+
+int	 check_quotes(t_minishell *ms)
 {
 	int	i;
 	int	j;
@@ -144,17 +147,20 @@ void	check_dollar(t_minishell *ms)
 {
 	char	**envvar;
 	int		i;
+	int		j;
 	int		k;
 
 	i = -1;
+	j = -1;
 	k = -1;
+	(void)j;
 	while (ms->input[++i])
 	{
 		if (ft_strchr(ms->input[i], '$') && ms->token[i] != 1)
 		{
 			envvar = lexer(ft_strchr(ms->input[i], '$'), "$");
-			// for (int f = 0; envvar[f]; f++)
-				// 	printf("envvar[%d]: %s\n", f, envvar[f]);
+			for (int f = 0; envvar[f]; f++)
+					printf("envvar[%d]: %s\n", f, envvar[f]);
 			multiple_dollar(ms, envvar, i, k);
 			k = -1;
 			while (envvar[++k])
