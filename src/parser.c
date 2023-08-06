@@ -169,14 +169,19 @@ void	check_dollar(t_minishell *ms)
 				ft_strlcat(result, temp, ft_strlen(result) + ft_strlen(temp) + 1);
 				// printf("temp: %s\n", temp);
 			}
-			else if (ms->input[i][j] == '$' && ft_isalnum(ms->input[i][j + 1]))
+			else if (ms->input[i][j] == '$' && (ft_isalnum(ms->input[i][j + 1]) || ms->input[i][j + 1] == '?'))
 			{
-				while (ms->input[i][++j] && ft_isalnum(ms->input[i][j]))
-					temp[++k] = ms->input[i][j];
+				if (ms->input[i][j + 1] == '?')
+					temp[++k] = ms->input[i][++j];
+				else
+				{
+					while (ms->input[i][++j] && ft_isalnum(ms->input[i][j]))
+						temp[++k] = ms->input[i][j];
+					j--;
+				}
 				temp[++k] = '\0';
 				ft_strlcat(result, ft_getenv(ms, temp), ft_strlen(result) + ft_strlen(ft_getenv(ms, temp)) + 1);
 				// printf("temp: %s\n", temp);
-				j--;
 			}
 			else if (ms->input[i][j] != '\"')
 			{

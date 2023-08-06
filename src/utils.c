@@ -60,6 +60,8 @@ char	*ft_getenv(t_minishell *ms, char *envvar)
 
 	i = 0;
 	envval = NULL;
+	if (!ft_strncmp(envvar, "?\0", 2))
+		return (ft_itoa(ms->exit_status));
 	while (ms->envp[++i])
 	{
 		var = ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "="));
