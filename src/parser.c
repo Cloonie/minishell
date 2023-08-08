@@ -12,31 +12,32 @@
 
 #include "../includes/minishell.h"
 
-// if quote = 0 means its close ""
-// if quote = 1 means its open " and will look for the same type of quote
+// closed: quoted = 0
+// open: quoted = 1
 
 int	 check_quotes(t_minishell *ms)
 {
 	int	i;
 	int	j;
-	int	d_quote;
-	int	s_quote;
+	int	quoted;
 
 	i = -1;
-	d_quote = 0;
-	s_quote = 0;
+	quoted = 0;
 	while (ms->input[++i])
 	{
 		j = -1;
 		while (ms->input[i][++j])
 		{
-			if (ms->input[i][j] == '\"')
-				d_quote++;
-			else if (ms->input[i][j] == '\'')
-				s_quote++;
+			if (ms->input[i][j] == '\'' || ms->input[i][j] == '\"')
+			{
+				if (quoted == 0)
+					quoted = ms->input[i][j];
+				else if (ms->input[i][j] == quoted)
+					quoted = 0;
+			}
 		}
 	}
-	if ((d_quote % 2) != 0 || (s_quote % 2) != 0)
+	if (quoted != 0)
 	{
 		printf("Error quotes are not closed.\n");
 		ms->exit_status = 130;
@@ -151,17 +152,19 @@ void	check_dollar(t_minishell *ms)
 	int		i;
 	int		j;
 	int		k;
+	int		quote;
 
 	i = -1;
 	while (ms->input[++i])
 	{
 		j = -1;
 		ft_strlcpy(result, "", 1024);
+		quote = 0;
 		while (ms->input[i][++j])
 		{
-			ft_memset(temp, 0, 1024);
+			ft_strlcpy(temp, "", 1024);
 			k = -1;
-			if (ms->input[i][j] == '\'')
+			if (ms->input[i][j] == '\'' && !quote)
 			{
 				while (ms->input[i][++j] && ms->input[i][j] != '\'')
 					temp[++k] = ms->input[i][j];
@@ -183,7 +186,14 @@ void	check_dollar(t_minishell *ms)
 				ft_strlcat(result, ft_getenv(ms, temp), ft_strlen(result) + ft_strlen(ft_getenv(ms, temp)) + 1);
 				// printf("temp: %s\n", temp);
 			}
-			else if (ms->input[i][j] != '\"')
+			else if (ms->input[i][j] == '\"')
+			{
+				if (quote == 0)
+					quote = 1;
+				else
+					quote = 0;
+			}
+			else
 			{
 				temp[++k] = ms->input[i][j];
 				temp[++k] = '\0';

@@ -83,7 +83,10 @@ int	main(int argc, char **argv, char **envp)
 		// split_cmd(lst, ms);
 		// if (!redir(ms, lst))
 		// 	pipex(ms, lst);
-		// ft_free(ms, lst);
+		for (int i = 0; ms->input[i]; i++)
+			printf("input[%d]: [%s]\n", i , ms->input[i]);
+		ft_free(ms, lst);
+
 		// while (*lst)
 		// {
 		// 	printf("NODE\n");
@@ -93,8 +96,6 @@ int	main(int argc, char **argv, char **envp)
 		// }
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		for (int i = 0; ms->input[i]; i++)
-			printf("input[%d]: [%s]\n", i , ms->input[i]);
 		// myexit(ms, lst, 0);
 	}
 }

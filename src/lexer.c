@@ -53,7 +53,7 @@
 // 	array[j] = 0;
 // }
 
-static void	split_words(char **array, const char *s, const char *op)
+int	split_words(char **array, const char *s, const char *op)
 {
 	int	i;
 	int	j;
@@ -62,7 +62,6 @@ static void	split_words(char **array, const char *s, const char *op)
 	i = -1;
 	j = -1;
 	k = -1;
-	(void)op;
 	while (++i <= ft_strlen(s))
 	{
 		if (s[i] != ' ' && k < 0)
@@ -74,7 +73,7 @@ static void	split_words(char **array, const char *s, const char *op)
 			while (s[++i] && s[i] != '\'')
 				;
 		if ((s[i] == ' ' || i == ft_strlen(s)
-			|| (s[i] && ft_strchr(op, s[i])))
+				|| (s[i] && ft_strchr(op, s[i])))
 			&& k >= 0)
 		{
 			if ((i - k) != 0)
@@ -97,40 +96,50 @@ static void	split_words(char **array, const char *s, const char *op)
 		}
 	}
 	array[++j] = NULL;
+	return (j);
 }
 
-int	getsize(char *s, const char *op)
-{
-	int	size;
-	int	i;
+// int	getsize(char *s, const char *op)
+// {
+// 	int	size;
+// 	int	i;
 
-	i = -1;
-	size = 0;
-	while (s[++i])
-	{
-		if (!size)
-			size++;
-		if (s[i] == '\"')
-			while (s[++i] && s[i] != '\"')
-				;
-		else if (s[i] == '\'')
-			while (s[++i] && s[i] != '\'')
-				;
-		if ((s[i] == ' ' && s[i - 1] != ' ')
-			|| (ft_strchr(op, s[i]) && s[i - 1] != ' '))
-			size++;
-	}
-	return (size);
-}
+// 	i = -1;
+// 	size = 0;
+// 	while (s[++i])
+// 	{
+// 		if (!size)
+// 			size++;
+// 		if (s[i] == '\"')
+// 			while (s[++i] && s[i] != '\"')
+// 				;
+// 		else if (s[i] == '\'')
+// 			while (s[++i] && s[i] != '\'')
+// 				;
+// 		if (s[i] == ' ' || ft_strchr(op, s[i]))
+// 			size++;
+// 	}
+// 	return (size);
+// }
 
 char	**lexer(char *s, const char *op)
 {
-	char		**array;
+	int		size;
+	int		i;
+	char	**array;
 
+	i = -1;
 	if (!s)
 		return (NULL);
+	array = malloc(sizeof(char *) * MAX_BUF);
+	size = split_words(array, s, op);
+	printf("SIZE: %d\n", size);
+	while (array[++i])
+		free(array[i]);
+	free(array);
 	// printf("SIZE: %d\n", getsize(s, op));
-	array = malloc((sizeof(char *) * getsize(s, op)) + 1);
+	// array = malloc((sizeof(char *) * (getsize(s, op)) + 1));
+	array = malloc(sizeof(char *) * (size + 1));
 	if (!array)
 		return (NULL);
 	split_words(array, s, op);
