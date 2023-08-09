@@ -59,7 +59,7 @@ int	redir_error(t_minishell *ms, t_list *tmp, int i)
 			|| !ft_strncmp(tmp->args[i], ">\0", 2)
 			|| !ft_strncmp(tmp->args[i], ">>\0", 3)
 			|| !ft_strncmp(tmp->args[i], "<<\0", 3))
-		&& (tmp->args[i + 1] == NULL
+		&& (!tmp->args[i + 1]
 			|| !ft_strncmp(tmp->args[i + 1], "<\0", 2)
 			|| !ft_strncmp(tmp->args[i + 1], ">\0", 2)
 			|| !ft_strncmp(tmp->args[i + 1], ">>\0", 3)
@@ -83,6 +83,10 @@ int	redir(t_minishell *ms, t_list **lst)
 		i = 0;
 		while (tmp->args[i])
 		{
+			tmp->append = 0;
+			tmp->delimiter = NULL;
+			tmp->infile = NULL;
+			tmp->outfile = NULL;
 			if (redir_error(ms, tmp, i) == 1)
 				return (1);
 			if (redir_type(tmp, i) == 1)

@@ -99,27 +99,28 @@ void	repipe(t_minishell *ms, int *fdpipe)
 void	pipex(t_minishell *ms, t_list **lst)
 {
 	int		fdpipe[2];
-	t_list	**tmp;
+	t_list	*head;
 
-	tmp = lst;
+	head = *lst;
 	ms->ori_in = dup(0);
 	ms->ori_out = dup(1);
 	ms->fdin = 0;
 	ms->fdout = 0;
 	ms->piped = 0;
-	while ((*tmp))
+	while ((*lst))
 	{
-		if (input(ms, tmp) == 1)
+		if (input(ms, lst) == 1)
 			return ;
 		pipe(fdpipe);
-		output(ms, tmp, fdpipe);
-		cmd(ms, tmp);
+		output(ms, lst, fdpipe);
+		cmd(ms, lst);
 		unlink("here_doc");
 		repipe(ms, fdpipe);
-		(*tmp) = (*tmp)->next;
+		(*lst) = (*lst)->next;
 	}
 	dup2(ms->ori_in, 0);
 	dup2(ms->ori_out, 1);
 	close(ms->ori_in);
 	close(ms->ori_out);
+	*lst = head;
 }

@@ -72,23 +72,17 @@ int	main(int argc, char **argv, char **envp)
 	if (argv[1] || argc > 1)
 		myexit(ms, lst, 1);
 	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		get_input(ms);
 		// get_token(ms);
 		check_quotes(ms);
-		// remove_quotes(ms);
 		check_dollar(ms);
 		check_emptystr(ms);
 		split_cmd(lst, ms);
 		if (!redir(ms, lst))
 			pipex(ms, lst);
-
-		for (int i = 0; ms->input[i]; i++)
-			printf("input[%d]: [%s]\n", i , ms->input[i]);
-
-		ft_free(ms, lst);
 
 		// while (*lst)
 		// {
@@ -98,6 +92,10 @@ int	main(int argc, char **argv, char **envp)
 		// 	*lst = (*lst)->next;
 		// }
 
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s]\n", i , ms->input[i]);
+
+		ft_free(ms, lst);
 
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
