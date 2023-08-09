@@ -45,9 +45,11 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 	tmp = malloc(sizeof(char *) * (MAX_BUF + 1));
 	while (ms->input[++i])
 	{
-		if (!ft_strncmp(ms->input[i], "|", 1))
+		if (!ft_strncmp(ms->input[i], "|\0", 2))
 		{
 			tmp[++j] = NULL;
+			// for (int loop = 0; tmp[loop]; loop++)
+			// 	printf("tmp[%d]: %s\n", loop, tmp[loop]);
 			ft_lstadd_back(lst, ft_lstnew(tmp));
 			tmp = malloc(sizeof(char *) * (MAX_BUF + 1));
 			j = -1;
@@ -77,12 +79,14 @@ int	main(int argc, char **argv, char **envp)
 	{
 		get_input(ms);
 		// get_token(ms);
-		check_quotes(ms);
-		check_dollar(ms);
-		check_emptystr(ms);
-		split_cmd(lst, ms);
-		if (!redir(ms, lst))
-			pipex(ms, lst);
+		if (!check_quotes(ms))
+		{
+			check_dollar(ms);
+			check_emptystr(ms);
+			split_cmd(lst, ms);
+			if (!redir(ms, lst))
+				pipex(ms, lst);
+		}
 
 		// while (*lst)
 		// {

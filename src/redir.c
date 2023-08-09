@@ -16,6 +16,7 @@ int	rm_2strs(t_list *tmp, int i)
 {
 	while (tmp->args[i])
 	{
+		free(tmp->args[i]);
 		tmp->args[i] = tmp->args[i + 2];
 		i++;
 	}
@@ -83,10 +84,6 @@ int	redir(t_minishell *ms, t_list **lst)
 		i = 0;
 		while (tmp->args[i])
 		{
-			tmp->append = 0;
-			tmp->delimiter = NULL;
-			tmp->infile = NULL;
-			tmp->outfile = NULL;
 			if (redir_error(ms, tmp, i) == 1)
 				return (1);
 			if (redir_type(tmp, i) == 1)
