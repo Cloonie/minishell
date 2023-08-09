@@ -81,10 +81,6 @@ int	redir(t_minishell *ms, t_list **lst)
 	while (tmp && tmp->args)
 	{
 		i = 0;
-		tmp->append = 0;
-		tmp->delimiter = NULL;
-		tmp->infile = NULL;
-		tmp->outfile = NULL;
 		while (tmp->args[i])
 		{
 			if (redir_error(ms, tmp, i) == 1)

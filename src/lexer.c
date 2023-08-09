@@ -133,7 +133,7 @@ char	**lexer(char *s, const char *op)
 		return (NULL);
 	array = malloc(sizeof(char *) * MAX_BUF);
 	size = split_words(array, s, op);
-	printf("SIZE: %d\n", size);
+	// printf("SIZE: %d\n", size);
 	while (array[++i])
 		free(array[i]);
 	free(array);

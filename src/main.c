@@ -42,19 +42,20 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 
 	i = -1;
 	j = -1;
-	tmp = malloc(MAX_BUF);
+	tmp = malloc(sizeof(char *) * (MAX_BUF + 1));
 	while (ms->input[++i])
 	{
 		if (!ft_strncmp(ms->input[i], "|", 1))
 		{
 			tmp[++j] = NULL;
 			ft_lstadd_back(lst, ft_lstnew(tmp));
-			tmp = malloc(MAX_BUF);
+			tmp = malloc(sizeof(char *) * (MAX_BUF + 1));
 			j = -1;
 		}
 		else
 			tmp[++j] = ft_strdup(ms->input[i]);
-		printf("tmp: %s\n", tmp[j]);
+		// if (j >= 0)
+		// 	printf("tmp[%d]: %s\n", j, tmp[j]);
 	}
 	tmp[++j] = NULL;
 	ft_lstadd_back(lst, ft_lstnew(tmp));
@@ -79,12 +80,14 @@ int	main(int argc, char **argv, char **envp)
 		check_quotes(ms);
 		// remove_quotes(ms);
 		check_dollar(ms);
-		// check_emptystr(ms);
-		// split_cmd(lst, ms);
-		// if (!redir(ms, lst))
-		// 	pipex(ms, lst);
+		check_emptystr(ms);
+		split_cmd(lst, ms);
+		if (!redir(ms, lst))
+			pipex(ms, lst);
+
 		for (int i = 0; ms->input[i]; i++)
 			printf("input[%d]: [%s]\n", i , ms->input[i]);
+
 		ft_free(ms, lst);
 
 		// while (*lst)
@@ -94,6 +97,8 @@ int	main(int argc, char **argv, char **envp)
 		// 		printf("lst->args[%d]: %s\n", x, (*lst)->args[x]);
 		// 	*lst = (*lst)->next;
 		// }
+
+
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
 		// myexit(ms, lst, 0);

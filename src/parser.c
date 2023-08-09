@@ -183,7 +183,8 @@ void	check_dollar(t_minishell *ms)
 					j--;
 				}
 				temp[++k] = '\0';
-				ft_strlcat(result, ft_getenv(ms, temp), ft_strlen(result) + ft_strlen(ft_getenv(ms, temp)) + 1);
+				if (ft_getenv(ms, temp))
+					ft_strlcat(result, ft_getenv(ms, temp), ft_strlen(result) + ft_strlen(ft_getenv(ms, temp)) + 1);
 				// printf("temp: %s\n", temp);
 			}
 			else if (ms->input[i][j] == '\"')

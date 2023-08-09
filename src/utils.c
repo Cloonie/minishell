@@ -23,21 +23,28 @@ void	sigint_handler(int sig)
 
 void	ft_free(t_minishell	*ms, t_list **lst)
 {
-	// t_list	*tmp;
+	t_list	*tmp;
+	t_list	*next;
 	int		i;
 
+	tmp = *lst;
 	i = -1;
-	(void)lst;
-	// tmp = *lst;
 	while (ms->input[++i])
 		free(ms->input[i]);
 	free(ms->input);
 	// free(ms->token);
-	// while (tmp && tmp->args)
-	// {
-	// 	free(tmp->args);
-	// 	tmp = tmp->next;
-	// }
+	while (tmp)
+	{
+		next = tmp->next;
+		i = -1;
+		while (tmp->args[++i])
+			free(tmp->args[i]);
+		free(tmp->args);
+		if (tmp->delimiter)
+			free(tmp->delimiter);
+		free(tmp);
+		tmp = next;
+	}
 }
 
 void	myexit(t_minishell	*ms, t_list **lst, int status)
