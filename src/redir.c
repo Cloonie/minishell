@@ -14,9 +14,9 @@
 
 int	rm_2strs(t_list *tmp, int i)
 {
+	free(tmp->args[i]);
 	while (tmp->args[i])
 	{
-		free(tmp->args[i]);
 		tmp->args[i] = tmp->args[i + 2];
 		i++;
 	}
@@ -28,15 +28,23 @@ int	redir_type(t_list *tmp, int i)
 	int	tmpfd;
 
 	if (!ft_strncmp(tmp->args[i], "<\0", 2))
+	{
+		if (tmp->infile)
+			free(tmp->infile);
 		tmp->infile = tmp->args[i + 1];
+	}
 	else if (!ft_strncmp(tmp->args[i], ">\0", 2))
 	{
+		if (tmp->outfile)
+			free(tmp->outfile);
 		tmp->outfile = tmp->args[i + 1];
 		tmpfd = open(tmp->outfile, O_CREAT, 0644);
 		close(tmpfd);
 	}
 	else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
 	{
+		if (tmp->outfile)
+			free(tmp->outfile);
 		tmp->outfile = tmp->args[i + 1];
 		tmp->append = 1;
 		tmpfd = open(tmp->outfile, O_CREAT, 0644);
