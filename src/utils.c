@@ -16,7 +16,7 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	ft_printf("\n");
-	rl_replace_line("", 0);
+	// rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }
@@ -71,7 +71,7 @@ char	*ft_getenv(t_minishell *ms, char *envvar)
 	char	*var;
 	int		i;
 
-	i = 0;
+	i = -1;
 	envval = NULL;
 	if (!ft_strncmp(envvar, "?\0", 2))
 		return (ft_itoa(ms->exit_status));
