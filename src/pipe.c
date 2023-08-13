@@ -32,8 +32,9 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	input = readline("> ");
 	while (input != NULL)
 	{
+
 		if ((!ft_strncmp(input, (*lst)->delimiter,
-					ft_strlen((*lst)->delimiter) + 1)))
+					ft_strlen((*lst)->delimiter) + 1) || !ft_strncmp(input, "^C", 2)))
 		{
 			free(input);
 			break ;
@@ -53,8 +54,8 @@ int	input(t_minishell *ms, t_list **lst)
 		here_doc(ms, lst);
 	else if ((*lst)->infile)
 		ms->fdin = open((*lst)->infile, O_RDONLY);
-	else if (ms->piped)
-		ms->piped = 0;
+	// else if (ms->piped)
+	// 	ms->piped = 0;
 	else
 		ms->fdin = dup(ms->ori_in);
 	if (ms->fdin == -1)
@@ -76,14 +77,15 @@ void	output(t_minishell *ms, t_list **lst, int *fdpipe)
 	else if ((*lst)->outfile && (*lst)->append)
 		ms->fdout = open((*lst)->outfile,
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if ((*lst)->next)
-	{
-		ms->fdout = fdpipe[1];
-		ms->fdin = fdpipe[0];
-		ms->piped = 1;
-	}
 	else
 		ms->fdout = dup(ms->ori_out);
+	(void)fdpipe;
+	// else if ((*lst)->next)
+	// {
+	// 	ms->fdout = fdpipe[1];
+	// 	ms->fdin = fdpipe[0];
+	// 	ms->piped = 1;
+	// }
 	dup2(ms->fdout, 1);
 	close(ms->fdout);
 }
@@ -107,15 +109,23 @@ void	pipex(t_minishell *ms, t_list **lst)
 	ms->fdin = 0;
 	ms->fdout = 0;
 	ms->piped = 0;
+	int child;
 	while ((*lst))
 	{
-		if (input(ms, lst) == 1)
-			return ;
-		pipe(fdpipe);
-		output(ms, lst, fdpipe);
-		cmd(ms, lst);
-		unlink("here_doc");
-		repipe(ms, fdpipe);
+		child = fork();
+		if (child == 0)
+		{
+			printf("in child\n");
+			if (input(ms, lst) == 1)
+				return ;
+			pipe(fdpipe);
+			output(ms, lst, fdpipe);
+			cmd(ms, lst);
+			unlink("here_doc");
+			// repipe(ms, fdpipe);
+			exit(0);
+		}
+		
 		(*lst) = (*lst)->next;
 	}
 	dup2(ms->ori_in, 0);
