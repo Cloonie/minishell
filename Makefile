@@ -18,55 +18,40 @@ C_BLUE	=	\033[1;34m
 C_END 	=	\033[0m
 
 NAME		=	minishell
-NAME2		= 	pipex
-CFLAGS		=	-Wall -Wextra -Werror
+CFLAGS		=	-Wall -Wextra -Werror -g
 CC			=	gcc
 LIBFT		=	libft
 LIBFLAGS	+=	-lreadline
 LIBFLAGS	+=	-Llibft -lft
 SANITIZE	=	-fsanitize=address -g3
 
-FILES		=	main		\
-				utils		\
-				lexer		\
-				token		\
-				parser		\
-				build_ins	\
-				build_ins2	\
-				executer	\
-				ms_pipe		\
-				# spipe_sample\
+INCLUDES	=	./includes
+SRC_PATH	=	./src
+OBJ_PATH	=	./obj
 
-SRCS		=	$(addsuffix .c, $(FILES))
-OBJS		=	$(addsuffix .o, $(FILES))
-# SRCS2		=	$(addsuffix .c, $(PIPEX_FILES))
-# OBJS2		=	$(addsuffix .o, $(PIPEX_FILES))
+SRCS	=	$(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*, .c*)))
+OBJS	=	$(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRCS)))))
 
 all: $(NAME)
 # all: $(NAME) $(NAME2)
 
 $(NAME): $(OBJS)
 	@make -s -C libft
-	@gcc $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
 	@echo "$(B_GREEN)Compiling $(OBJS)$(C_END)"
 	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 
-# $(NAME2): $(OBJS2)
-# 	@make -s -C libft
-# 	@gcc $(CFLAGS) $(OBJS2) $(LIBFLAGS) -o $(NAME2)
-# 	@echo "$(B_GREEN)Compiling $(OBJS2)$(C_END)"
-# 	@echo "$(C_GREEN)Makefile for pipex completed.$(C_END)"
-
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@echo "$(B_GREEN)Creating object file: $<$(C_END)"
+$(OBJ_PATH)/%.o:	$(SRC_PATH)/%.c*
+					@mkdir -p $(OBJ_PATH)
+					@echo "$(B_GREEN)Creating object file: $<$(C_ENDR)"
+					@$(CC) $(CFLAGS) -c -I$(INCLUDES) $< -o $@
 
 clean:
-	@$(RM) $(OBJS) $(OBJS2)
+	@rm -rf $(OBJS) $(OBJ_PATH)
 	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
 
 fclean:	clean
-	@$(RM) $(NAME) $(NAME2) $(NAME3)
+	@$(RM) $(NAME) 
 	@echo "$(C_RED)Removing $(NAME)$(C_END)"
 
 lclean:

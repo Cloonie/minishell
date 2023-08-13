@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/libft.h"
 
 //	searches for a character in a string and when it reaches the character
 //	it null terminates the character and returns the string

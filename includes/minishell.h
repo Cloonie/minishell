@@ -24,9 +24,11 @@
 # include <dirent.h>
 # include <sys/stat.h>
 
-# include "libft/includes/libft.h"
-# include "libft/includes/ft_printf.h"
-# include "libft/includes/get_next_line_bonus.h"
+# include "../libft/includes/libft.h"
+# include "../libft/includes/ft_printf.h"
+# include "../libft/includes/get_next_line_bonus.h"
+
+# define MAX_BUF 10000
 
 // typedef	struct s_pipe {
 // 	int		numcmd;
@@ -36,18 +38,21 @@
 // 	int		tmp;
 // }	t_pipe;
 
+int	g_quit_heredoc;
+
 typedef struct s_minishell
 {
 	char	**input;
 	int		*token;
 	char	**envp;
 	char	cwd[1024];
-	char	*infile;
-	char	*outfile;
-	int		tmpin;
-	int		tmpout;
+	int		ori_in;
+	int		ori_out;
 	int		fdin;
 	int		fdout;
+	int		piped;
+	int		exit_status;
+	int		heredoc;
 }	t_minishell;
 
 enum {
@@ -63,25 +68,26 @@ enum {
 };
 
 // main
-char		**get_input(t_minishell *ms);
+void		get_input(t_minishell *ms);
 
 // utils
-void		sigint_handler(int sig);
-void		myexit(int status);
+// void		sigint_handler(int sig);
+int			signal_handler(int sig, int pid);
+void		heredoc_handler(int sig);
+void		myexit(t_minishell	*ms, t_list **lst, int status);
 char		*ft_getenv(t_minishell *ms, char *envvar);
 void		ft_free(t_minishell	*ms, t_list **lst);
 
 // build_ins
-void		call_echo(char **input);
-void		call_cd(char **input, char *cwd);
-void		call_unset(char **input, char **envp);
-void		call_export(char **input, char **envp);
-void		export2(char **input, char **envp);
+void		call_echo(t_minishell *ms, t_list *lst);
+void		call_cd(t_minishell *ms, t_list *lst);
+void		call_unset(t_minishell *ms, t_list *lst);
+void		call_export(t_minishell *ms, t_list *lst);
+void		export2(t_minishell *ms, t_list *lst);
 
 // build_ins2
-void		call_env(char **envp);
-void		call_run(char **input, char **envp);
-
+void		call_env(t_minishell *ms, t_list *lst);
+void		call_run(t_minishell *ms, t_list *lst);
 
 // executer
 int			cmd(t_minishell *ms, t_list **lst);
@@ -95,13 +101,18 @@ int			check_valid_cmd(t_minishell *ms, char *input);
 void		get_token(t_minishell *ms);
 
 // parser
-void		remove_quotes(char **array);
+void		remove_quotes(t_minishell *ms);
 void		check_dollar(t_minishell *ms);
-int			check_quotes(char *s);
+int			check_quotes(t_minishell *ms);
 void		check_emptystr(t_minishell *ms);
 
-// pipex
-// void		pipex(t_minishell *ms, t_list **lst);
-int			handle_pipe(t_minishell *ms, t_list **lst);
+// redirection
+int			rm_2strs(t_list *tmp, int i);
+int			redir_type(t_list *tmp, int i);
+int			redir_error(t_minishell *ms, t_list *tmp, int i);
+int			redir(t_minishell *ms, t_list **lst);
+
+// pipe
+void		pipex(t_minishell *ms, t_list **lst);
 
 #endif

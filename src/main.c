@@ -10,44 +10,31 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
-char	**get_input(t_minishell *ms)
+void	get_input(t_minishell *ms)
 {
 	char	*line;
+	char	*trim;
+	char	tmp[100];
 
-	line = readline(ft_strjoin(ft_strjoin
-				("\033[38;5;39m[minishell] \033[4;36m", ms->cwd),
-				"\033[0;36m> \033[0m"));
-	if (line == NULL)
+	getcwd(ms->cwd, sizeof(ms->cwd));
+	ft_strlcpy(tmp, "\033[38;5;39m[minishell] \033[4;36m", 30);
+	ft_strlcat(tmp, ms->cwd, 100);
+	ft_strlcat(tmp, "\033[0;36m> \033[0m", 100);
+	line = readline(tmp);
+	if (!line)
 		exit(0);
-	ft_strtrim(line, " ");
-	add_history(line);
-	ms->input = lexer(line, " ><|");
-	return (ms->input);
+	if (ft_strncmp(line, "", 1))
+		add_history(line);
+	trim = ft_strtrim(line, " ");
+	ms->input = lexer(trim, "<>|");
+	ms->exit_status = 0;
+	free(trim);
+	free(line);
 }
 
-// int	count_strings(char **input)
-// {
-// 	static int	i;
-// 	int			words;
-
-// 	words = 0;
-// 	while (!ft_strncmp(input[i], "|", 1))
-// 		i++;
-// 	while (input[i])
-// 	{
-// 		printf("input: %s\n", input[i]);
-// 		if (!ft_strncmp(input[i], "|", 1))
-// 			break ;
-// 		words++;
-// 		i++;
-// 	}
-// 	printf("words: %d\n", words);
-// 	return (words);
-// }
-
-void	split_cmd(t_list **lst, char **input)
+void	split_cmd(t_list **lst, t_minishell *ms)
 {
 	char	**tmp;
 	int		i;
@@ -55,28 +42,22 @@ void	split_cmd(t_list **lst, char **input)
 
 	i = -1;
 	j = -1;
-	tmp = (char **)malloc(100);
-	while (input[++i])
+	tmp = malloc(MAX_BUF);
+	while (ms->input[++i])
 	{
-		if (!ft_strncmp(input[i], "|", 1))
+		if (!ft_strncmp(ms->input[i], "|", 1))
 		{
 			tmp[++j] = NULL;
 			ft_lstadd_back(lst, ft_lstnew(tmp));
-			tmp = (char **)malloc(100);
+			tmp = malloc(MAX_BUF);
 			j = -1;
 		}
 		else
-			tmp[++j] = ft_strdup(input[i]);
+			tmp[++j] = ft_strdup(ms->input[i]);
+		// printf("tmp: %s\n", tmp[j]);
 	}
 	tmp[++j] = NULL;
 	ft_lstadd_back(lst, ft_lstnew(tmp));
-	// while (*lst)
-	// {
-	// 	printf("NODE\n");
-	// 	for (int x = 0; (*lst)->cmd[x]; x++)
-	// 		printf("lst->args[%d]: %s\n", x, (*lst)->cmd[x]);
-	// 	*lst = (*lst)->next;
-	// }
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -87,24 +68,35 @@ int	main(int argc, char **argv, char **envp)
 	ms = malloc(sizeof(t_minishell));
 	lst = malloc(sizeof(t_list));
 	ms->envp = envp;
-	if (!argv[0] || argc != 1)
-		myexit(1);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	ms->heredoc = 0;
+	g_quit_heredoc = 0;
+	if (argv[1] || argc > 1)
+		myexit(ms, lst, 1);
 	while (1)
 	{
-		getcwd(ms->cwd, sizeof(ms->cwd));
-		ms->input = get_input(ms);
+		signal_handler(1, 0);
+		// signal(SIGUSR1, heredoc_handler);
+		get_input(ms);
 		get_token(ms);
-		remove_quotes(ms->input);
+		check_quotes(ms);
+		remove_quotes(ms);
 		check_dollar(ms);
 		check_emptystr(ms);
-		split_cmd(lst, ms->input);
-		// cmd(ms, lst);
-		// pipex(ms, lst);
-		handle_pipe(ms, lst);
+		split_cmd(lst, ms);
+		if (!redir(ms, lst))
+			pipex(ms, lst);
+		// for (int i = 0; ms->input[i]; i++)
+		// 	printf("input[%d]: [%s]\n", i , ms->input[i]);
+		ft_free(ms, lst);
+		// while (*lst)
+		// {
+		// 	printf("NODE\n");
+		// 	for (int x = 0; (*lst)->args[x]; x++)
+		// 		printf("lst->args[%d]: %s\n", x, (*lst)->args[x]);
+		// 	*lst = (*lst)->next;
+		// }
 		// for (int i = 0; ms->input[i]; i++)
 		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		ft_free(ms, lst);
+		// myexit(ms, lst, 0);
 	}
 }
