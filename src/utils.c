@@ -88,3 +88,12 @@ char	*ft_getenv(t_minishell *ms, char *envvar)
 	}
 	return (envval);
 }
+
+void	init_pipe(t_minishell *ms)
+{
+	ms->ori_in = dup(0);
+	ms->ori_out = dup(1);
+	ms->fdin = 0;
+	ms->fdout = 0;
+	ms->prev_read = 0;
+}

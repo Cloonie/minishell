@@ -34,7 +34,8 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	{
 
 		if ((!ft_strncmp(input, (*lst)->delimiter,
-					ft_strlen((*lst)->delimiter) + 1) || !ft_strncmp(input, "^C", 2)))
+					ft_strlen((*lst)->delimiter) + 1)
+				|| !ft_strncmp(input, "^C", 2)))
 		{
 			free(input);
 			break ;
@@ -48,14 +49,20 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	ms->fdin = open("here_doc", O_RDONLY);
 }
 
-int	input(t_minishell *ms, t_list **lst)
+int	input(t_minishell *ms, t_list **lst, int *fdpipe)
 {
+	printf("INPUT!\n");
+	printf("start of in prevread: %d\n", (*lst)->prev_read);
+	(void)fdpipe;
 	if ((*lst)->delimiter)
 		here_doc(ms, lst);
 	else if ((*lst)->infile)
 		ms->fdin = open((*lst)->infile, O_RDONLY);
-	// else if (ms->piped)
-	// 	ms->piped = 0;
+	else if ((*lst)->prev_read)
+	{
+		ms->fdin = (*lst)->prev_read;
+		printf("input prevread: %d\n", (*lst)->prev_read);
+	}
 	else
 		ms->fdin = dup(ms->ori_in);
 	if (ms->fdin == -1)
@@ -71,21 +78,22 @@ int	input(t_minishell *ms, t_list **lst)
 
 void	output(t_minishell *ms, t_list **lst, int *fdpipe)
 {
+	printf("OUTPUT!\n");
 	if ((*lst)->outfile && !(*lst)->append)
 			ms->fdout = open((*lst)->outfile,
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if ((*lst)->outfile && (*lst)->append)
 		ms->fdout = open((*lst)->outfile,
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else if ((*lst)->next)
+	{
+		ms->fdout = fdpipe[1];
+		(*lst)->next->prev_read = fdpipe[0];
+		close(fdpipe[0]);
+		printf("output prevread: %d\n", (*lst)->next->prev_read);
+	}
 	else
 		ms->fdout = dup(ms->ori_out);
-	(void)fdpipe;
-	// else if ((*lst)->next)
-	// {
-	// 	ms->fdout = fdpipe[1];
-	// 	ms->fdin = fdpipe[0];
-	// 	ms->piped = 1;
-	// }
 	dup2(ms->fdout, 1);
 	close(ms->fdout);
 }
@@ -95,39 +103,38 @@ void	repipe(t_minishell *ms, int *fdpipe)
 	ms->fdout = fdpipe[1];
 	dup2(ms->fdout, 1);
 	close(ms->fdout);
-	ms->piped = 1;
 }
 
 void	pipex(t_minishell *ms, t_list **lst)
 {
-	int		fdpipe[2];
 	t_list	*head;
+	pid_t	*child;
+	int		i;
 
+	i = -1;
 	head = *lst;
-	ms->ori_in = dup(0);
-	ms->ori_out = dup(1);
-	ms->fdin = 0;
-	ms->fdout = 0;
-	ms->piped = 0;
-	int child;
+	child = malloc(sizeof(pid_t) * ft_lstsize(*lst));
+	init_pipe(ms);
 	while ((*lst))
 	{
-		child = fork();
-		if (child == 0)
+		child[++i] = fork();
+		if (child[i] == 0)
 		{
-			printf("in child\n");
-			if (input(ms, lst) == 1)
+			pipe((*lst)->fdpipe);
+			if (input(ms, lst, (*lst)->fdpipe) == 1)
 				return ;
-			pipe(fdpipe);
-			output(ms, lst, fdpipe);
+			output(ms, lst, (*lst)->fdpipe);
 			cmd(ms, lst);
 			unlink("here_doc");
-			// repipe(ms, fdpipe);
+			// repipe(ms, (*lst)->fdpipe);
+			printf("\n");
 			exit(0);
 		}
-		
 		(*lst) = (*lst)->next;
 	}
+	i = -1;
+	while (child[++i])
+		waitpid(child[i], NULL, 0);
 	dup2(ms->ori_in, 0);
 	dup2(ms->ori_out, 1);
 	close(ms->ori_in);

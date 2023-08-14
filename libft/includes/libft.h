@@ -26,6 +26,8 @@ typedef struct s_list
 	char			*outfile;
 	char			*delimiter;
 	int				append;
+	int				fdpipe[2];
+	int				prev_read;
 	struct s_list	*next;
 }	t_list;
 

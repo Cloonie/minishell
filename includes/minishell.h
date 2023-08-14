@@ -40,7 +40,6 @@ typedef struct s_minishell
 	int		ori_out;
 	int		fdin;
 	int		fdout;
-	int		piped;
 	int		exit_status;
 }	t_minishell;
 
@@ -61,9 +60,10 @@ void		get_input(t_minishell *ms);
 
 // utils
 void		sigint_handler(int sig);
+void		ft_free(t_minishell	*ms, t_list **lst);
 void		myexit(t_minishell	*ms, t_list **lst, int status);
 char		*ft_getenv(t_minishell *ms, char *envvar);
-void		ft_free(t_minishell	*ms, t_list **lst);
+void		init_pipe(t_minishell *ms);
 
 // build_ins
 void		call_echo(t_minishell *ms, t_list *lst);
