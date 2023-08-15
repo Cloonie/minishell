@@ -95,5 +95,4 @@ void	init_pipe(t_minishell *ms)
 	ms->ori_out = dup(1);
 	ms->fdin = 0;
 	ms->fdout = 0;
-	ms->prev_read = 0;
 }
