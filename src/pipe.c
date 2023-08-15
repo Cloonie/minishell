@@ -117,10 +117,10 @@ void	pipex(t_minishell *ms, t_list **lst)
 	init_pipe(ms);
 	while ((*lst))
 	{
+		pipe((*lst)->fdpipe);
 		child[++i] = fork();
 		if (child[i] == 0)
 		{
-			pipe((*lst)->fdpipe);
 			if (input(ms, lst, (*lst)->fdpipe) == 1)
 				return ;
 			output(ms, lst, (*lst)->fdpipe);

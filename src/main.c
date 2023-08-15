@@ -15,7 +15,6 @@
 void	get_input(t_minishell *ms)
 {
 	char	*line;
-	char	*trim;
 	char	tmp[100];
 
 	getcwd(ms->cwd, sizeof(ms->cwd));

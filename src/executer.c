@@ -50,7 +50,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 			call_run(ms, tmp);
 		else if (executable(ms, tmp))
 		{
-			printf("Enter a valid command.\n");
+			printf("minishell: %s: command not found\n", tmp->args[0]);
 			ms->exit_status = 127;
 			return (1);
 		}
