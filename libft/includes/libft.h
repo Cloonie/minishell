@@ -27,7 +27,7 @@ typedef struct s_list
 	char			*delimiter;
 	int				append;
 	int				fdpipe[2];
-	int				prev_read;
+	int				prev_read[2];
 	struct s_list	*next;
 }	t_list;
 

@@ -20,7 +20,6 @@ t_list	*ft_lstnew(char **cmd)
 	if (!lst)
 		return (NULL);
 	lst->args = cmd;
-	lst->prev_read = 0;
 	lst->append = 0;
 	lst->delimiter = NULL;
 	lst->infile = NULL;

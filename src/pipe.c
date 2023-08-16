@@ -49,22 +49,23 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	ms->fdin = open("here_doc", O_RDONLY);
 }
 
-int	input(t_minishell *ms, t_list **lst, int *fdpipe)
+int	input(t_minishell *ms, t_list **lst, int flag)
 {
-	printf("INPUT!\n");
-	printf("start of in prevread: %d\n", (*lst)->prev_read);
-	(void)fdpipe;
 	if ((*lst)->delimiter)
 		here_doc(ms, lst);
 	else if ((*lst)->infile)
 		ms->fdin = open((*lst)->infile, O_RDONLY);
-	else if ((*lst)->prev_read)
+	else if (flag)
 	{
-		ms->fdin = (*lst)->prev_read;
-		printf("input prevread: %d\n", (*lst)->prev_read);
+		printf("pipe in\n");
+		ms->fdin = (*lst)->fdpipe[0];
+		// close((*lst)->fdpipe[1]);
 	}
 	else
+	{
+		// printf("STDIN\n");
 		ms->fdin = dup(ms->ori_in);
+	}
 	if (ms->fdin == -1)
 	{
 		perror((*lst)->infile);
@@ -76,9 +77,8 @@ int	input(t_minishell *ms, t_list **lst, int *fdpipe)
 	return (0);
 }
 
-void	output(t_minishell *ms, t_list **lst, int *fdpipe)
+void	output(t_minishell *ms, t_list **lst)
 {
-	printf("OUTPUT!\n");
 	if ((*lst)->outfile && !(*lst)->append)
 			ms->fdout = open((*lst)->outfile,
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -87,20 +87,15 @@ void	output(t_minishell *ms, t_list **lst, int *fdpipe)
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if ((*lst)->next)
 	{
-		ms->fdout = fdpipe[1];
-		(*lst)->next->prev_read = fdpipe[0];
-		close(fdpipe[0]);
-		printf("output prevread: %d\n", (*lst)->next->prev_read);
+		printf("pipe out\n");
+		ms->fdout = (*lst)->next->fdpipe[1];
+		// close((*lst)->next->fdpipe[0]);
 	}
 	else
+	{
+		// printf("STDOUT\n");
 		ms->fdout = dup(ms->ori_out);
-	dup2(ms->fdout, 1);
-	close(ms->fdout);
-}
-
-void	repipe(t_minishell *ms, int *fdpipe)
-{
-	ms->fdout = fdpipe[1];
+	}
 	dup2(ms->fdout, 1);
 	close(ms->fdout);
 }
@@ -110,26 +105,43 @@ void	pipex(t_minishell *ms, t_list **lst)
 	t_list	*head;
 	pid_t	*child;
 	int		i;
+	int		flag;
 
 	i = -1;
+	flag = 0;
 	head = *lst;
 	child = malloc(sizeof(pid_t) * ft_lstsize(*lst));
 	init_pipe(ms);
 	while ((*lst))
 	{
-		pipe((*lst)->fdpipe);
+		if ((*lst)->next)
+		{
+			pipe((*lst)->next->fdpipe);
+			// printf("fdpipe[0]: %d\n", (*lst)->next->fdpipe[0]);
+			// printf("fdpipe[1]: %d\n", (*lst)->next->fdpipe[1]);
+		}
 		child[++i] = fork();
 		if (child[i] == 0)
 		{
-			if (input(ms, lst, (*lst)->fdpipe) == 1)
+			// printf("\nchild: %d\n", i);
+			if (input(ms, lst, flag) == 1)
 				return ;
-			output(ms, lst, (*lst)->fdpipe);
+			output(ms, lst);
 			cmd(ms, lst);
 			unlink("here_doc");
-			// repipe(ms, (*lst)->fdpipe);
-			printf("\n");
 			exit(0);
 		}
+		if ((*lst)->next)
+		{
+			close((*lst)->next->fdpipe[1]);
+			close((*lst)->fdpipe[0]);
+		}
+		if (!(*lst)->next)
+		{
+			close((*lst)->fdpipe[1]);
+			close((*lst)->fdpipe[0]);
+		}
+		flag = 1;
 		(*lst) = (*lst)->next;
 	}
 	i = -1;
