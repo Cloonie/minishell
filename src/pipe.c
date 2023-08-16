@@ -111,26 +111,27 @@ void	pipex(t_minishell *ms, t_list **lst)
 	init_pipe(ms);
 	while ((*lst))
 	{
-		if ((*lst)->next)
-			pipe((*lst)->next->fdpipe);
-		child[++i] = fork();
-		if (child[i] == 0)
+		if (run_build_ins(ms, lst) != 0)
 		{
-			// printf("\nchild: %d\n", i);
-			// printf("fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
-			// printf("fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
-			if (input(ms, lst) == 1)
-				return ;
-			output(ms, lst);
-			cmd(ms, lst);
-			unlink("here_doc");
-			exit(0);
+			if ((*lst)->next)
+				pipe((*lst)->next->fdpipe);
+			child[++i] = fork();
+			if (child[i] == 0)
+			{
+				// printf("\nchild: %d\n", i);
+				// printf("fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
+				// printf("fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
+				if (input(ms, lst) == 1)
+					return ;
+				output(ms, lst);
+				cmd(ms, lst);
+				unlink("here_doc");
+				exit(0);
+			}
+			close((*lst)->fdpipe[0]);
+			if ((*lst)->next)
+				close((*lst)->next->fdpipe[1]);
 		}
-		// else
-		// 	run_build_ins(ms, lst);
-		close((*lst)->fdpipe[0]);
-		if ((*lst)->next)
-			close((*lst)->next->fdpipe[1]);
 		(*lst) = (*lst)->next;
 	}
 	i = -1;

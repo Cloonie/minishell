@@ -112,10 +112,10 @@ void	call_export(t_minishell *ms, t_list *lst)
 {
 	int	i;
 
-	i = -1;
+	i = 0;
 	if (!lst->args[1])
 	{
-		while (ms->envp[++i])
+		while (ms->envp[i])
 		{
 			if (ft_strchr(ms->envp[i], '='))
 				printf("declare -x %s=\"%s\"\n",
@@ -123,9 +123,11 @@ void	call_export(t_minishell *ms, t_list *lst)
 					ft_strchr(ms->envp[i], '=') + 1);
 			else
 				printf("declare -x %s\n", ms->envp[i]);
+			i++;
 		}
 	}
-	export2(ms, lst);
+	else
+		export2(ms, lst);
 }
 
 void	export2(t_minishell *ms, t_list *lst)
@@ -145,21 +147,22 @@ void	export2(t_minishell *ms, t_list *lst)
 		}
 		else
 		{
-			i = -1;
-			while (ms->envp[++i])
+			i = 0;
+			while (ms->envp[i])
 			{
 				if (ms->envp[i + 1] == NULL)
 				{
-					ms->envp[i + 1] = lst->args[j];
+					ms->envp[i + 1] = ft_strdup(lst->args[j]);
 					ms->envp[i + 2] = NULL;
 					break ;
 				}
 				else if (ft_strncmp(ms->envp[i + 1], lst->args[j],
 						ft_strpos(ms->envp[i + 1], "=") + 1) == 0)
 				{
-					ms->envp[i + 1] = lst->args[j];
+					ms->envp[i + 1] = ft_strdup(lst->args[j]);
 					break ;
 				}
+				i++;
 			}
 		}
 		j++;
