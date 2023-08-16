@@ -21,6 +21,8 @@ t_list	*ft_lstnew(char **cmd)
 		return (NULL);
 	lst->args = cmd;
 	lst->append = 0;
+	lst->fdpipe[0] = -1;
+	lst->fdpipe[1] = -1;
 	lst->delimiter = NULL;
 	lst->infile = NULL;
 	lst->outfile = NULL;

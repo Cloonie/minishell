@@ -49,17 +49,16 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	ms->fdin = open("here_doc", O_RDONLY);
 }
 
-int	input(t_minishell *ms, t_list **lst, int flag)
+int	input(t_minishell *ms, t_list **lst)
 {
 	if ((*lst)->delimiter)
 		here_doc(ms, lst);
 	else if ((*lst)->infile)
 		ms->fdin = open((*lst)->infile, O_RDONLY);
-	else if (flag)
+	else if ((*lst)->fdpipe[0])
 	{
-		printf("pipe in\n");
 		ms->fdin = (*lst)->fdpipe[0];
-		// close((*lst)->fdpipe[1]);
+		// printf("%s, pipe in: %d\n", (*lst)->args[0], ms->fdin);
 	}
 	else
 	{
@@ -87,9 +86,8 @@ void	output(t_minishell *ms, t_list **lst)
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if ((*lst)->next)
 	{
-		printf("pipe out\n");
 		ms->fdout = (*lst)->next->fdpipe[1];
-		// close((*lst)->next->fdpipe[0]);
+		// printf("%s, pipe out: %d\n", (*lst)->args[0], ms->fdout);
 	}
 	else
 	{
@@ -105,43 +103,31 @@ void	pipex(t_minishell *ms, t_list **lst)
 	t_list	*head;
 	pid_t	*child;
 	int		i;
-	int		flag;
 
 	i = -1;
-	flag = 0;
 	head = *lst;
 	child = malloc(sizeof(pid_t) * ft_lstsize(*lst));
 	init_pipe(ms);
 	while ((*lst))
 	{
 		if ((*lst)->next)
-		{
 			pipe((*lst)->next->fdpipe);
-			// printf("fdpipe[0]: %d\n", (*lst)->next->fdpipe[0]);
-			// printf("fdpipe[1]: %d\n", (*lst)->next->fdpipe[1]);
-		}
 		child[++i] = fork();
 		if (child[i] == 0)
 		{
 			// printf("\nchild: %d\n", i);
-			if (input(ms, lst, flag) == 1)
+			// printf("fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
+			// printf("fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
+			if (input(ms, lst) == 1)
 				return ;
 			output(ms, lst);
 			cmd(ms, lst);
 			unlink("here_doc");
 			exit(0);
 		}
+		close((*lst)->fdpipe[0]);
 		if ((*lst)->next)
-		{
 			close((*lst)->next->fdpipe[1]);
-			close((*lst)->fdpipe[0]);
-		}
-		if (!(*lst)->next)
-		{
-			close((*lst)->fdpipe[1]);
-			close((*lst)->fdpipe[0]);
-		}
-		flag = 1;
 		(*lst) = (*lst)->next;
 	}
 	i = -1;
