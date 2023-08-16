@@ -55,7 +55,7 @@ int	input(t_minishell *ms, t_list **lst)
 		here_doc(ms, lst);
 	else if ((*lst)->infile)
 		ms->fdin = open((*lst)->infile, O_RDONLY);
-	else if ((*lst)->fdpipe[0])
+	else if ((*lst)->fdpipe[0] != -1 && (*lst)->fdpipe[0] != 0)
 	{
 		ms->fdin = (*lst)->fdpipe[0];
 		// printf("%s, pipe in: %d\n", (*lst)->args[0], ms->fdin);
@@ -67,7 +67,7 @@ int	input(t_minishell *ms, t_list **lst)
 	}
 	if (ms->fdin == -1)
 	{
-		perror((*lst)->infile);
+		// perror("fdin is -1");
 		(*lst)->infile = NULL;
 		return (1);
 	}
