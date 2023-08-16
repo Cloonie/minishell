@@ -67,7 +67,7 @@ int	input(t_minishell *ms, t_list **lst)
 	}
 	if (ms->fdin == -1)
 	{
-		// perror("fdin is -1");
+		perror("fdin is -1");
 		(*lst)->infile = NULL;
 		return (1);
 	}
@@ -87,6 +87,7 @@ void	output(t_minishell *ms, t_list **lst)
 	else if ((*lst)->next)
 	{
 		ms->fdout = (*lst)->next->fdpipe[1];
+		close((*lst)->next->fdpipe[0]);
 		// printf("%s, pipe out: %d\n", (*lst)->args[0], ms->fdout);
 	}
 	else
@@ -125,6 +126,8 @@ void	pipex(t_minishell *ms, t_list **lst)
 			unlink("here_doc");
 			exit(0);
 		}
+		// else
+		// 	run_build_ins(ms, lst);
 		close((*lst)->fdpipe[0]);
 		if ((*lst)->next)
 			close((*lst)->next->fdpipe[1]);

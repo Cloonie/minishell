@@ -41,13 +41,13 @@ int	run_build_ins(t_minishell *ms, t_list **lst)
 
 int	cmd(t_minishell *ms, t_list **lst)
 {
-	if ((*lst)->args[0])
+	if (((*lst))->args[0])
 	{
 		if (!run_build_ins(ms, lst))
 			;
-		else if (executable(ms, (*lst)))
+		else if (executable(ms, ((*lst))))
 		{
-			printf("minishell: %s: command not found\n", (*lst)->args[0]);
+			printf("minishell: %s: command not found\n", ((*lst))->args[0]);
 			ms->exit_status = 127;
 			return (1);
 		}
