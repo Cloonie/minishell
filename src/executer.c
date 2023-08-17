@@ -38,6 +38,8 @@ int	check_build_ins(t_list **lst)
 
 int	run_build_ins(t_minishell *ms, t_list **lst)
 {
+	if (!(*lst)->args[0])
+		return (1);
 	if (!ft_strncmp((*lst)->args[0], "echo\0", 5))
 		call_echo(ms, (*lst));
 	else if (!ft_strncmp((*lst)->args[0], "pwd\0", 4))
