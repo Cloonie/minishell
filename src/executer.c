@@ -12,6 +12,30 @@
 
 #include "../includes/minishell.h"
 
+int	check_build_ins(t_list **lst)
+{
+	if (!ft_strncmp((*lst)->args[0], "echo\0", 5))
+		;
+	else if (!ft_strncmp((*lst)->args[0], "pwd\0", 4))
+		;
+	else if (!ft_strncmp((*lst)->args[0], "export\0", 7))
+		;
+	else if (!ft_strncmp((*lst)->args[0], "unset\0", 6))
+		;
+	else if ((!ft_strncmp((*lst)->args[0], "env\0", 4)))
+		;
+	else if (!ft_strncmp((*lst)->args[0], "cd\0", 3))
+		;
+	else if (!ft_strncmp((*lst)->args[0], "exit\0", 5))
+		;
+	else if ((!ft_strncmp((*lst)->args[0], "./", 2)
+			|| !ft_strncmp((*lst)->args[0], "/", 1)))
+		;
+	else
+		return (1);
+	return (0);
+}
+
 int	run_build_ins(t_minishell *ms, t_list **lst)
 {
 	if (!ft_strncmp((*lst)->args[0], "echo\0", 5))
@@ -43,7 +67,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 {
 	if (((*lst))->args[0])
 	{
-		if (!run_build_ins(ms, lst))
+		if (!check_build_ins(lst))
 			;
 		else if (executable(ms, ((*lst))))
 		{

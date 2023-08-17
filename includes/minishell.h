@@ -80,6 +80,7 @@ void		call_run(t_minishell *ms, t_list *lst);
 int			cmd(t_minishell *ms, t_list **lst);
 int			executable(t_minishell *ms, t_list *lst);
 int			run_build_ins(t_minishell *ms, t_list **lst);
+int			check_build_ins(t_list **lst);
 
 // lexer
 char		**lexer(char *s, const char *op);
