@@ -70,8 +70,9 @@ int	main(int argc, char **argv, char **envp)
 	ms->envp = envp;
 	if (argv[1] || argc > 1)
 		myexit(ms, lst, 1);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	signal_handler(0);
+	// signal(SIGINT, sigint_handler);
+	// signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		get_input(ms);

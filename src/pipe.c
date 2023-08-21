@@ -167,6 +167,7 @@ void	pipex(t_minishell *ms, t_list **lst)
 			// printf("\nchild: %d\n", i);
 			// printf("c fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
 			// printf("c fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
+			signal_handler(1);
 			input(ms, lst);
 			output(ms, lst);
 			cmd(ms, lst);
