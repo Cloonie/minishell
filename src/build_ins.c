@@ -138,7 +138,7 @@ void	export2(t_minishell *ms, t_list *lst)
 	j = 1;
 	while (lst->args[j])
 	{
-		if (!ft_isalpha(lst->args[j][0]))
+		if (!ft_isalpha(lst->args[j][0]) && lst->args[j][0] != '_')
 		{
 			printf("-minishell: export: `%s': not a valid identifier\n",
 				lst->args[j]);
