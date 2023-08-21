@@ -40,13 +40,13 @@ void	call_echo(t_minishell *ms, t_list *lst)
 	}
 	while (lst->args[i])
 	{
-		printf("%s", lst->args[i]);
+		ft_putstr_fd(lst->args[i], 1);
 		if (lst->args[i + 1])
-			printf(" ");
+			ft_putstr_fd(" ", 1);
 		i++;
 	}
 	if (newline)
-		printf("\n");
+		ft_putstr_fd("\n", 1);
 	ms->exit_status = 0;
 }
 
@@ -65,7 +65,7 @@ void	call_cd(t_minishell *ms, t_list *lst)
 			chdir(path);
 		else
 		{
-			printf("%s: %s: No such file or directory\n",
+			ft_printf("%s: %s: No such file or directory\n",
 				lst->args[0], lst->args[1]);
 			ms->exit_status = 1;
 			return ;
@@ -98,11 +98,13 @@ void	call_unset(t_minishell *ms, t_list *lst)
 			{
 				while (ms->envp[i])
 				{
+					free(ms->envp[i]);
 					ms->envp[i] = ms->envp[i + 1];
 					i++;
 				}
 				break ;
 			}
+			free(var);
 		}
 	}
 	ms->exit_status = 0;
@@ -110,7 +112,8 @@ void	call_unset(t_minishell *ms, t_list *lst)
 
 void	call_export(t_minishell *ms, t_list *lst)
 {
-	int	i;
+	int		i;
+	char	*tmp;
 
 	i = 0;
 	if (!lst->args[1])
@@ -118,11 +121,14 @@ void	call_export(t_minishell *ms, t_list *lst)
 		while (ms->envp[i])
 		{
 			if (ft_strchr(ms->envp[i], '='))
-				printf("declare -x %s=\"%s\"\n",
-					ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "=")),
-					ft_strchr(ms->envp[i], '=') + 1);
+			{
+				tmp = ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "="));
+				ft_printf("declare -x %s=\"%s\"\n",
+					tmp, ft_strchr(ms->envp[i], '=') + 1);
+				free(tmp);
+			}
 			else
-				printf("declare -x %s\n", ms->envp[i]);
+				ft_printf("declare -x %s\n", ms->envp[i]);
 			i++;
 		}
 	}
@@ -140,7 +146,7 @@ void	export2(t_minishell *ms, t_list *lst)
 	{
 		if (!ft_isalpha(lst->args[j][0]) && lst->args[j][0] != '_')
 		{
-			printf("-minishell: export: `%s': not a valid identifier\n",
+			ft_printf("-minishell: export: `%s': not a valid identifier\n",
 				lst->args[j]);
 			ms->exit_status = 1;
 			return ;

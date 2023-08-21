@@ -26,7 +26,7 @@ void	call_env(t_minishell *ms, t_list *lst)
 	while (ms->envp[i])
 	{
 		if (ft_strchr(ms->envp[i], '='))
-			printf("%s\n", ms->envp[i++]);
+			ft_printf("%s\n", ms->envp[i++]);
 		else
 			i++;
 	}

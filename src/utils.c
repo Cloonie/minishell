@@ -58,7 +58,12 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 
 void	myexit(t_minishell	*ms, t_list **lst, int status)
 {
+	int	i;
+
+	i = -1;
 	ft_free(ms, lst);
+	// while(ms->envp[++i])
+	// 	free(ms->envp[i]);
 	free(lst);
 	free(ms);
 	if (status == EXIT_SUCCESS)
