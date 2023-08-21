@@ -70,7 +70,12 @@ int	input(t_minishell *ms, t_list **lst)
 		(*lst)->infile = NULL;
 		return (1);
 	}
-	dup2(ms->fdin, 0);
+	// printf("ms->fdin: %d\n", ms->fdin);
+	if (dup2(ms->fdin, 0) == -1)
+	{
+		perror("dup2 fdin");
+		return (1);
+	}
 	close(ms->fdin);
 	return (0);
 }
@@ -86,7 +91,7 @@ void	output(t_minishell *ms, t_list **lst)
 	else if ((*lst)->next)
 	{
 		ms->fdout = (*lst)->next->fdpipe[1];
-		close((*lst)->next->fdpipe[0]);
+		// close((*lst)->next->fdpipe[0]);
 		// printf("%s, c pipe out: %d\n", (*lst)->args[0], ms->fdout);
 	}
 	else
@@ -94,7 +99,12 @@ void	output(t_minishell *ms, t_list **lst)
 		// printf("STDOUT\n");
 		ms->fdout = dup(ms->ori_out);
 	}
-	dup2(ms->fdout, 1);
+	// printf("ms->fdout: %d\n", ms->fdout);
+	if (dup2(ms->fdout, 1) == -1)
+	{
+		perror("dup2 fdout");
+		return ;
+	}
 	close(ms->fdout);
 }
 
@@ -112,23 +122,24 @@ void	pipex(t_minishell *ms, t_list **lst)
 	{
 		if ((*lst)->next)
 			pipe((*lst)->next->fdpipe);
+		input(ms, lst);
+		output(ms, lst);
 		child[++i] = fork();
 		if (child[i] == 0)
 		{
 			// printf("\nchild: %d\n", i);
 			// printf("c fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
 			// printf("c fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
-			signal_handler(1);
-			input(ms, lst);
-			output(ms, lst);
+			if (!ft_strncmp((*lst)->args[0], "cat", 3))
+				close((*lst)->next->fdpipe[0]);
 			cmd(ms, lst);
 			exit(0);
 		}
 		run_build_ins(ms, lst);
-		unlink("here_doc");
-		close((*lst)->fdpipe[0]);
 		if ((*lst)->next)
 			close((*lst)->next->fdpipe[1]);
+		close((*lst)->fdpipe[0]);
+		unlink("here_doc");
 		(*lst) = (*lst)->next;
 	}
 	i = -1;

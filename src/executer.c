@@ -22,7 +22,7 @@ int	check_build_ins(t_list **lst)
 		;
 	else if (!ft_strncmp((*lst)->args[0], "unset\0", 6))
 		;
-	else if ((!ft_strncmp((*lst)->args[0], "env\0", 4)))
+	else if (!ft_strncmp((*lst)->args[0], "env\0", 4))
 		;
 	else if (!ft_strncmp((*lst)->args[0], "cd\0", 3))
 		;
@@ -70,7 +70,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 	if (((*lst))->args[0])
 	{
 		if (!check_build_ins(lst))
-			;
+			return (1);
 		else if (executable(ms, ((*lst))))
 		{
 			printf("minishell: %s: command not found\n", ((*lst))->args[0]);

@@ -15,7 +15,7 @@
 void	quitsubshell(int sig)
 {
 	(void)sig;
-	printf("1111\n");
+	// printf("1111\n");
 }
 
 void	newprompt(int sig)
