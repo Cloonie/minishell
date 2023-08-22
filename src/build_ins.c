@@ -98,7 +98,6 @@ void	call_unset(t_minishell *ms, t_list *lst)
 			{
 				while (ms->envp[i])
 				{
-					free(ms->envp[i]);
 					ms->envp[i] = ms->envp[i + 1];
 					i++;
 				}
