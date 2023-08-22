@@ -16,7 +16,7 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	ft_printf("\n");
-	// rl_replace_line("", 0);
+	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 }
@@ -58,12 +58,7 @@ void	ft_free(t_minishell	*ms, t_list **lst)
 
 void	myexit(t_minishell	*ms, t_list **lst, int status)
 {
-	int	i;
-
-	i = -1;
 	ft_free(ms, lst);
-	// while(ms->envp[++i])
-	// 	free(ms->envp[i]);
 	free(lst);
 	free(ms);
 	if (status == EXIT_SUCCESS)
