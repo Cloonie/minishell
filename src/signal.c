@@ -12,31 +12,42 @@
 
 #include "minishell.h"
 
-void	quitsubshell(int sig)
+void    quit3(int sig)
 {
-	(void)sig;
-	// printf("1111\n");
+    (void)sig;
+    printf("Quit: 3\n");
 }
 
-void	newprompt(int sig)
+void    quitsubshell(int sig)
 {
-	(void)sig;
-	ft_printf("\n");
-	// rl_replgitace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
+    (void)sig;
+	rl_replace_line("", 0);
+   	// printf("\b \b");
+	// printf("\b \b");
+	printf("\n");
+    // exit(0);
 }
 
-void	signal_handler(int num)
+void    sigint_handler(int sig)
 {
-	if (num == 0)
-	{
-		signal(SIGINT, newprompt);
-		signal(SIGQUIT, SIG_IGN);
-	}
-	else if (num == 1)
-	{
-		signal(SIGINT, quitsubshell);
-	}
-	// else if (num == 2)
+    (void)sig;
+    ft_printf("\n");
+    rl_replace_line("", 0);
+    rl_on_new_line();
+    rl_redisplay();
+}
+
+void    signal_handler(int num)
+{
+    if (num == 0)
+    {
+        signal(SIGINT, sigint_handler);
+        signal(SIGQUIT, SIG_IGN);
+    }
+    else if (num == 1)
+    {
+        signal(SIGINT, quitsubshell);
+        signal(SIGQUIT, quit3);
+    }
+    // else if (num == 2)
 }

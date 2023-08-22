@@ -105,6 +105,6 @@ int			redir(t_minishell *ms, t_list **lst);
 void		pipex(t_minishell *ms, t_list **lst);
 
 // signal
-void	signal_handler(int num);
+void		signal_handler(int num);
 
 #endif

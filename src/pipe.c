@@ -48,6 +48,7 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	close(tmp_fd);
 	ms->fdin = open("here_doc", O_RDONLY);
 }
+
 int	input(t_minishell *ms, t_list **lst)
 {
 	if ((*lst)->delimiter)
@@ -105,7 +106,7 @@ void	output(t_minishell *ms, t_list **lst)
 		perror("dup2 fdout");
 		return ;
 	}
-	close(ms->fdout);
+	// close(ms->fdout);
 }
 
 void	pipex(t_minishell *ms, t_list **lst)
@@ -127,12 +128,14 @@ void	pipex(t_minishell *ms, t_list **lst)
 		child[++i] = fork();
 		if (child[i] == 0)
 		{
+			signal_handler(1);
 			// printf("\nchild: %d\n", i);
 			// printf("c fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
 			// printf("c fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
 			if ((*lst)->next)
 				close((*lst)->next->fdpipe[0]);
 			cmd(ms, lst);
+			close(ms->fdin);
 			exit(0);
 		}
 		else
@@ -142,6 +145,7 @@ void	pipex(t_minishell *ms, t_list **lst)
 			if ((*lst)->next)
 				close((*lst)->next->fdpipe[1]);
 			close((*lst)->fdpipe[0]);
+			close(ms->fdin);
 			(*lst) = (*lst)->next;
 		}
 	}
