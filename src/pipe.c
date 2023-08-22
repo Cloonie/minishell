@@ -130,17 +130,20 @@ void	pipex(t_minishell *ms, t_list **lst)
 			// printf("\nchild: %d\n", i);
 			// printf("c fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
 			// printf("c fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
-			if (!ft_strncmp((*lst)->args[0], "cat", 3))
+			if ((*lst)->next)
 				close((*lst)->next->fdpipe[0]);
 			cmd(ms, lst);
 			exit(0);
 		}
-		run_build_ins(ms, lst);
-		if ((*lst)->next)
-			close((*lst)->next->fdpipe[1]);
-		close((*lst)->fdpipe[0]);
-		unlink("here_doc");
-		(*lst) = (*lst)->next;
+		else
+		{
+			run_build_ins(ms, lst);
+			unlink("here_doc");
+			if ((*lst)->next)
+				close((*lst)->next->fdpipe[1]);
+			close((*lst)->fdpipe[0]);
+			(*lst) = (*lst)->next;
+		}
 	}
 	i = -1;
 	while (child[++i])
