@@ -58,6 +58,7 @@ int	input(t_minishell *ms, t_list **lst)
 	else if ((*lst)->fdpipe[0] != -1 && (*lst)->fdpipe[0] != 0)
 	{
 		ms->fdin = (*lst)->fdpipe[0];
+		// close((*lst)->fdpipe[0]);
 		// printf("%s, c pipe in: %d\n", (*lst)->args[0], ms->fdin);
 	}
 	else
@@ -74,7 +75,7 @@ int	input(t_minishell *ms, t_list **lst)
 	// printf("ms->fdin: %d\n", ms->fdin);
 	if (dup2(ms->fdin, 0) == -1)
 	{
-		perror("dup2 fdin");
+		perror("dup2 fdout");
 		return (1);
 	}
 	close(ms->fdin);
@@ -92,10 +93,9 @@ void	output(t_minishell *ms, t_list **lst)
 	else if ((*lst)->next)
 	{
 		ms->fdout = (*lst)->next->fdpipe[1];
-		// close((*lst)->next->fdpipe[0]);
 		// printf("%s, c pipe out: %d\n", (*lst)->args[0], ms->fdout);
 	}
-	else
+	else  
 	{
 		// printf("STDOUT\n");
 		ms->fdout = dup(ms->ori_out);
@@ -106,7 +106,7 @@ void	output(t_minishell *ms, t_list **lst)
 		perror("dup2 fdout");
 		return ;
 	}
-	// close(ms->fdout);
+	close(ms->fdout);
 }
 
 void	pipex(t_minishell *ms, t_list **lst)
@@ -132,10 +132,10 @@ void	pipex(t_minishell *ms, t_list **lst)
 			// printf("\nchild: %d\n", i);
 			// printf("c fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
 			// printf("c fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
+			// close((*lst)->fdpipe[0]);
 			if ((*lst)->next)
 				close((*lst)->next->fdpipe[0]);
 			cmd(ms, lst);
-			close(ms->fdin);
 			exit(0);
 		}
 		else
@@ -145,7 +145,6 @@ void	pipex(t_minishell *ms, t_list **lst)
 			if ((*lst)->next)
 				close((*lst)->next->fdpipe[1]);
 			close((*lst)->fdpipe[0]);
-			close(ms->fdin);
 			(*lst) = (*lst)->next;
 		}
 	}
