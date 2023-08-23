@@ -21,9 +21,8 @@ NAME		=	minishell
 CFLAGS		=	-Wall -Wextra -Werror -g
 CC			=	gcc
 LIBFT		=	libft
-LIBFLAGS	+=	-lreadline
+LIBFLAGS	=	-lreadline -L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 LIBFLAGS	+=	-Llibft -lft
-# LIBFLAGS	+=	-L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 SANITIZE	=	-fsanitize=address -g3
 
 INCLUDES	=	./includes
@@ -37,7 +36,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@make -s -C libft
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFLAGS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBFLAGS)
 	@echo "$(B_GREEN)Compiling $(OBJS)$(C_END)"
 	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 

@@ -85,7 +85,7 @@ int	cmd(t_minishell *ms, t_list **lst)
 
 int	fork_pid(t_minishell *ms, t_list *lst, char **paths, int i)
 {
-	pid_t	pid;
+	// pid_t	pid;
 	char	buf[MAX_BUF];
 
 	ft_strlcpy(buf, paths[i], MAX_BUF);
@@ -93,19 +93,19 @@ int	fork_pid(t_minishell *ms, t_list *lst, char **paths, int i)
 	ft_strlcat(buf, lst->args[0], MAX_BUF);
 	if (access(buf, F_OK) == 0)
 	{
-		pid = fork();
-		if (pid == 0)
+		// pid = fork();
+		// if (pid == 0)
 			execve(buf, lst->args, ms->envp);
-		else if (pid > 0)
-		{
-			waitpid(pid, &ms->exit_status, 0);
-			ms->exit_status = ms->exit_status >> 8;
+		// else if (pid > 0)
+		// {
+			// waitpid(pid, &ms->exit_status, 0);
+			// ms->exit_status = ms->exit_status >> 8;
 			i = -1;
 			while (paths[++i])
 				free(paths[i]);
 			free(paths);
-			return (1);
-		}
+			// return (1);
+		// }
 	}
 	return (0);
 }

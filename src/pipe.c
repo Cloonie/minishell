@@ -42,6 +42,7 @@ void	here_doc(t_minishell *ms, t_list **lst)
 		write(tmp_fd, "\n", 1);
 		free(input);
 		input = readline("> ");
+		signal_handler(1);
 	}
 	close(tmp_fd);
 }

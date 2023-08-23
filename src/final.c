@@ -6,7 +6,7 @@
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 21:11:11 by mliew             #+#    #+#             */
-/*   Updated: 2023/08/23 21:59:41 by mliew            ###   ########.fr       */
+/*   Updated: 2023/08/23 23:16:37 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	child_loop(t_minishell *ms, t_list **lst, int i, pid_t *child)
 	}
 	i = -1;
 	while (child[++i])
-		waitpid(child[i], NULL, 0);
+		waitpid(child[i], &ms->exit_status, 0);
 }
 
 void	final(t_minishell *ms, t_list **lst)

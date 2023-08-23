@@ -27,7 +27,8 @@ void	get_input(t_minishell *ms)
 	if (ft_strncmp(line, "", 1))
 		add_history(line);
 	ms->input = lexer(line, "<>|");
-	ms->exit_status = 0;
+	if (!ms->exit_status)
+		ms->exit_status = 0;
 	free(line);
 }
 
