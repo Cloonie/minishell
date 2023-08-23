@@ -12,6 +12,20 @@
 
 #include "../includes/minishell.h"
 
+void	call_echo2(t_minishell *ms, t_list *lst, int i, int newline)
+{
+	while (lst->args[i])
+	{
+		ft_putstr_fd(lst->args[i], 1);
+		if (lst->args[i + 1])
+			ft_putstr_fd(" ", 1);
+		i++;
+	}
+	if (newline)
+		ft_putstr_fd("\n", 1);
+	ms->exit_status = 0;
+}
+
 void	call_echo(t_minishell *ms, t_list *lst)
 {
 	int	i;
@@ -38,16 +52,7 @@ void	call_echo(t_minishell *ms, t_list *lst)
 		j = 1;
 		i++;
 	}
-	while (lst->args[i])
-	{
-		ft_putstr_fd(lst->args[i], 1);
-		if (lst->args[i + 1])
-			ft_putstr_fd(" ", 1);
-		i++;
-	}
-	if (newline)
-		ft_putstr_fd("\n", 1);
-	ms->exit_status = 0;
+	call_echo2(ms, lst, i, newline);
 }
 
 void	call_cd(t_minishell *ms, t_list *lst)
@@ -76,101 +81,48 @@ void	call_cd(t_minishell *ms, t_list *lst)
 	ms->exit_status = 0;
 }
 
-void	call_unset(t_minishell *ms, t_list *lst)
+void	call_env(t_minishell *ms, t_list *lst)
 {
-	char	*var;
-	int		i;
-	int		j;
+	int	i;
 
-	if (!lst->args[1])
-		return ;
-	j = 0;
-	while (lst->args[++j])
+	i = 0;
+	if (lst->args[1])
 	{
-		i = -1;
-		while (ms->envp[++i])
-		{
-			if (ft_strpos(ms->envp[i], "="))
-				var = ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "="));
-			else
-				var = ft_substr(ms->envp[i], 0, ft_strlen(ms->envp[i]));
-			if (!ft_strncmp(lst->args[j], var, ft_strlen(var) + 1))
-			{
-				while (ms->envp[i])
-				{
-					ms->envp[i] = ms->envp[i + 1];
-					i++;
-				}
-				break ;
-			}
-			free(var);
-		}
+		perror(lst->args[1]);
+		ms->exit_status = 127;
+		return ;
+	}
+	while (ms->envp[i])
+	{
+		if (ft_strchr(ms->envp[i], '='))
+			ft_printf("%s\n", ms->envp[i++]);
+		else
+			i++;
 	}
 	ms->exit_status = 0;
 }
 
-void	call_export(t_minishell *ms, t_list *lst)
+void	call_run(t_minishell *ms, t_list *lst)
 {
-	int		i;
-	char	*tmp;
+	int		pid;
 
-	i = 0;
-	if (!lst->args[1])
+	if (access(lst->args[0], F_OK) == 0)
 	{
-		while (ms->envp[i])
+		pid = fork();
+		if (pid == 0)
+			execve(lst->args[0], lst->args, ms->envp);
+		else if (pid > 0)
 		{
-			if (ft_strchr(ms->envp[i], '='))
-			{
-				tmp = ft_substr(ms->envp[i], 0, ft_strpos(ms->envp[i], "="));
-				ft_printf("declare -x %s=\"%s\"\n",
-					tmp, ft_strchr(ms->envp[i], '=') + 1);
-				free(tmp);
-			}
-			else
-				ft_printf("declare -x %s\n", ms->envp[i]);
-			i++;
+			waitpid(pid, &ms->exit_status, 0);
+			ms->exit_status = ms->exit_status >> 8;
+			return ;
 		}
 	}
 	else
-		export2(ms, lst);
-}
-
-void	export2(t_minishell *ms, t_list *lst)
-{
-	int	i;
-	int	j;
-
-	j = 1;
-	while (lst->args[j])
 	{
-		if (!ft_isalpha(lst->args[j][0]) && lst->args[j][0] != '_')
-		{
-			ft_printf("-minishell: export: `%s': not a valid identifier\n",
-				lst->args[j]);
-			ms->exit_status = 1;
-			return ;
-		}
-		else
-		{
-			i = 0;
-			while (ms->envp[i])
-			{
-				if (ms->envp[i + 1] == NULL)
-				{
-					ms->envp[i + 1] = ft_strdup(lst->args[j]);
-					ms->envp[i + 2] = NULL;
-					break ;
-				}
-				else if (ft_strncmp(ms->envp[i + 1], lst->args[j],
-						ft_strpos(ms->envp[i + 1], "=") + 1) == 0)
-				{
-					ms->envp[i + 1] = ft_strdup(lst->args[j]);
-					break ;
-				}
-				i++;
-			}
-		}
-		j++;
+		perror(lst->args[0]);
+		ms->exit_status = 127;
+		return ;
 	}
 	ms->exit_status = 0;
 }

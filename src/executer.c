@@ -81,38 +81,43 @@ int	cmd(t_minishell *ms, t_list **lst)
 	return (0);
 }
 
-int	executable(t_minishell *ms, t_list *lst)
+int	fork_pid(t_minishell *ms, t_list *lst, char **paths, int i)
 {
 	pid_t	pid;
+	char	buf[MAX_BUF];
+
+	ft_strlcpy(buf, paths[i], MAX_BUF);
+	ft_strlcat(buf, "/", MAX_BUF);
+	ft_strlcat(buf, lst->args[0], MAX_BUF);
+	if (access(buf, F_OK) == 0)
+	{
+		pid = fork();
+		if (pid == 0)
+			execve(buf, lst->args, ms->envp);
+		else if (pid > 0)
+		{
+			waitpid(pid, &ms->exit_status, 0);
+			ms->exit_status = ms->exit_status >> 8;
+			i = -1;
+			while (paths[++i])
+				free(paths[i]);
+			free(paths);
+			return (1);
+		}
+	}
+	return (0);
+}
+
+int	executable(t_minishell *ms, t_list *lst)
+{
 	char	**paths;
-	char	buf[100];
 	int		i;
 
 	i = -1;
 	paths = ft_split(ft_getenv(ms, "PATH"), ':');
 	while (paths && paths[++i])
-	{
-		ft_strlcpy(buf, paths[i], 100);
-		ft_strlcat(buf, "/", 100);
-		ft_strlcat(buf, lst->args[0], 100);
-		if (access(buf, F_OK) == 0)
-		{
-			pid = fork();
-			if (pid == 0)
-				execve(buf, lst->args, ms->envp);
-			else if (pid > 0)
-			{
-				waitpid(pid, &ms->exit_status, 0);
-				ms->exit_status = ms->exit_status >> 8;
-				i = -1;
-				while (paths[++i])
-					free(paths[i]);
-				free(paths);
-				return (0);
-			}
-		}
-	}
-	// printf("debug\n");
+		if (fork_pid(ms, lst, paths, i))
+			return (0);
 	i = -1;
 	while (paths && paths[++i])
 		free(paths[i]);

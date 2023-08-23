@@ -41,6 +41,7 @@ typedef struct s_minishell
 	int		fdin;
 	int		fdout;
 	int		exit_status;
+	int		quote;
 }	t_minishell;
 
 enum {
@@ -71,6 +72,7 @@ void		call_cd(t_minishell *ms, t_list *lst);
 void		call_unset(t_minishell *ms, t_list *lst);
 void		call_export(t_minishell *ms, t_list *lst);
 void		export2(t_minishell *ms, t_list *lst);
+void		export3(t_minishell *ms, t_list *lst, int i, int j);
 
 // build_ins2
 void		call_env(t_minishell *ms, t_list *lst);
@@ -92,7 +94,11 @@ void		get_token(t_minishell *ms);
 // parser
 void		remove_quotes(t_minishell *ms);
 void		check_dollar(t_minishell *ms);
+void		check_dollar2(t_minishell *ms, char *temp, char *result, int i[3]);
+void		check_dollar3(t_minishell *ms, char *temp, char *result, int i[3]);
+void		check_dollar4(t_minishell *ms, char *temp, char *result, int i[3]);
 int			check_quotes(t_minishell *ms);
+int			check_quotes2(t_minishell *ms, int quoted);
 void		check_emptystr(t_minishell *ms);
 
 // redirection

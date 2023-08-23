@@ -45,16 +45,12 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 		if (!ft_strncmp(ms->input[i], "|\0", 2))
 		{
 			tmp[++j] = NULL;
-			// for (int loop = 0; tmp[loop]; loop++)
-			// 	printf("tmp[%d]: %s\n", loop, tmp[loop]);
 			ft_lstadd_back(lst, ft_lstnew(tmp));
 			tmp = malloc(sizeof(char *) * (MAX_BUF + 1));
 			j = -1;
 		}
 		else
 			tmp[++j] = ft_strdup(ms->input[i]);
-		// if (j >= 0)
-		// 	printf("tmp[%d]: %s\n", j, tmp[j]);
 	}
 	tmp[++j] = NULL;
 	ft_lstadd_back(lst, ft_lstnew(tmp));
@@ -68,15 +64,13 @@ int	main(int argc, char **argv, char **envp)
 	ms = malloc(sizeof(t_minishell));
 	lst = malloc(sizeof(t_list));
 	ms->envp = envp;
+	ms->quote = 0;
 	if (argv[1] || argc > 1)
 		myexit(ms, lst, 1);
 	signal_handler(0);
-	// signal(SIGINT, sigint_handler);
-	// signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		get_input(ms);
-		// get_token(ms);
 		if (!check_quotes(ms))
 		{
 			check_dollar(ms);
@@ -85,22 +79,6 @@ int	main(int argc, char **argv, char **envp)
 			if (!redir(ms, lst))
 				pipex(ms, lst);
 		}
-
-		// while (*lst)
-		// {
-		// 	printf("NODE\n");
-		// 	for (int x = 0; (*lst)->args[x]; x++)
-		// 		printf("lst->args[%d]: %s\n", x, (*lst)->args[x]);
-		// 	*lst = (*lst)->next;
-		// }
-
-		// for (int i = 0; ms->input[i]; i++)
-		// 	printf("input[%d]: [%s]\n", i , ms->input[i]);
-
 		ft_free(ms, lst);
-
-		// for (int i = 0; ms->input[i]; i++)
-		// 	printf("input[%d]: [%s] token:[%i]\n", i , ms->input[i], ms->token[i]);
-		// myexit(ms, lst, 0);
 	}
 }

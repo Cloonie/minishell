@@ -23,25 +23,9 @@ int	rm_2strs(t_list *tmp, int i)
 	return (0);
 }
 
-int	redir_type(t_list *tmp, int i)
+void	append_heredoc(t_list *tmp, int i, int tmpfd)
 {
-	int	tmpfd;
-
-	if (!ft_strncmp(tmp->args[i], "<\0", 2))
-	{
-		if (tmp->infile)
-			free(tmp->infile);
-		tmp->infile = tmp->args[i + 1];
-	}
-	else if (!ft_strncmp(tmp->args[i], ">\0", 2))
-	{
-		if (tmp->outfile)
-			free(tmp->outfile);
-		tmp->outfile = tmp->args[i + 1];
-		tmpfd = open(tmp->outfile, O_CREAT, 0644);
-		close(tmpfd);
-	}
-	else if (!ft_strncmp(tmp->args[i], ">>\0", 3))
+	if (!ft_strncmp(tmp->args[i], ">>\0", 3))
 	{
 		if (tmp->outfile)
 			free(tmp->outfile);
@@ -56,6 +40,30 @@ int	redir_type(t_list *tmp, int i)
 			free(tmp->delimiter);
 		tmp->delimiter = ft_strjoin(tmp->args[i + 1], "\0");
 	}
+}
+
+int	redir_type(t_list *tmp, int i)
+{
+	int	tmpfd;
+
+	tmpfd = 0;
+	if (!ft_strncmp(tmp->args[i], "<\0", 2))
+	{
+		if (tmp->infile)
+			free(tmp->infile);
+		tmp->infile = tmp->args[i + 1];
+	}
+	else if (!ft_strncmp(tmp->args[i], ">\0", 2))
+	{
+		if (tmp->outfile)
+			free(tmp->outfile);
+		tmp->outfile = tmp->args[i + 1];
+		tmpfd = open(tmp->outfile, O_CREAT, 0644);
+		close(tmpfd);
+	}
+	else if (!ft_strncmp(tmp->args[i], ">>\0", 3)
+		||!ft_strncmp(tmp->args[i], "<<\0", 3))
+		append_heredoc(tmp, i, tmpfd);
 	else
 		return (1);
 	rm_2strs(tmp, i);

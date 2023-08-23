@@ -32,10 +32,8 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	input = readline("> ");
 	while (input != NULL)
 	{
-
 		if ((!ft_strncmp(input, (*lst)->delimiter,
-					ft_strlen((*lst)->delimiter) + 1)
-				|| !ft_strncmp(input, "^C", 2)))
+					ft_strlen((*lst)->delimiter) + 1)))
 		{
 			free(input);
 			break ;
@@ -78,7 +76,7 @@ int	input(t_minishell *ms, t_list **lst)
 		perror("dup2 fdout");
 		return (1);
 	}
-	close(ms->fdin);
+	// close(ms->fdin);
 	return (0);
 }
 
@@ -95,7 +93,7 @@ void	output(t_minishell *ms, t_list **lst)
 		ms->fdout = (*lst)->next->fdpipe[1];
 		// printf("%s, c pipe out: %d\n", (*lst)->args[0], ms->fdout);
 	}
-	else  
+	else
 	{
 		// printf("STDOUT\n");
 		ms->fdout = dup(ms->ori_out);
@@ -106,7 +104,7 @@ void	output(t_minishell *ms, t_list **lst)
 		perror("dup2 fdout");
 		return ;
 	}
-	close(ms->fdout);
+	// close(ms->fdout);
 }
 
 void	pipex(t_minishell *ms, t_list **lst)
@@ -123,28 +121,38 @@ void	pipex(t_minishell *ms, t_list **lst)
 	{
 		if ((*lst)->next)
 			pipe((*lst)->next->fdpipe);
+		// printf("parent before: %s fdpipe[0]: %d\n", (*lst)->args[0], (*lst)->fdpipe[0]);
+		// printf("parent before: %s fdpipe[1]: %d\n", (*lst)->args[0], (*lst)->fdpipe[1]);
 		input(ms, lst);
 		output(ms, lst);
+		run_build_ins(ms, lst);
 		child[++i] = fork();
 		if (child[i] == 0)
 		{
 			signal_handler(1);
+			// printf("child : %s fdpipe[0]: %d\n", (*lst)->args[0], (*lst)->fdpipe[0]);
+			// printf("child : %s fdpipe[1]: %d\n", (*lst)->args[0], (*lst)->fdpipe[1]);
 			// printf("\nchild: %d\n", i);
-			// printf("c fdpipe[0]: %d\n", (*lst)->fdpipe[0]);
-			// printf("c fdpipe[1]: %d\n", (*lst)->fdpipe[1]);
-			// close((*lst)->fdpipe[0]);
+			close((*lst)->fdpipe[1]);
+			close((*lst)->fdpipe[0]);
 			if ((*lst)->next)
+			{
 				close((*lst)->next->fdpipe[0]);
+				close((*lst)->next->fdpipe[1]);
+			}
 			cmd(ms, lst);
 			exit(0);
 		}
 		else
 		{
-			run_build_ins(ms, lst);
+			// close(ms->fdin);
+			// close(ms->fdout);
 			unlink("here_doc");
+			close((*lst)->fdpipe[0]);
 			if ((*lst)->next)
 				close((*lst)->next->fdpipe[1]);
-			close((*lst)->fdpipe[0]);
+			// printf("parent after: %s fdpipe[0]: %d\n", (*lst)->args[0], (*lst)->fdpipe[0]);
+			// printf("parent after: %s fdpipe[1]: %d\n", (*lst)->args[0], (*lst)->fdpipe[1]);
 			(*lst) = (*lst)->next;
 		}
 	}

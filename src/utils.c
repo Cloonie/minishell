@@ -21,36 +21,38 @@
 // 	rl_redisplay();
 // }
 
-void	ft_free(t_minishell	*ms, t_list **lst)
+void	ft_free2(t_list *current)
 {
 	int		i;
-	t_list	*current;
+
+	i = -1;
+	while (current->args[++i])
+		free(current->args[i]);
+	free(current->args);
+	if (current->infile)
+		free(current->infile);
+	if (current->outfile)
+		free(current->outfile);
+	if (current->delimiter)
+		free(current->delimiter);
+	free(current);
+}
+
+void	ft_free(t_minishell *ms, t_list **lst)
+{
 	t_list	*next;
+	int		i;
+	t_list	*current;
 
 	i = -1;
 	while (ms->input[++i])
 		free(ms->input[i]);
 	free(ms->input);
-
-	// free(ms->token);
-
 	current = *lst;
 	while (current)
 	{
 		next = current->next;
-		// printf("current: %p\n", current);
-		// printf("next: %p\n", next);
-		i = -1;
-		while (current->args[++i])
-			free(current->args[i]);
-		free(current->args);
-		if (current->infile)
-			free(current->infile);
-		if (current->outfile)
-			free(current->outfile);
-		if (current->delimiter)
-			free(current->delimiter);
-		free(current);
+		ft_free2(current);
 		current = next;
 	}
 	*lst = NULL;
