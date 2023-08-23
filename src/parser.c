@@ -37,7 +37,7 @@ int	check_quotes(t_minishell *ms)
 			}
 		}
 	}
-	if(check_quotes2(ms, quoted) == 1)
+	if (check_quotes2(ms, quoted) == 1)
 		return (1);
 	return (0);
 }
