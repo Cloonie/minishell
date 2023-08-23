@@ -17,8 +17,8 @@
 
 char	*ft_strschr(char *s, int c)
 {
-	int	i;
-	char *new;
+	int		i;
+	char	*new;
 
 	i = 0;
 	new = s;
@@ -27,7 +27,7 @@ char	*ft_strschr(char *s, int c)
 		if (new[i] == c)
 		{
 			new[i] = '\0';
-			break;
+			break ;
 		}
 		i++;
 	}

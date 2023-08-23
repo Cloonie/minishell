@@ -58,48 +58,54 @@ enum {
 
 // main
 void		get_input(t_minishell *ms);
+void		split_cmd(t_list **lst, t_minishell *ms);
 
 // utils
-void		sigint_handler(int sig);
+void		ft_free2(t_list *current);
 void		ft_free(t_minishell	*ms, t_list **lst);
 void		myexit(t_minishell	*ms, t_list **lst, int status);
 char		*ft_getenv(t_minishell *ms, char *envvar);
 void		init_pipe(t_minishell *ms);
 
 // build_ins
+void		call_echo2(t_minishell *ms, t_list *lst, int i, int newline);
 void		call_echo(t_minishell *ms, t_list *lst);
 void		call_cd(t_minishell *ms, t_list *lst);
+void		call_env(t_minishell *ms, t_list *lst);
+void		call_run(t_minishell *ms, t_list *lst);
+
+// build_ins2
+void		call_unset2(t_minishell *ms, t_list *lst, int j);
 void		call_unset(t_minishell *ms, t_list *lst);
 void		call_export(t_minishell *ms, t_list *lst);
 void		export2(t_minishell *ms, t_list *lst);
 void		export3(t_minishell *ms, t_list *lst, int i, int j);
 
-// build_ins2
-void		call_env(t_minishell *ms, t_list *lst);
-void		call_run(t_minishell *ms, t_list *lst);
-
 // executer
-int			cmd(t_minishell *ms, t_list **lst);
-int			executable(t_minishell *ms, t_list *lst);
-int			run_build_ins(t_minishell *ms, t_list **lst);
 int			check_build_ins(t_list **lst);
+int			run_build_ins(t_minishell *ms, t_list **lst);
+int			cmd(t_minishell *ms, t_list **lst);
+int			fork_pid(t_minishell *ms, t_list *lst, char **paths, int i);
+int			executable(t_minishell *ms, t_list *lst);
 
 // lexer
+void		split_helper(char **array, const char *s, const char *op, int i[3]);
+int			split_words(char **array, const char *s, const char *op);
 char		**lexer(char *s, const char *op);
 
-// token
-int			check_valid_cmd(t_minishell *ms, char *input);
-void		get_token(t_minishell *ms);
-
-// parser
-void		remove_quotes(t_minishell *ms);
+// dollar
 void		check_dollar(t_minishell *ms);
 void		check_dollar2(t_minishell *ms, char *temp, char *result, int i[3]);
 void		check_dollar3(t_minishell *ms, char *temp, char *result, int i[3]);
 void		check_dollar4(t_minishell *ms, char *temp, char *result, int i[3]);
+
+// parser
 int			check_quotes(t_minishell *ms);
 int			check_quotes2(t_minishell *ms, int quoted);
 void		check_emptystr(t_minishell *ms);
+
+// signal
+void		signal_handler(int num);
 
 // redirection
 int			rm_2strs(t_list *tmp, int i);
@@ -108,9 +114,14 @@ int			redir_error(t_minishell *ms, t_list *tmp, int i);
 int			redir(t_minishell *ms, t_list **lst);
 
 // pipe
-void		pipex(t_minishell *ms, t_list **lst);
+void		stdio_readline(t_minishell *ms);
+void		here_doc(t_minishell *ms, t_list **lst);
+int			input(t_minishell *ms, t_list **lst);
+void		output(t_minishell *ms, t_list **lst);
 
-// signal
-void		signal_handler(int num);
+// final
+void		final(t_minishell *ms, t_list **lst);
+void		child_loop(t_minishell *ms, t_list **lst, int i, pid_t *child);
+void		child_run(t_minishell *ms, t_list **lst);
 
 #endif

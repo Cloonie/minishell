@@ -12,15 +12,6 @@
 
 #include "../includes/minishell.h"
 
-// void	sigint_handler(int sig)
-// {
-// 	(void)sig;
-// 	ft_printf("\n");
-// 	rl_replace_line("", 0);
-// 	rl_on_new_line();
-// 	rl_redisplay();
-// }
-
 void	ft_free2(t_list *current)
 {
 	int		i;

@@ -77,7 +77,7 @@ int	main(int argc, char **argv, char **envp)
 			check_emptystr(ms);
 			split_cmd(lst, ms);
 			if (!redir(ms, lst))
-				pipex(ms, lst);
+				final(ms, lst);
 		}
 		ft_free(ms, lst);
 	}

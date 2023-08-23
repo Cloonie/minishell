@@ -14,6 +14,8 @@
 
 int	check_build_ins(t_list **lst)
 {
+	if (!(*lst)->args[0])
+		return (1);
 	if (!ft_strncmp((*lst)->args[0], "echo\0", 5))
 		;
 	else if (!ft_strncmp((*lst)->args[0], "pwd\0", 4))
