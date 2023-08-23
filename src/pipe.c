@@ -44,7 +44,6 @@ void	here_doc(t_minishell *ms, t_list **lst)
 		input = readline("> ");
 	}
 	close(tmp_fd);
-	// ms->fdin = open(".tmp", O_RDONLY);
 }
 
 int	input(t_minishell *ms, t_list **lst)

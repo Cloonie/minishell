@@ -6,7 +6,7 @@
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 21:11:11 by mliew             #+#    #+#             */
-/*   Updated: 2023/08/23 21:50:40 by mliew            ###   ########.fr       */
+/*   Updated: 2023/08/23 21:59:41 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	child_run(t_minishell *ms, t_list **lst)
 	signal_handler(1);
 	run_build_ins(ms, lst);
 	cmd(ms, lst);
-	unlink(".tmp");
 	exit(0);
 }
 
@@ -44,7 +43,6 @@ void	child_loop(t_minishell *ms, t_list **lst, int i, pid_t *child)
 				close((*lst)->next->fdpipe[1]);
 			(*lst) = (*lst)->next;
 		}
-		unlink("here_doc");
 	}
 	i = -1;
 	while (child[++i])
@@ -71,6 +69,7 @@ void	final(t_minishell *ms, t_list **lst)
 		close(ms->ori_in);
 		close(ms->ori_out);
 	}
+	unlink(".tmp");
 	free(child);
 	*lst = head;
 }
