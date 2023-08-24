@@ -59,9 +59,9 @@ int	input(t_minishell *ms, t_list **lst)
 		ms->fdin = dup(ms->ori_in);
 	if (ms->fdin == -1)
 	{
-		perror("fdin is -1");
+		perror("minishell:");
 		(*lst)->infile = NULL;
-		return (1);
+		exit(1);
 	}
 	if (dup2(ms->fdin, 0) == -1)
 	{

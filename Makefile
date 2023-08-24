@@ -23,7 +23,7 @@ CC			=	gcc
 LIBFT		=	libft
 READLINE	=	-lreadline -L/usr/local/opt/readline/lib -I/usr/local/opt/readline/include
 LIBFLAGS	=	-Llibft -lft
-# SANITIZE	=	-fsanitize=address -g3
+SANITIZE	=	-fsanitize=address -g3
 
 INCLUDES	=	./includes
 SRC_PATH	=	./src
@@ -36,7 +36,7 @@ all: $(NAME)
 
 $(NAME): $(SRCS)
 	@make -s -C libft
-	@$(CC) $(CFLAGS) $(SRCS) -o $(NAME) $(LIBFLAGS) $(READLINE)
+	$(CC) $(CFLAGS) $(SRCS) -o $(NAME) $(LIBFLAGS) $(READLINE)
 	@echo "$(B_GREEN)Compiling $(C_END)"
 	@echo "$(C_GREEN)Makefile for minishell completed.$(C_END)"
 

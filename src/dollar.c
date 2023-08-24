@@ -6,7 +6,7 @@
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 18:36:38 by mliew             #+#    #+#             */
-/*   Updated: 2023/08/23 18:37:05 by mliew            ###   ########.fr       */
+/*   Updated: 2023/08/24 16:27:02 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,18 +53,27 @@ void	check_dollar2(t_minishell *ms, char *temp, char *result, int i[3])
 
 void	check_dollar3(t_minishell *ms, char *temp, char *result, int i[3])
 {
+	char	*tmp;
+
 	if (ms->input[i[0]][i[1] + 1] == '?')
+	{
 		temp[++i[2]] = ms->input[i[0]][++i[1]];
+		temp[++i[2]] = '\0';
+		tmp = ft_getenv(ms, temp);
+		ft_strlcat(result, tmp,
+			ft_strlen(result) + ft_strlen(tmp) + 1);
+		free(tmp);
+	}
 	else
 	{
 		while (ms->input[i[0]][++i[1]] && ft_isalnum(ms->input[i[0]][i[1]]))
 			temp[++i[2]] = ms->input[i[0]][i[1]];
 		i[1]--;
+		temp[++i[2]] = '\0';
+		if (ft_getenv(ms, temp))
+			ft_strlcat(result, ft_getenv(ms, temp),
+				ft_strlen(result) + ft_strlen(ft_getenv(ms, temp)) + 1);
 	}
-	temp[++i[2]] = '\0';
-	if (ft_getenv(ms, temp))
-		ft_strlcat(result, ft_getenv(ms, temp),
-			ft_strlen(result) + ft_strlen(ft_getenv(ms, temp)) + 1);
 }
 
 void	check_dollar4(t_minishell *ms, char *temp, char *result, int i[3])
