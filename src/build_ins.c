@@ -88,7 +88,7 @@ void	call_env(t_minishell *ms, t_list *lst)
 	i = 0;
 	if (lst->args[1])
 	{
-		perror(lst->args[1]);
+		ft_printf("env: '%s': No such file or directory\n", lst->args[1]);
 		ms->exit_status = 127;
 		return ;
 	}
