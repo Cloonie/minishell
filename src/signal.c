@@ -45,4 +45,8 @@ void	signal_handler(int num)
 		signal(SIGINT, quitsubshell);
 		signal(SIGQUIT, quit3);
 	}
+	else if (num == 2)
+	{
+		// printf("hi\n");
+		signal(SIGQUIT, SIG_IGN);}
 }

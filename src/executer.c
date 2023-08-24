@@ -75,8 +75,15 @@ int	cmd(t_minishell *ms, t_list **lst)
 			return (1);
 		else if (executable(ms, ((*lst))))
 		{
-			printf("minishell: %s: command not found\n", ((*lst))->args[0]);
-			ms->exit_status = 127;
+			int child = fork();
+			if (child == 0)
+			{
+				printf("minishell: %s: command not found\n", ((*lst))->args[0]);
+				ms->exit_status = 127;
+				exit(ms->exit_status);
+			}
+			waitpid(child, &ms->exit_status, 0);
+			ms->exit_status = ms->exit_status % 255;
 			return (1);
 		}
 	}

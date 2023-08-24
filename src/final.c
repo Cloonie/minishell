@@ -6,7 +6,7 @@
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 21:11:11 by mliew             #+#    #+#             */
-/*   Updated: 2023/08/24 17:31:43 by mliew            ###   ########.fr       */
+/*   Updated: 2023/08/24 17:56:43 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,10 @@ void	child_loop(t_minishell *ms, t_list **lst, int i, pid_t *child)
 		if ((*lst)->next)
 			pipe((*lst)->next->fdpipe);
 		if ((*lst)->delimiter)
+		{
+			signal_handler(0);
 			here_doc(ms, lst);
+		}
 		child[++i] = fork();
 		if (child[i] == 0)
 			child_run(ms, lst);

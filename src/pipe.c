@@ -32,7 +32,7 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	input = readline("> ");
 	while (input != NULL)
 	{
-		// signal_handler(1);
+		signal_handler(2);
 		if ((!ft_strncmp(input, (*lst)->delimiter,
 					ft_strlen((*lst)->delimiter) + 1)))
 		{
