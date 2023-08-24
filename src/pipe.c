@@ -49,7 +49,7 @@ void	here_doc(t_minishell *ms, t_list **lst)
 
 int	input(t_minishell *ms, t_list **lst)
 {
-	if ((*lst)->delimiter && (*lst)->flag == 1)
+	if ((*lst)->delimiter)
 		ms->fdin = open(".tmp", O_RDONLY);
 	else if ((*lst)->infile)
 		ms->fdin = open((*lst)->infile, O_RDONLY);

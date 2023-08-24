@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   12final.c                                          :+:      :+:    :+:   */
+/*   final.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 21:11:11 by mliew             #+#    #+#             */
-/*   Updated: 2023/08/24 11:31:05 by mliew            ###   ########.fr       */
+/*   Updated: 2023/08/24 12:30:06 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,7 @@ void	child_loop(t_minishell *ms, t_list **lst, int i, pid_t *child)
 		if ((*lst)->next)
 			pipe((*lst)->next->fdpipe);
 		if ((*lst)->delimiter)
-		{
 			here_doc(ms, lst);
-			(*lst)->flag = 1;
-		}
 		child[++i] = fork();
 		if (child[i] == 0)
 			child_run(ms, lst);

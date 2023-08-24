@@ -114,7 +114,7 @@ void	call_run(t_minishell *ms, t_list *lst)
 		else if (pid > 0)
 		{
 			waitpid(pid, &ms->exit_status, 0);
-			ms->exit_status = ms->exit_status >> 8;
+			ms->exit_status = ms->exit_status % 255;
 			return ;
 		}
 	}

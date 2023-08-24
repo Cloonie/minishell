@@ -100,7 +100,7 @@ int	fork_pid(t_minishell *ms, t_list *lst, char **paths, int i)
 		// else if (pid > 0)
 		// {
 			// waitpid(pid, &ms->exit_status, 0);
-			// ms->exit_status = ms->exit_status >> 8;
+			// ms->exit_status = ms->exit_status % 255;
 			// i = -1;
 			// while (paths[++i])
 			// 	free(paths[i]);
