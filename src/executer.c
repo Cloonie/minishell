@@ -58,7 +58,7 @@ int	run_build_ins(t_minishell *ms, t_list **lst)
 	else if (!ft_strncmp((*lst)->args[0], "cd\0", 3))
 		call_cd(ms, (*lst));
 	else if (!ft_strncmp((*lst)->args[0], "exit\0", 5))
-		myexit(ms, lst, 0);
+		myexit(ms, lst);
 	else if ((!ft_strncmp((*lst)->args[0], "./", 2)
 			|| !ft_strncmp((*lst)->args[0], "/", 1)))
 		call_run(ms, (*lst));
@@ -75,15 +75,8 @@ int	cmd(t_minishell *ms, t_list **lst)
 			return (1);
 		else if (executable(ms, ((*lst))))
 		{
-			int child = fork();
-			if (child == 0)
-			{
-				printf("minishell: %s: command not found\n", ((*lst))->args[0]);
-				ms->exit_status = 127;
-				exit(ms->exit_status);
-			}
-			waitpid(child, &ms->exit_status, 0);
-			ms->exit_status = ms->exit_status % 255;
+			printf("minishell: %s: command not found\n", ((*lst))->args[0]);
+			ms->exit_status = 127;
 			return (1);
 		}
 	}

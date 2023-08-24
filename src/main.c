@@ -76,7 +76,7 @@ int	main(int argc, char **argv, char **envp)
 	lst = malloc(sizeof(t_list));
 	init(ms, envp);
 	if (argv[1] || argc > 1)
-		myexit(ms, lst, 1);
+		myexit(ms, lst);
 	while (1)
 	{
 		signal_handler(0);

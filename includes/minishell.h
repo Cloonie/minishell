@@ -54,7 +54,7 @@ void		split_cmd(t_list **lst, t_minishell *ms);
 // utils
 void		ft_free2(t_list *current);
 void		ft_free(t_minishell	*ms, t_list **lst);
-void		myexit(t_minishell	*ms, t_list **lst, int status);
+void		myexit(t_minishell	*ms, t_list **lst);
 char		*ft_getenv(t_minishell *ms, char *envvar);
 void		init_pipe(t_minishell *ms);
 

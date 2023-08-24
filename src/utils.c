@@ -49,18 +49,12 @@ void	ft_free(t_minishell *ms, t_list **lst)
 	*lst = NULL;
 }
 
-void	myexit(t_minishell	*ms, t_list **lst, int status)
+void	myexit(t_minishell	*ms, t_list **lst)
 {
-	(void)status;
 	ft_free(ms, lst);
 	free(lst);
 	free(ms);
-	// if (status == EXIT_SUCCESS)
-	// 	printf("EXIT_SUCCESS\n");
-	// else if (status == EXIT_FAILURE)
-	// 	printf("EXIT_FAILURE\n");
-	// system("leaks minishell");
-	printf("%d\n", ms->exit_status);
+	system("leaks minishell");
 	exit(ms->exit_status);
 }
 

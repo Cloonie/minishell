@@ -27,6 +27,7 @@ void	here_doc(t_minishell *ms, t_list **lst)
 	int		tmp_fd;
 	char	*input;
 
+	signal_handler(0);
 	stdio_readline(ms);
 	tmp_fd = open(".tmp", O_WRONLY | O_CREAT, 0644);
 	input = readline("> ");
