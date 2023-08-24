@@ -15,7 +15,7 @@
 void	quit3(int sig)
 {
 	(void)sig;
-	printf("Quit: 3\n");
+	write(1, "Quit: 3\n", 9);
 }
 
 void	quitsubshell(int sig)

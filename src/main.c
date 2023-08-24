@@ -57,6 +57,16 @@ void	split_cmd(t_list **lst, t_minishell *ms)
 	ft_lstadd_back(lst, ft_lstnew(tmp));
 }
 
+void	init(t_minishell *ms, char **envp)
+{
+	ms->envp = envp;
+	ms->quote = 0;
+	tcgetattr(STDIN_FILENO, &ms->ori_attr);
+	ms->new_attr = ms->ori_attr;
+	ms->new_attr.c_lflag &= ~ECHOCTL;
+	tcsetattr(STDIN_FILENO, TCIFLUSH, &ms->new_attr);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*ms;
@@ -64,22 +74,24 @@ int	main(int argc, char **argv, char **envp)
 
 	ms = malloc(sizeof(t_minishell));
 	lst = malloc(sizeof(t_list));
-	ms->envp = envp;
-	ms->quote = 0;
+	init(ms, envp);
 	if (argv[1] || argc > 1)
 		myexit(ms, lst, 1);
-	signal_handler(0);
 	while (1)
 	{
+		signal_handler(0);
 		get_input(ms);
 		if (!check_quotes(ms))
 		{
 			check_dollar(ms);
 			check_emptystr(ms);
 			split_cmd(lst, ms);
+			tcsetattr(STDIN_FILENO, TCSANOW, &ms->ori_attr);
 			if (!redir(ms, lst))
 				final(ms, lst);
 		}
+		tcsetattr(STDIN_FILENO, TCIFLUSH, &ms->new_attr);
 		ft_free(ms, lst);
 	}
+	tcsetattr(STDIN_FILENO, TCSANOW, &ms->ori_attr);
 }

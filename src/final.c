@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   final.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
+/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 21:11:11 by mliew             #+#    #+#             */
-/*   Updated: 2023/08/24 12:30:06 by mliew            ###   ########.fr       */
+/*   Updated: 2023/08/24 17:31:43 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void	final(t_minishell *ms, t_list **lst)
 	head = *lst;
 	child = malloc(sizeof(pid_t) * ft_lstsize(*lst));
 	init_pipe(ms);
+	signal_handler(1);
 	if (!check_build_ins(lst) && !(*lst)->next)
 		run_build_ins(ms, lst);
 	else

@@ -23,6 +23,7 @@
 # include <sys/wait.h>
 # include <dirent.h>
 # include <sys/stat.h>
+# include <termios.h>
 
 # include "../libft/includes/libft.h"
 # include "../libft/includes/ft_printf.h"
@@ -32,29 +33,19 @@
 
 typedef struct s_minishell
 {
-	char	**input;
-	int		*token;
-	char	**envp;
-	char	cwd[1024];
-	int		ori_in;
-	int		ori_out;
-	int		fdin;
-	int		fdout;
-	int		exit_status;
-	int		quote;
+	char			**input;
+	int				*token;
+	char			**envp;
+	char			cwd[1024];
+	int				ori_in;
+	int				ori_out;
+	int				fdin;
+	int				fdout;
+	int				exit_status;
+	int				quote;
+	struct termios	new_attr;
+	struct termios	ori_attr;
 }	t_minishell;
-
-enum {
-	TOK_EOF,
-	TOK_CMD,
-	TOK_ARG,
-	TOK_SQUOTE,
-	TOK_DQUOTE,
-	TOK_DOLLAR,
-	TOK_REDIRECT,
-	TOK_PIPE,
-	TOK_ESCAPE,
-};
 
 // main
 void		get_input(t_minishell *ms);
