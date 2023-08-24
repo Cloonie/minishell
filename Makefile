@@ -34,7 +34,7 @@ OBJS	=	$(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRCS)))))
 
 all: $(NAME)
 
-$(NAME):
+$(NAME): $(SRCS)
 	@make -s -C libft
 	@$(CC) $(CFLAGS) $(SRCS) -o $(NAME) $(LIBFLAGS) $(READLINE)
 	@echo "$(B_GREEN)Compiling $(C_END)"
@@ -44,8 +44,8 @@ $(NAME):
 # 					@mkdir -p $(OBJ_PATH)
 # 					@echo "$(B_GREEN)Creating object file: $<$(C_ENDR)"
 # 					@$(CC) $(CFLAGS) -c $< -o $@ $(READLINE)
-
 # @rm -rf $(OBJ_PATH)
+
 clean:
 	@echo "$(B_RED)Removing $(NAME) object files$(C_END)"
 
