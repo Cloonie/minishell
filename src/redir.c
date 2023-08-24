@@ -38,7 +38,7 @@ void	append_heredoc(t_list *tmp, int i, int tmpfd)
 	{
 		if (tmp->delimiter)
 			free(tmp->delimiter);
-		tmp->delimiter = ft_strjoin(tmp->args[i + 1], "\0");
+		tmp->delimiter = tmp->args[i + 1];
 	}
 }
 
