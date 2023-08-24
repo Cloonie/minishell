@@ -95,15 +95,16 @@ int	fork_pid(t_minishell *ms, t_list *lst, char **paths, int i)
 	{
 		// pid = fork();
 		// if (pid == 0)
-			execve(buf, lst->args, ms->envp);
+		execve(buf, lst->args, ms->envp);
+		printf("after execve\n");
 		// else if (pid > 0)
 		// {
 			// waitpid(pid, &ms->exit_status, 0);
 			// ms->exit_status = ms->exit_status >> 8;
-			i = -1;
-			while (paths[++i])
-				free(paths[i]);
-			free(paths);
+			// i = -1;
+			// while (paths[++i])
+			// 	free(paths[i]);
+			// free(paths);
 			// return (1);
 		// }
 	}
