@@ -32,13 +32,16 @@ void	ft_free2(t_list *current)
 void	ft_free(t_minishell *ms, t_list **lst)
 {
 	t_list	*next;
-	int		i;
 	t_list	*current;
+	int		i;
 
 	i = -1;
-	while (ms->input[++i])
-		free(ms->input[i]);
-	free(ms->input);
+	if (ms->input)
+	{
+		while (ms->input[++i])
+			free(ms->input[i]);
+		free(ms->input);
+	}
 	current = *lst;
 	while (current)
 	{
@@ -54,9 +57,9 @@ void	myexit(t_minishell	*ms, t_list **lst)
 	ft_free(ms, lst);
 	free(lst);
 	free(ms);
-	system("leaks minishell");
 	exit(ms->exit_status);
 }
+// system("leaks minishell");
 
 char	*ft_getenv(t_minishell *ms, char *envvar)
 {
